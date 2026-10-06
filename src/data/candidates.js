@@ -1,0 +1,160 @@
+// Sport turi sahifasidagi murabbiylar
+const avatar = (id) =>
+  `https://images.unsplash.com/photo-${id}?w=200&h=200&fit=crop&crop=faces`
+
+const COACH_TITLES = {
+  futbol: 'Futbol murabbiyi',
+  basketbol: 'Basketbol murabbiyi',
+  tennis: 'Tennis murabbiyi',
+  suzish: 'Suzish murabbiyi',
+  fitnes: 'Fitnes murabbiyi',
+  boks: 'Boks murabbiyi',
+  kurash: 'Kurash murabbiyi',
+  voleybol: 'Voleybol murabbiyi',
+  yoga: 'Yoga instruktori',
+  'stol-tennisi': 'Stol tennisi murabbiyi',
+  padel: 'Padel murabbiyi',
+  'yengil-atletika': 'Yengil atletika murabbiyi',
+  velosport: 'Velosport murabbiyi',
+  shaxmat: 'Shaxmat ustozi',
+  boshqa: 'Sport murabbiyi',
+}
+
+const COACH_SKILLS = {
+  futbol: ['Texnika', 'Taktika', 'Darvozabonlik', 'Bolalar guruhi'],
+  basketbol: ['Dribling', 'Otish texnikasi', 'Jamoaviy o‘yin'],
+  tennis: ['Forhend / bekhend', 'Serve', 'Yakka darslar'],
+  suzish: ['Krol', 'Brass', 'Suvdan qo‘rqishni yengish'],
+  fitnes: ['Kuch mashqlari', 'Ozish dasturi', 'Ovqatlanish rejasi'],
+  boks: ['Zarba texnikasi', 'Sparring', 'Chidamlilik'],
+  kurash: ['Uloqtirish', 'Musobaqaga tayyorlov', 'Bolalar guruhi'],
+  voleybol: ['Uzatma', 'Hujum zarbasi', 'Jamoaviy o‘yin'],
+  yoga: ['Hatha', 'Pilates', 'Nafas mashqlari'],
+  shaxmat: ['Debyut', 'Endshpil', 'Musobaqaga tayyorlov'],
+}
+
+const DEFAULT_SKILLS = ['Shaxsiy mashg‘ulot', 'Guruh darslari', 'Jismoniy tayyorgarlik']
+
+const TRAINERS = [
+  {
+    id: 'aziz-rahimov',
+    name: 'Aziz Rahimov',
+    location: 'Toshkent',
+    district: 'Yunusobod tumani',
+    experience: '8 yil tajriba',
+    salary: '150 000 soʻm / dars',
+    premium: true,
+    online: true,
+    avatar: avatar('1507003211169-0a1dd7228f2d'),
+    school: 'O‘zbekiston Davlat Jismoniy tarbiya va sport universiteti',
+    degree: 'Bakalavr — Sport murabbiyligi',
+    years: '2010–2014',
+    club: 'Olimpiya Sport Majmuasi',
+    clubYears: '2018 — hozirgacha',
+  },
+  {
+    id: 'madina-rasulova',
+    name: 'Madina Rasulova',
+    location: 'Toshkent',
+    district: 'Chilonzor tumani',
+    experience: '5 yil tajriba',
+    salary: '120 000 soʻm / dars',
+    premium: false,
+    online: true,
+    avatar: avatar('1544005313-94ddf0286df2'),
+    school: 'O‘zbekiston Davlat Jismoniy tarbiya va sport universiteti',
+    degree: 'Magistr — Sport pedagogikasi',
+    years: '2015–2019',
+    club: 'FitLife Club',
+    clubYears: '2020 — hozirgacha',
+  },
+  {
+    id: 'jasur-karimov',
+    name: 'Jasur Karimov',
+    location: 'Toshkent',
+    district: 'Mirzo Ulug‘bek tumani',
+    experience: '12 yil tajriba',
+    salary: '200 000 soʻm / dars',
+    premium: true,
+    online: false,
+    avatar: avatar('1500648767791-00dcc994a43e'),
+    school: 'Respublika Olimpiya zaxiralari kolleji',
+    degree: 'Sport ustasi, xalqaro toifadagi hakam',
+    years: '2006–2010',
+    club: 'Champion Arena',
+    clubYears: '2016 — hozirgacha',
+  },
+  {
+    id: 'nilufar-tosheva',
+    name: 'Nilufar Tosheva',
+    location: 'Toshkent',
+    district: 'Yakkasaroy tumani',
+    experience: '4 yil tajriba',
+    salary: '100 000 soʻm / dars',
+    premium: false,
+    online: true,
+    avatar: avatar('1438761681033-6461ffad8d80'),
+    school: 'O‘zbekiston Davlat Jismoniy tarbiya va sport universiteti',
+    degree: 'Bakalavr — Jismoniy madaniyat',
+    years: '2016–2020',
+    club: 'Yoga Space',
+    clubYears: '2021 — hozirgacha',
+  },
+  {
+    id: 'sardor-aliyev',
+    name: 'Sardor Aliyev',
+    location: 'Samarqand',
+    district: 'Samarqand shahri',
+    experience: '6 yil tajriba',
+    salary: '90 000 soʻm / dars',
+    premium: false,
+    online: false,
+    avatar: avatar('1472099645785-5658abf4ff4e'),
+    school: 'Samarqand Davlat Universiteti',
+    degree: 'Bakalavr — Jismoniy tarbiya',
+    years: '2012–2016',
+    club: 'Atlet Sport Markazi',
+    clubYears: '2019 — hozirgacha',
+  },
+]
+
+function buildTrainer(base, categoryId) {
+  const title = COACH_TITLES[categoryId] ?? COACH_TITLES.boshqa
+  const skills = COACH_SKILLS[categoryId] ?? DEFAULT_SKILLS
+  return {
+    id: base.id,
+    name: base.name,
+    title,
+    location: base.location,
+    district: base.district,
+    experience: base.experience,
+    salary: base.salary,
+    skills,
+    premium: base.premium,
+    online: base.online,
+    avatar: base.avatar,
+    about: `${base.experience.replace(' tajriba', '')}lik tajribaga ega ${title.toLowerCase()}. Yangi boshlovchilar bilan ham, musobaqaga tayyorlanayotgan sportchilar bilan ham ishlayman. Har bir shogird uchun individual reja tuzaman va natijani muntazam kuzatib boraman.`,
+    education: [{ school: base.school, degree: base.degree, years: base.years }],
+    work: [
+      {
+        role: title,
+        company: base.club,
+        years: base.clubYears,
+        points: [
+          'Yakka va guruh mashg‘ulotlarini olib borish',
+          'Shogirdlarni shahar va respublika musobaqalariga tayyorlash',
+          'Jismoniy tayyorgarlik va tiklanish dasturlarini tuzish',
+        ],
+      },
+    ],
+  }
+}
+
+export function getCandidatesForCategory(categoryId) {
+  return TRAINERS.map((trainer) => buildTrainer(trainer, categoryId))
+}
+
+// Xabarlar sahifasi murabbiyni id bo'yicha topishi uchun
+export const candidatesByCategory = {
+  boshqa: getCandidatesForCategory('boshqa'),
+}

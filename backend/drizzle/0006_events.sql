@@ -1,0 +1,31 @@
+CREATE TABLE "events" (
+	"id" text PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"category" text NOT NULL,
+	"image" text,
+	"location" text NOT NULL,
+	"starts_at" timestamp with time zone NOT NULL,
+	"ends_at" timestamp with time zone NOT NULL,
+	"excerpt" text DEFAULT '' NOT NULL,
+	"about" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"includes" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"rules" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"schedule" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"faq" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"organizer_name" text DEFAULT 'SportON' NOT NULL,
+	"organizer_role" text DEFAULT 'Tashkilotchi' NOT NULL,
+	"venue_name" text,
+	"venue_address" text,
+	"fee" text DEFAULT 'Bepul' NOT NULL,
+	"prize" text,
+	"level" text DEFAULT 'Barcha darajalar' NOT NULL,
+	"age" text DEFAULT 'Cheklovsiz' NOT NULL,
+	"capacity" integer DEFAULT 0 NOT NULL,
+	"registered" integer DEFAULT 0 NOT NULL,
+	"views" integer DEFAULT 0 NOT NULL,
+	"status" text DEFAULT 'published' NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE INDEX "events_status_starts_idx" ON "events" USING btree ("status","starts_at");

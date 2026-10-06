@@ -1,0 +1,518 @@
+.sport-news {
+  --news-navy: #13235b;
+  --news-navy-soft: #a9b3cc;
+  --news-title: #13235b;
+  --news-notch-bg: var(--color-bg);
+
+  padding-bottom: 56px;
+}
+
+[data-theme='dark'] .sport-news {
+  --news-navy: var(--color-primary);
+  --news-navy-soft: #2a3348;
+  --news-title: var(--color-text);
+}
+
+/* ===== Yuqori blok: bosh yangilik + yon ro‘yxat ===== */
+.sport-news__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.sport-news__side {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* ===== Burchakdagi “o‘yilgan” strelka tugmasi ===== */
+.news-notch {
+  --btn: 40px;
+  --gap: 8px;
+  --r: 14px;
+  --btn-r: 10px;
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: var(--gap) 0 0 var(--gap);
+  background: var(--news-notch-bg);
+  border-top-left-radius: calc(var(--btn-r) + var(--gap));
+}
+
+.news-notch::before,
+.news-notch::after {
+  content: '';
+  position: absolute;
+  width: var(--r);
+  height: var(--r);
+  background: radial-gradient(
+    circle at 0 0,
+    transparent calc(var(--r) - 0.5px),
+    var(--news-notch-bg) var(--r)
+  );
+}
+
+.news-notch::before {
+  right: 0;
+  top: calc(var(--r) * -1);
+}
+
+.news-notch::after {
+  left: calc(var(--r) * -1);
+  bottom: 0;
+}
+
+.news-notch__btn {
+  display: grid;
+  place-items: center;
+  width: var(--btn);
+  height: var(--btn);
+  border-radius: var(--btn-r);
+  background: var(--news-navy);
+  color: #fff;
+  font-size: 18px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.news-notch--lg {
+  --btn: 84px;
+  --gap: 10px;
+  --r: 24px;
+  --btn-r: 22px;
+}
+
+.news-notch--lg .news-notch__btn {
+  font-size: 30px;
+  background: linear-gradient(145deg, var(--color-primary-light), var(--color-primary-dark));
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+
+.news-featured:hover .news-notch__btn,
+.news-row:hover .news-notch__btn {
+  transform: rotate(45deg);
+}
+
+.news-row:hover .news-notch__btn {
+  background: var(--color-primary);
+}
+
+/* ===== Meta: manba + sana ===== */
+.news-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.news-meta__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--news-title);
+}
+
+.news-meta__avatar {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--color-card);
+}
+
+.news-meta__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.news-meta__date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== Bosh yangilik ===== */
+.news-featured {
+  position: relative;
+  display: flex;
+  min-height: 470px;
+  border-radius: 26px;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+}
+
+.news-featured__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform 0.6s ease;
+}
+
+.news-featured:hover .news-featured__img {
+  transform: scale(1.04);
+}
+
+.news-featured__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(10, 18, 48, 0.1) 0%, rgba(10, 18, 48, 0.45) 45%, rgba(8, 14, 40, 0.94) 100%);
+}
+
+.news-featured__body {
+  align-self: flex-end;
+  max-width: 600px;
+  padding: 30px 120px 30px 30px;
+}
+
+.news-featured__badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.news-featured__title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.news-featured__excerpt {
+  margin: 14px 0 18px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-featured .news-meta,
+.news-featured .news-meta__source {
+  color: #fff;
+}
+
+.news-featured .news-meta__avatar {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+/* ===== Gorizontal yangilik kartasi ===== */
+.news-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.95fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  min-height: 142px;
+}
+
+.news-row__media {
+  position: relative;
+  height: 100%;
+  min-height: 142px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.news-row__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.news-row:hover .news-row__media img {
+  transform: scale(1.06);
+}
+
+.news-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.news-row__title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--news-title);
+  transition: color 0.15s ease;
+}
+
+.news-row:hover .news-row__title {
+  color: var(--color-primary);
+}
+
+.news-row__excerpt {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-row__body .news-meta {
+  margin-top: 2px;
+}
+
+/* ===== Lenta (ticker) ===== */
+.news-ticker {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  margin-bottom: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.news-ticker__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 0 34px 0 20px;
+  background: var(--news-navy);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+}
+
+.news-ticker__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 0 rgba(124, 197, 32, 0.6);
+  animation: news-pulse 1.8s ease-out infinite;
+}
+
+.news-ticker__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 40px), transparent);
+}
+
+.news-ticker__track {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: max-content;
+  animation: news-marquee 40s linear infinite;
+}
+
+.news-ticker:hover .news-ticker__track {
+  animation-play-state: paused;
+}
+
+.news-ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding-left: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.news-ticker__item::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+@keyframes news-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes news-pulse {
+  70% {
+    box-shadow: 0 0 0 8px rgba(124, 197, 32, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 197, 32, 0);
+  }
+}
+
+/* ===== So‘nggi yangiliklar karuseli ===== */
+.latest-news__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.latest-news__title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--news-title);
+}
+
+.latest-news__nav {
+  display: flex;
+  gap: 10px;
+}
+
+.latest-news__btn {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--news-navy);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.latest-news__btn:hover:not(:disabled) {
+  background: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.latest-news__btn:disabled {
+  background: var(--news-navy-soft);
+  cursor: default;
+}
+
+.latest-news__btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.latest-news__track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.latest-news__track::-webkit-scrollbar {
+  display: none;
+}
+
+.latest-news__track .news-row {
+  flex: 0 0 min(580px, 44%);
+  scroll-snap-align: start;
+}
+
+/* ===== Moslashuvchanlik ===== */
+@media (max-width: 1100px) {
+  .sport-news__top {
+    grid-template-columns: 1fr;
+  }
+
+  .news-featured {
+    min-height: 420px;
+  }
+
+  .latest-news__track .news-row {
+    flex-basis: min(560px, 80%);
+  }
+}
+
+@media (max-width: 640px) {
+  .news-featured {
+    min-height: 380px;
+    border-radius: 20px;
+  }
+
+  .news-featured__body {
+    padding: 22px 22px 100px;
+  }
+
+  .news-notch--lg {
+    --btn: 64px;
+    --r: 18px;
+    --btn-r: 16px;
+  }
+
+  .news-row {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .news-row__title {
+    font-size: 15px;
+  }
+
+  .news-row__excerpt {
+    -webkit-line-clamp: 2;
+  }
+
+  .latest-news__track .news-row {
+    flex-basis: 88%;
+    grid-template-columns: 1fr;
+  }
+
+  .latest-news__track .news-row__media {
+    min-height: 190px;
+  }
+
+  .news-ticker__label {
+    padding: 0 26px 0 14px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-ticker__track,
+  .news-ticker__pulse {
+    animation: none;
+  }
+
+  .news-ticker__viewport {
+    overflow-x: auto;
+  }
+}

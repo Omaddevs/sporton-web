@@ -1,0 +1,396 @@
+.partners {
+  --tile: 112px;
+  --tile-gap: 18px;
+  padding-top: 8px;
+  padding-bottom: 56px;
+}
+
+.partners__panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 40px;
+  overflow: hidden;
+  padding: 44px 0 44px 48px;
+  border-radius: 28px;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(30, 111, 245, 0.09) 0%, transparent 55%),
+    linear-gradient(160deg, #ffffff 0%, #f6f9ff 100%);
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04), 0 18px 48px -24px rgba(16, 24, 40, 0.18);
+}
+
+[data-theme='dark'] .partners__panel {
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(75, 141, 255, 0.12) 0%, transparent 55%),
+    linear-gradient(160deg, #151517 0%, #111113 100%);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+/* ===== Matn ===== */
+.partners__copy {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+}
+
+.partners__copy > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.partners.is-visible .partners__copy > * {
+  opacity: 1;
+  transform: none;
+}
+
+.partners__copy > :nth-child(2) { transition-delay: 70ms; }
+.partners__copy > :nth-child(3) { transition-delay: 140ms; }
+.partners__copy > :nth-child(4) { transition-delay: 210ms; }
+.partners__copy > :nth-child(5) { transition-delay: 280ms; }
+
+.partners__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(30, 111, 245, 0.1);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.partners__eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.partners__title {
+  margin: 16px 0 14px;
+  color: var(--color-text);
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.partners__title span {
+  color: var(--color-primary);
+}
+
+.partners__text {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+.partners__stats {
+  display: flex;
+  gap: 32px;
+  margin: 28px 0 0;
+}
+
+.partners__stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.partners__stats dt {
+  color: var(--color-text);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.partners__stats dd {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.partners__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.partners__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+
+.partners__btn:hover {
+  transform: translateY(-1px);
+}
+
+.partners__btn--primary {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(30, 111, 245, 0.6);
+}
+
+.partners__btn--primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.partners__btn--ghost {
+  border-color: var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+}
+
+.partners__btn--ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ===== Logolar devori ===== */
+.partners__wall {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--tile-gap);
+  height: 470px;
+  margin: -44px 0;
+  padding-left: 8px;
+  /* Yuqori/pastki va o‘ng chet asta so‘nadi — namunadagi kabi */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to right, #000 62%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to right, #000 62%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.partners__col {
+  flex: 0 0 var(--tile);
+  overflow: visible;
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--delay),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--delay);
+}
+
+.partners.is-visible .partners__col {
+  opacity: 1;
+  transform: none;
+}
+
+.partners__col:nth-child(even) {
+  margin-top: 58px;
+}
+
+.partners__track {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  animation: partners-up var(--duration) linear infinite;
+  will-change: transform;
+}
+
+.partners__col--down .partners__track {
+  animation-name: partners-down;
+}
+
+.partners__wall:hover .partners__track {
+  animation-play-state: paused;
+}
+
+@keyframes partners-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes partners-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.partners__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex-shrink: 0;
+  width: var(--tile);
+  height: var(--tile);
+  /* gap emas, margin — ikki nusxa aynan teng bo‘lib, aylanish «sakramaydi» */
+  margin-bottom: var(--tile-gap);
+  padding: 12px 10px;
+  border-radius: 22px;
+  background: var(--color-card);
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 12px 28px -10px rgba(16, 24, 40, 0.16);
+  text-align: center;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-theme='dark'] .partners__tile {
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+}
+
+.partners__tile:hover,
+.partners__tile:focus-visible {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow:
+    0 2px 4px rgba(16, 24, 40, 0.05),
+    0 20px 36px -12px rgba(30, 111, 245, 0.35);
+}
+
+.partners__mark {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #fff;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.partners__mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.partners__tile:hover .partners__mark {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.partners__name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--color-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* ===== Moslashuvchanlik ===== */
+@media (max-width: 1100px) {
+  .partners__panel {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 36px 0 0 32px;
+  }
+
+  .partners__copy {
+    max-width: 640px;
+    padding-right: 32px;
+  }
+
+  .partners__wall {
+    height: 380px;
+    margin: 0;
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 12%, #000 80%, transparent 100%),
+      linear-gradient(to right, #000 60%, transparent 100%);
+    mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 12%, #000 80%, transparent 100%),
+      linear-gradient(to right, #000 60%, transparent 100%);
+  }
+}
+
+@media (max-width: 640px) {
+  .partners {
+    --tile: 92px;
+    --tile-gap: 12px;
+    padding-bottom: 40px;
+  }
+
+  .partners__panel {
+    padding: 28px 0 0 20px;
+    border-radius: 22px;
+  }
+
+  .partners__copy {
+    padding-right: 20px;
+  }
+
+  .partners__stats {
+    gap: 22px;
+  }
+
+  .partners__stats dt {
+    font-size: 22px;
+  }
+
+  .partners__actions {
+    flex-direction: column;
+  }
+
+  .partners__btn {
+    justify-content: center;
+  }
+
+  .partners__wall {
+    height: 320px;
+    padding-left: 0;
+  }
+
+  .partners__col:nth-child(even) {
+    margin-top: 40px;
+  }
+
+  .partners__tile {
+    border-radius: 18px;
+    gap: 7px;
+  }
+
+  .partners__mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .partners__name {
+    font-size: 10.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partners__track {
+    animation: none;
+  }
+
+  .partners__copy > *,
+  .partners__col {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

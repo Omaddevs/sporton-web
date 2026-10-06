@@ -1,0 +1,195 @@
+/* ===== Kirish talab qilinadi: modal va sahifa ===== */
+.auth-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.auth-gate__icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, var(--color-primary-light), var(--color-primary-dark));
+  color: #fff;
+  font-size: 26px;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.auth-gate__title {
+  max-width: 340px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.auth-gate__text {
+  max-width: 380px;
+  margin-top: 10px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.auth-gate__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 22px 0 24px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--color-overlay);
+  list-style: none;
+  text-align: left;
+}
+
+.auth-gate__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.auth-gate__list svg {
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 18px;
+}
+
+.auth-gate__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.auth-gate__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 12px;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.auth-gate__btn:hover {
+  background: var(--color-overlay);
+}
+
+.auth-gate__btn--primary {
+  border-color: transparent;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.auth-gate__btn--primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.auth-gate__btn:focus-visible,
+.auth-gate-modal__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* ----- Modal ----- */
+.auth-gate-modal {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: none;
+  border-radius: 24px;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+
+.auth-gate-modal::backdrop {
+  background: rgba(5, 8, 20, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.auth-gate-modal[open] {
+  animation: auth-gate-in 0.22s ease-out;
+}
+
+.auth-gate-modal__box {
+  position: relative;
+  padding: 36px 28px 28px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-card);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+.auth-gate-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-overlay);
+  color: var(--color-text-muted);
+  font-size: 18px;
+}
+
+.auth-gate-modal__close:hover {
+  color: var(--color-text);
+}
+
+@keyframes auth-gate-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+/* ----- Sahifa varianti ----- */
+.auth-gate-page {
+  display: flex;
+  justify-content: center;
+  padding-top: 56px;
+  padding-bottom: 72px;
+}
+
+.auth-gate-page__card {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 32px 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 480px) {
+  .auth-gate-modal__box,
+  .auth-gate-page__card {
+    padding: 32px 20px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-gate-modal[open] {
+    animation: none;
+  }
+}

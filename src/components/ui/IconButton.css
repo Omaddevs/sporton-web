@@ -1,0 +1,111 @@
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  font-size: 19px;
+  flex-shrink: 0;
+  isolation: isolate;
+  transition:
+    color 0.35s ease,
+    transform 0.2s ease,
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.icon-btn svg {
+  transition: color 0.35s ease, transform 0.35s ease, opacity 0.35s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn--dark {
+  background: var(--color-card);
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.icon-btn--dark:hover {
+  background: var(--color-card-hover);
+  color: var(--color-primary);
+}
+
+.icon-btn--outline {
+  color: var(--color-text);
+  border-color: var(--color-control-border);
+  background:
+    linear-gradient(var(--color-control), var(--color-control)) padding-box,
+    linear-gradient(var(--color-control-border), var(--color-control-border)) border-box;
+}
+
+.icon-btn--outline:hover {
+  color: var(--color-primary);
+  border-color: transparent;
+  background:
+    linear-gradient(var(--color-control), var(--color-control)) padding-box,
+    conic-gradient(
+      from var(--border-angle),
+      transparent 0%,
+      transparent 40%,
+      var(--color-primary) 50%,
+      var(--color-primary-light) 60%,
+      transparent 70%,
+      transparent 100%
+    )
+    border-box;
+  animation: icon-btn-border-spin 1.1s linear infinite;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.icon-btn--outline:hover svg {
+  transform: scale(1.06);
+}
+
+.icon-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border-color: transparent;
+}
+
+.icon-btn--primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.icon-btn--ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+}
+
+.icon-btn--ghost:hover {
+  color: var(--color-primary);
+}
+
+@keyframes icon-btn-border-spin {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn--outline:hover {
+    animation: none;
+    border-color: var(--color-primary);
+    background:
+      linear-gradient(var(--color-control), var(--color-control)) padding-box,
+      linear-gradient(var(--color-primary), var(--color-primary)) border-box;
+  }
+}

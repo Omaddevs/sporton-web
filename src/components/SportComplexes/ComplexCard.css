@@ -1,0 +1,197 @@
+/* ===== Karta ===== */
+.complex-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.complex-card__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3.1;
+  border-radius: var(--radius-lg);
+  background: var(--color-card-hover);
+}
+
+.complex-card__media-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.complex-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.complex-card:hover .complex-card__img {
+  transform: scale(1.03);
+}
+
+.complex-card__badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.complex-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #12141a;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.complex-card__badge--icon {
+  padding-right: 4px;
+}
+
+.complex-card__badge-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.complex-card__badge-icon--green {
+  background: #22c55e;
+}
+
+.complex-card__badge-icon--orange {
+  background: #f5a623;
+}
+
+.complex-card__dots {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.complex-card__dot {
+  width: 8px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.55);
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.complex-card__dot--active {
+  width: 22px;
+  background: #fff;
+}
+
+.complex-card__save {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+  transition: transform 0.15s ease;
+}
+
+.complex-card__save:hover {
+  transform: scale(1.1);
+}
+
+.complex-card__save svg {
+  fill: rgba(255, 255, 255, 0.25);
+}
+
+.complex-card__save--active svg {
+  fill: #ef4444;
+  stroke: #ef4444;
+}
+
+.complex-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.complex-card__price {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.complex-card__name {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.complex-card__body:hover .complex-card__name {
+  color: var(--color-primary);
+}
+
+.complex-card__meta {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 899px) {
+  .complex-card__price {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 639px) {
+  .complex-card {
+    gap: 8px;
+  }
+
+  .complex-card__price {
+    font-size: 17px;
+  }
+
+  .complex-card__name {
+    font-size: 15px;
+  }
+
+  .complex-card__meta {
+    font-size: 13px;
+  }
+
+  .complex-card__badge {
+    font-size: 12px;
+  }
+}

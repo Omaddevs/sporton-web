@@ -1,0 +1,714 @@
+/* ===== Majmua qo‘shish sahifasi ===== */
+.acf-page {
+  padding: 24px 0 64px;
+  background: var(--color-bg);
+}
+
+.acf-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.acf-crumbs a:hover {
+  color: var(--color-primary);
+}
+
+.acf-head {
+  margin-bottom: 24px;
+}
+
+.acf-head h1 {
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+}
+
+.acf-head p {
+  max-width: 620px;
+  margin-top: 6px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.acf-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+.acf-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.acf-card {
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.acf-section {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+.acf-section__head {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.acf-section__num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.acf-section__head h2 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.acf-section__head p {
+  margin-top: 3px;
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+
+.acf-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.acf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.acf-grid--3 {
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+}
+
+/* ----- Maydonlar ----- */
+.acf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.acf-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.acf-label span {
+  color: #ef4444;
+}
+
+.acf-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1.5px solid var(--color-control-border);
+  border-radius: 12px;
+  background: var(--color-control);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+textarea.acf-input {
+  padding: 12px 14px 28px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.acf-input::placeholder,
+.acf-input input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.acf-input:hover {
+  border-color: var(--color-control-border-hover);
+}
+
+.acf-input:focus,
+.acf-input--group:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.acf-input--group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acf-input--group input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.acf-input__prefix,
+.acf-input__suffix {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.acf-input__prefix {
+  padding-right: 10px;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.acf-field.has-error .acf-input,
+.acf-drop.has-error {
+  border-color: #ef4444;
+}
+
+.acf-textarea {
+  position: relative;
+}
+
+.acf-counter {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  pointer-events: none;
+}
+
+.acf-hint,
+.acf-error {
+  font-size: 12.5px;
+}
+
+.acf-hint {
+  color: var(--color-text-muted);
+}
+
+.acf-error {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* ----- Sport turi chiplari ----- */
+.acf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.acf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid var(--color-control-border);
+  border-radius: 999px;
+  background: var(--color-control);
+  color: var(--color-text);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.acf-chip:hover {
+  border-color: var(--color-control-border-hover);
+}
+
+.acf-chip.is-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* ----- Qulayliklar ----- */
+.acf-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.acf-check {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--color-control-border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.acf-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.acf-check__box {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--color-control-border-hover);
+  border-radius: 6px;
+  color: transparent;
+  font-size: 13px;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.acf-check.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.acf-check.is-active .acf-check__box {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.acf-check:has(input:focus-visible) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ----- Rasmlar ----- */
+.acf-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.acf-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--color-card-hover);
+}
+
+.acf-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.acf-photo__cover {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(10, 14, 28, 0.72);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.acf-photo__remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 9px;
+  background: rgba(10, 14, 28, 0.72);
+  color: #fff;
+  font-size: 15px;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.acf-photo:hover .acf-photo__remove,
+.acf-photo__remove:focus-visible {
+  opacity: 1;
+}
+
+.acf-photo__remove:hover {
+  background: #ef4444;
+}
+
+.acf-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 4 / 3;
+  padding: 12px;
+  border: 1.5px dashed var(--color-control-border-hover);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.acf-drop svg {
+  margin-bottom: 4px;
+  font-size: 24px;
+  color: var(--color-primary);
+}
+
+.acf-drop strong {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.acf-drop:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+/* ----- O‘ng panel ----- */
+.acf-aside {
+  position: sticky;
+  top: calc(var(--header-h) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.acf-aside__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.acf-preview__media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  margin: 12px 0 14px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--color-card-hover);
+  color: var(--color-text-subtle);
+  font-size: 13px;
+}
+
+.acf-preview__media span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.acf-preview__media svg {
+  font-size: 26px;
+}
+
+.acf-preview__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.acf-preview__price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.acf-preview__name {
+  margin: 4px 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.acf-preview__meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.acf-preview__meta svg {
+  flex-shrink: 0;
+}
+
+.acf-progress__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.acf-progress__head strong {
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.acf-progress__bar {
+  height: 8px;
+  margin: 12px 0 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-overlay);
+}
+
+.acf-progress__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  transition: width 0.3s ease;
+}
+
+.acf-progress__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.acf-progress__list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+
+.acf-progress__list a:hover {
+  background: var(--color-overlay);
+  color: var(--color-text);
+}
+
+.acf-progress__dot {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--color-control-border-hover);
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.acf-progress__list .is-done a {
+  color: var(--color-text);
+}
+
+.acf-progress__list .is-done .acf-progress__dot {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* ----- Tugmalar ----- */
+.acf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.acf-btn:hover {
+  background: var(--color-overlay);
+}
+
+.acf-btn--primary {
+  border-color: transparent;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.acf-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.acf-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.acf-btn:focus-visible,
+.acf-chip:focus-visible,
+.acf-drop:focus-visible,
+.acf-progress__list a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.acf-submit {
+  width: 100%;
+}
+
+.acf-note {
+  margin-top: 10px;
+  font-size: 12.5px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.acf-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: acf-spin 0.7s linear infinite;
+}
+
+@keyframes acf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ----- Muvaffaqiyat ----- */
+.acf-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 560px;
+  padding-top: 64px;
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.acf-success__icon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: var(--color-accent);
+  font-size: 36px;
+}
+
+.acf-success h1 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.acf-success p {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.acf-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+/* ----- Moslashuvchanlik ----- */
+@media (max-width: 1099px) {
+  .acf-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .acf-aside {
+    position: static;
+  }
+
+  .acf-preview {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .acf-card {
+    padding: 18px;
+  }
+
+  .acf-grid,
+  .acf-grid--3,
+  .acf-checks {
+    grid-template-columns: 1fr;
+  }
+
+  .acf-photo__remove {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acf-progress__bar span {
+    transition: none;
+  }
+}
+
+.acf-error-banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgb(239 68 68 / 0.1);
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+}

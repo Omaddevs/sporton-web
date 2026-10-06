@@ -1,0 +1,856 @@
+.jobs-map-page {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  height: calc(100dvh - var(--header-h));
+  min-height: 560px;
+  background: var(--color-bg);
+}
+
+/* ---------- Chap panel ---------- */
+/* Panel bitta scroll — filtrlar baland ekranni egallab olmaydi, natijalar sarlavhasi yopishib turadi */
+.jmp-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.jmp-panel__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 24px 20px;
+}
+
+.jmp-panel__title {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.jmp-panel__subtitle {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* Joylashuv holati kartasi */
+.jmp-location {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 10px 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-card);
+}
+
+.jmp-location__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  background: var(--color-tabs);
+}
+
+.jmp-location--ok .jmp-location__icon {
+  color: #16a34a;
+  background: color-mix(in srgb, #22c55e 14%, transparent);
+}
+
+.jmp-location__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.jmp-location__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.jmp-location__meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.jmp-icon-btn {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.jmp-icon-btn:hover {
+  color: var(--color-text);
+  background: var(--color-overlay);
+}
+
+.jmp-icon-btn:active svg {
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+}
+
+/* ---------- Filtrlar ---------- */
+.jmp-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 24px 20px;
+}
+
+.jmp-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jmp-filter__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.jmp-segmented {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--color-tabs);
+}
+
+.jmp-segmented__item {
+  min-height: 36px;
+  padding: 0 4px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jmp-segmented__item:hover {
+  color: var(--color-text);
+}
+
+.jmp-segmented__item.is-active {
+  color: var(--color-text);
+  background: var(--color-card);
+  box-shadow: 0 1px 4px rgba(18, 20, 28, 0.12);
+}
+
+/* Qorong'i mavzuda karta va tab foni bir xil — faol tugmani ajratib ko'rsatish */
+[data-theme='dark'] .jmp-segmented__item.is-active {
+  background: #34343a;
+  box-shadow: none;
+}
+
+[data-theme='dark'] .jmp-distance,
+[data-theme='dark'] .jmp-selected__close {
+  background: #2a2a2e;
+}
+
+/* Chiplar sig'masa keyingi qatorga o'tadi — kesilib qolmaydi */
+.jmp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.jmp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-card);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.jmp-chip:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+}
+
+.jmp-chip.is-active {
+  padding-left: 10px;
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-card));
+  color: var(--color-primary);
+}
+
+/* ---------- Natijalar ---------- */
+.jmp-results {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.jmp-results__head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px 12px;
+  border-top: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-elevated) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.jmp-results__count {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.jmp-results__hint {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  text-align: right;
+}
+
+.jmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 16px 24px;
+}
+
+.jmp-job {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-card);
+  text-align: left;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.jmp-job:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  box-shadow: 0 4px 14px rgba(18, 20, 28, 0.06);
+}
+
+.jmp-job:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.jmp-job.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-card));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.jmp-logo {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.jmp-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.jmp-job__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.jmp-job__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jmp-job__title {
+  min-width: 0;
+  padding-top: 2px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jmp-job__company {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.jmp-job__company-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jmp-verified {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.jmp-job__salary {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.jmp-job__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 8px;
+}
+
+.jmp-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.jmp-job__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.jmp-job__location svg {
+  width: 12px;
+  height: 12px;
+}
+
+.jmp-distance {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-text);
+  background: var(--color-tabs);
+  font-variant-numeric: tabular-nums;
+}
+
+.jmp-distance svg {
+  width: 11px;
+  height: 11px;
+  color: var(--color-primary);
+}
+
+/* Joylashuv aniqlanayotganda ro'yxat o'rnida skeleton */
+.jmp-list--loading {
+  padding-top: 0;
+}
+
+.jmp-job-skeleton {
+  height: 112px;
+  border-radius: 16px;
+  background: var(--color-tabs);
+  animation: jmp-skeleton 1.4s ease-in-out infinite;
+}
+
+.jmp-job-skeleton:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.jmp-job-skeleton:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes jmp-skeleton {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.jmp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 16px 24px;
+  padding: 32px 20px;
+  border: 1px dashed var(--color-border);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.jmp-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.jmp-empty__title {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.jmp-empty__text {
+  max-width: 280px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.jmp-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+
+.jmp-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-card);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.jmp-steps span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+/* ---------- Tugmalar ---------- */
+.jmp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.jmp-btn:focus-visible,
+.jmp-chip:focus-visible,
+.jmp-segmented__item:focus-visible,
+.jmp-icon-btn:focus-visible,
+.jmp-selected__close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.jmp-btn--sm {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.jmp-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.jmp-btn--primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.jmp-btn--soft {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.jmp-btn--soft:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.jmp-btn--outline {
+  border-color: var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+}
+
+.jmp-btn--outline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.jmp-btn--ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.jmp-btn--ghost:hover {
+  color: var(--color-text);
+  background: var(--color-overlay);
+}
+
+.jmp-btn--block {
+  width: 100%;
+}
+
+/* ---------- Xarita ---------- */
+.jmp-map {
+  position: relative;
+  min-height: 0;
+}
+
+/* backdrop-filter o'rniga oddiy shaffof fon — blur xarita ustida GPU'ni qiynab qo'yardi */
+.jmp-permission {
+  position: absolute;
+  inset: 0;
+  z-index: 600;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+}
+
+.jmp-permission__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 400px);
+  padding: 32px 28px 24px;
+  border-radius: 24px;
+  background: var(--color-card);
+  box-shadow: 0 24px 60px rgba(18, 20, 28, 0.22);
+  text-align: center;
+  animation: jmp-card-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes jmp-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.jmp-permission__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.jmp-permission__icon::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  animation: jmp-ring 2.2s ease-out infinite;
+}
+
+.jmp-permission__icon.is-locating svg {
+  animation: jmp-spin 1.4s linear infinite;
+}
+
+@keyframes jmp-ring {
+  from {
+    transform: scale(0.85);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes jmp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.jmp-permission__title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.jmp-permission__text {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  text-wrap: balance;
+}
+
+.jmp-permission__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+}
+
+.jmp-selected {
+  position: absolute;
+  left: 20px;
+  bottom: 24px;
+  z-index: 550;
+  width: min(360px, calc(100% - 96px));
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-card);
+  box-shadow: 0 18px 48px rgba(18, 20, 28, 0.22);
+  animation: jmp-card-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.jmp-selected__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-tabs);
+  color: var(--color-text-muted);
+}
+
+.jmp-selected__close:hover {
+  color: var(--color-text);
+}
+
+.jmp-selected__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 36px;
+}
+
+.jmp-selected__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.jmp-selected__title {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.jmp-selected__salary {
+  margin-top: 14px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.jmp-selected__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.jmp-selected__facts li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jmp-selected__facts svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--color-primary);
+}
+
+.jmp-selected__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---------- Moslashuvchan ---------- */
+@media (max-width: 1100px) {
+  .jobs-map-page {
+    grid-template-columns: 360px minmax(0, 1fr);
+  }
+
+  .jmp-segmented__item {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .jobs-map-page {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+  }
+
+  .jmp-map {
+    order: -1;
+    height: 52vh;
+    min-height: 340px;
+  }
+
+  .jmp-panel {
+    overflow: visible;
+    border-right: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .jmp-panel__head {
+    padding: 20px 16px 16px;
+  }
+
+  .jmp-filters {
+    padding: 0 16px 16px;
+  }
+
+  .jmp-results__head {
+    top: var(--header-h);
+    padding: 12px 16px;
+  }
+
+  .jmp-list {
+    padding: 4px 16px 24px;
+  }
+
+  /* Mobilda barmoq uchun kattaroq nishon */
+  .jmp-segmented__item,
+  .jmp-chip {
+    min-height: 40px;
+  }
+
+  .jmp-selected {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+
+  .jmp-permission__card {
+    padding: 24px 20px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jmp-permission__card,
+  .jmp-selected,
+  .jmp-permission__icon::after,
+  .jmp-permission__icon.is-locating svg,
+  .jmp-job-skeleton {
+    animation: none;
+  }
+}

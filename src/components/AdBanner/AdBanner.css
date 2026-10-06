@@ -1,0 +1,273 @@
+.ad-banner-wrap {
+  padding-bottom: 48px;
+}
+
+.ad-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 152px;
+  padding: 30px 88px 30px 36px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.ad-banner:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+.ad-banner--primary {
+  background: linear-gradient(120deg, var(--color-primary) 0%, #4b8dff 55%, #b355e0 100%);
+}
+
+.ad-banner--dark {
+  background: linear-gradient(120deg, #16161a 0%, #232228 60%, #2c1f2a 100%);
+  border: 1px solid var(--color-border);
+}
+
+.ad-banner__blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.ad-banner--dark .ad-banner__blob {
+  background: var(--color-primary);
+  opacity: 0.2;
+}
+
+.ad-banner__blob--one {
+  width: 220px;
+  height: 220px;
+  right: -60px;
+  top: -90px;
+}
+
+.ad-banner__blob--two {
+  width: 160px;
+  height: 160px;
+  right: 20%;
+  bottom: -90px;
+}
+
+.ad-banner__icon {
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 96px;
+  height: 96px;
+  color: rgba(255, 255, 255, 0.28);
+  z-index: 1;
+}
+
+.ad-banner__icon--logo {
+  right: 18px;
+  width: 120px;
+  height: 120px;
+  color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-50%) rotate(8deg);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
+}
+
+.ad-banner--dark .ad-banner__icon {
+  color: rgba(30, 111, 245, 0.35);
+}
+
+.ad-banner--dark .ad-banner__icon--logo {
+  color: rgba(30, 111, 245, 0.32);
+}
+
+.ad-banner__content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+}
+
+.ad-banner__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.ad-banner--dark .ad-banner__eyebrow {
+  background: rgba(30, 111, 245, 0.16);
+  color: var(--color-primary-light);
+}
+
+.ad-banner__title {
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.ad-banner__subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ad-banner--dark .ad-banner__subtitle {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.ad-banner__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+}
+
+.ad-banner--dark .ad-banner__cta {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.ad-banner__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.15s ease;
+}
+
+.ad-banner--dark .ad-banner__close {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+}
+
+.ad-banner__close:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.ad-banner--dark .ad-banner__close:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 900px) {
+  .ad-banner {
+    padding: 26px 76px 26px 28px;
+    min-height: 0;
+  }
+
+  .ad-banner__icon {
+    width: 76px;
+    height: 76px;
+    right: 18px;
+  }
+
+  .ad-banner__title {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 639px) {
+  .ad-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px 20px 26px;
+  }
+
+  .ad-banner__icon {
+    display: none;
+  }
+
+  .ad-banner__content {
+    max-width: 100%;
+  }
+
+  .ad-banner__title {
+    font-size: 18px;
+  }
+
+  .ad-banner__close {
+    top: 14px;
+    right: 14px;
+  }
+}
+
+/* ===== Admin paneldan yuklangan rasmli banner (kompyuter 1920×360, telefon 800×400) ===== */
+.ad-banner--image {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  aspect-ratio: 16 / 3;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+}
+
+.ad-banner__picture,
+.ad-banner__picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ad-banner__picture img {
+  object-fit: cover;
+}
+
+.ad-banner__cta--floating {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  bottom: clamp(16px, 2.6vw, 40px);
+  z-index: 2;
+  margin: 0;
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: 0 8px 20px -8px rgba(30, 111, 245, 0.6);
+}
+
+.ad-banner--image .ad-banner__close {
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+.ad-banner--image .ad-banner__close:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 639px) {
+  .ad-banner--image {
+    aspect-ratio: 2 / 1;
+  }
+
+  .ad-banner__cta--floating {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}

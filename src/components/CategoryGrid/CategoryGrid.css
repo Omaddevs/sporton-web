@@ -1,0 +1,481 @@
+.category-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 48px;
+  animation: category-grid-in 0.28s ease;
+}
+
+@keyframes category-grid-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-grid__track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-grid__progress {
+  display: none;
+}
+
+.category-grid__row {
+  display: grid;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.category-grid__row--one {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.category-grid__row--two {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.category-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 118px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .category-card {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.category-card__title {
+  position: relative;
+  z-index: 2;
+  max-width: 46%;
+  padding: 14px 8px 14px 16px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* Sport surati o‘ng tomonda, chap tomonga silliq so‘nib karta foniga qo‘shiladi */
+.category-card__image {
+  position: absolute;
+  inset: 0 0 0 34%;
+  z-index: 1;
+  pointer-events: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.35) 22%, rgba(0, 0, 0, 0.85) 52%, #000 72%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.35) 22%, rgba(0, 0, 0, 0.85) 52%, #000 72%);
+  transition: transform 0.35s ease;
+}
+
+.category-card:hover .category-card__image {
+  transform: scale(1.04);
+}
+
+/* Fonsiz PNG figura: o‘ng tomonda, orqasida rangli doira (AyolKaryera uslubida) */
+.category-card__blob {
+  position: absolute;
+  z-index: 1;
+  right: 5%;
+  top: 22%;
+  width: 56%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.category-card__cutout {
+  position: absolute;
+  z-index: 1;
+  right: 7%;
+  top: 8px;
+  width: auto;
+  max-width: none;
+  height: 118%;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.35s ease;
+  transform-origin: 50% 0;
+}
+
+.category-card:hover .category-card__cutout {
+  transform: scale(1.04);
+}
+
+.category-card--full {
+  padding: 0;
+}
+
+.category-card__full-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.category-card--cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: var(--color-primary);
+  padding: 18px 16px;
+  filter: none;
+}
+
+.category-card--cta:hover {
+  background: var(--color-primary-dark);
+  filter: none;
+  transform: translateY(-2px);
+}
+
+.category-card__cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-on-primary);
+  line-height: 0;
+}
+
+.category-card__cta-grid {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.category-card__cta-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.category-card__cta-label {
+  color: var(--color-text-on-primary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.category-card__cta-arrow {
+  flex-shrink: 0;
+  color: var(--color-text-on-primary);
+  font-size: 16px;
+  stroke-width: 2.5;
+}
+
+/* Kompaniyalar tabi */
+.category-grid__companies {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.category-card--cta-wide {
+  grid-column: span 2;
+}
+
+.company-card {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.company-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.company-card__logo {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.company-card__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.company-card__arrow {
+  font-size: 16px;
+  color: var(--color-text-subtle);
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.company-card:hover .company-card__arrow {
+  color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+.company-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.company-card__name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.company-card__name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.company-card__verified {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-grid;
+  place-items: center;
+}
+
+.company-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-subtle);
+}
+
+.company-card__meta svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1279px) {
+  .category-grid__row--one,
+  .category-grid__row--two,
+  .category-grid__companies {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .category-card {
+    height: 122px;
+  }
+}
+
+@media (max-width: 900px) {
+  .category-grid__row--one,
+  .category-grid__row--two,
+  .category-grid__companies {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .category-card {
+    height: 114px;
+  }
+
+  .category-card__title {
+    font-size: 12px;
+    padding-left: 14px;
+  }
+}
+
+/* Mobil: 2 qatorli gorizontal carousel — snap, chetdan keyingi karta ko‘rinadi */
+@media (max-width: 767px) {
+  .category-grid {
+    --cg-gap: 10px;
+    --cg-per-view: 3.3;
+    gap: 14px;
+    padding-bottom: 36px;
+  }
+
+  .category-grid__track {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - var(--cg-gap) * (var(--cg-per-view) - 0.3)) / var(--cg-per-view));
+    gap: var(--cg-gap);
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 2px var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .category-grid__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-grid__row,
+  .category-grid__companies {
+    display: contents;
+  }
+
+  .category-card {
+    scroll-snap-align: start;
+  }
+
+  /* «Barchasi» kartasi carousel oxirida ikki qator balandligida */
+  .category-card.category-card--cta-end {
+    grid-row: span 2;
+    grid-column: auto;
+    height: auto;
+    justify-content: space-between;
+  }
+
+  .category-card--cta-end .category-card__cta-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .category-card--cta-end .category-card__cta-text {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .category-card--cta-end .category-card__cta-label {
+    font-size: 14px;
+  }
+
+  .category-card--cta-end .category-card__cta-arrow {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    border-radius: 50%;
+    background: var(--color-text-on-primary);
+    color: var(--color-primary);
+  }
+
+  /* Scroll ichida ko‘tarilish effekti qirqilib qoladi — bosilganda siqiladi */
+  .category-card:hover,
+  .category-card--cta:hover {
+    transform: none;
+  }
+
+  .category-card:active {
+    transform: scale(0.97);
+  }
+
+  .category-grid__progress {
+    display: block;
+    position: relative;
+    width: 64px;
+    height: 4px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+
+  .category-grid__progress[hidden] {
+    display: none;
+  }
+
+  .category-grid__progress-thumb {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--cg-thumb-size, 0.4) * 100%);
+    left: calc(var(--cg-thumb-pos, 0) * (100% - var(--cg-thumb-size, 0.4) * 100%));
+    border-radius: inherit;
+    background: var(--color-primary);
+  }
+}
+
+@media (max-width: 639px) {
+  .category-grid {
+    --cg-per-view: 2.3;
+  }
+
+  .category-card {
+    height: 100px;
+    border-radius: 14px;
+  }
+
+  .category-card__title {
+    max-width: 50%;
+    padding: 10px 4px 10px 12px;
+    font-size: 12px;
+  }
+
+  .category-card--cta {
+    padding: 12px;
+  }
+
+  .category-card__cta-label {
+    font-size: 12px;
+  }
+
+  .company-card {
+    height: auto;
+    min-height: 112px;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .company-card__logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .company-card__name {
+    font-size: 13px;
+  }
+}

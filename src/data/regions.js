@@ -1,0 +1,17 @@
+export const REGIONS = [
+  { id: 'all', label: 'Barcha hududlar' },
+  { id: 'toshkent-shahar', label: 'Toshkent shahri' },
+  { id: 'toshkent', label: 'Toshkent viloyati' },
+  { id: 'andijon', label: 'Andijon' },
+  { id: 'buxoro', label: 'Buxoro' },
+  { id: 'fargona', label: "Farg'ona" },
+  { id: 'jizzax', label: 'Jizzax' },
+  { id: 'namangan', label: 'Namangan' },
+  { id: 'navoiy', label: 'Navoiy' },
+  { id: 'qashqadaryo', label: 'Qashqadaryo' },
+  { id: 'qoraqalpogiston', label: "Qoraqalpog'iston" },
+  { id: 'samarqand', label: 'Samarqand' },
+  { id: 'sirdaryo', label: 'Sirdaryo' },
+  { id: 'surxondaryo', label: 'Surxondaryo' },
+  { id: 'xorazm', label: 'Xorazm' },
+]

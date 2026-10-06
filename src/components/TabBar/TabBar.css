@@ -1,0 +1,114 @@
+/* Pastki tab bar — faqat mobil (≤639px). Dark: qora kapsula, light: oq kapsula */
+.tabbar {
+  --tabbar-bg: #141416;
+  --tabbar-item-bg: #2a2a2e;
+  --tabbar-item-color: #d6d6dc;
+  --tabbar-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+
+  display: none;
+}
+
+[data-theme='light'] .tabbar {
+  --tabbar-bg: #ffffff;
+  --tabbar-item-bg: #eef0f4;
+  --tabbar-item-color: #3b414d;
+  --tabbar-shadow: 0 10px 30px rgba(18, 20, 28, 0.14);
+}
+
+@media (max-width: 639px) {
+  :root {
+    /* Sahifalar pastki qismi tab bar ostida qolib ketmasligi uchun */
+    --tabbar-space: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .tabbar {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: var(--z-header);
+    padding: 0 16px;
+    pointer-events: none;
+  }
+
+  .tabbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: 999px;
+    background: var(--tabbar-bg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--tabbar-shadow);
+    pointer-events: auto;
+  }
+
+  .tabbar__item {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--tabbar-item-bg);
+    color: var(--tabbar-item-color);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .tabbar__item:active {
+    transform: scale(0.92);
+  }
+
+  .tabbar__item:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .tabbar__item--active {
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  }
+
+  .tabbar__dot {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--tabbar-item-bg);
+  }
+
+  .tabbar__item--active .tabbar__dot {
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  .app {
+    padding-bottom: var(--tabbar-space);
+  }
+}
+
+@media (max-width: 359px) {
+  .tabbar__item {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabbar__item {
+    transition: none;
+  }
+}

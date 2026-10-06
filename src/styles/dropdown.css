@@ -1,0 +1,64 @@
+/**
+ * Shared dropdown / popover drop animation.
+ * Usage: add `drop-panel` + toggle `is-open` (keep mounted for close animation).
+ * Optional: `drop-panel--center` when horizontally centered with left: 50%.
+ */
+.drop-panel {
+  --drop-duration: 0.28s;
+  --drop-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --drop-x: 0px;
+  --drop-y-from: -12px;
+  --drop-scale-from: 0.96;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(var(--drop-x), var(--drop-y-from), 0) scale(var(--drop-scale-from));
+  transform-origin: top center;
+  transition:
+    opacity var(--drop-duration) var(--drop-ease),
+    transform var(--drop-duration) var(--drop-ease),
+    box-shadow var(--drop-duration) var(--drop-ease),
+    visibility 0s linear var(--drop-duration);
+  will-change: transform, opacity;
+}
+
+.drop-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(var(--drop-x), 0, 0) scale(1);
+  transition:
+    opacity var(--drop-duration) var(--drop-ease),
+    transform var(--drop-duration) var(--drop-ease),
+    box-shadow var(--drop-duration) var(--drop-ease),
+    visibility 0s linear 0s;
+}
+
+.drop-panel--center {
+  --drop-x: -50%;
+}
+
+.drop-panel--origin-start {
+  transform-origin: top left;
+}
+
+.drop-panel--origin-end {
+  transform-origin: top right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-panel {
+    --drop-y-from: 0px;
+    --drop-scale-from: 1;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0.12s;
+  }
+
+  .drop-panel.is-open {
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}

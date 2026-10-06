@@ -1,0 +1,62 @@
+.brand-logo {
+  --brand-h: 26px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--brand-h) * 0.22);
+  height: var(--brand-h);
+  font-family: var(--font-brand);
+  font-weight: 800;
+  font-size: calc(var(--brand-h) * 0.86);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.brand-logo--sm {
+  --brand-h: 22px;
+}
+
+.brand-logo--lg {
+  --brand-h: 32px;
+}
+
+.brand-logo__mark {
+  flex-shrink: 0;
+  width: auto;
+  height: calc(var(--brand-h) * 1.02);
+  margin-right: calc(var(--brand-h) * -0.04);
+}
+
+.brand-logo__word {
+  display: inline-block;
+  transform: translateY(0.02em);
+}
+
+.brand-logo__on {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--brand-h) * 1.18);
+  padding: 0 calc(var(--brand-h) * 0.22);
+  border-radius: calc(var(--brand-h) * 0.18);
+  background: var(--color-accent);
+  margin-left: calc(var(--brand-h) * 0.06);
+  color: var(--color-text-on-accent);
+}
+
+/* Oddiy fon: ko‘k belgi, matn rangi mavzuga mos */
+.brand-logo--default .brand-logo__mark {
+  color: var(--color-primary);
+}
+
+.brand-logo--default .brand-logo__word {
+  color: var(--color-text);
+}
+
+/* Ko‘k fon ustida (TopBar) */
+.brand-logo--onPrimary .brand-logo__mark,
+.brand-logo--onPrimary .brand-logo__word {
+  color: #fff;
+}

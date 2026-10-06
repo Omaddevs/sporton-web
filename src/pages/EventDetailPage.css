@@ -1,0 +1,771 @@
+/* Tadbir detail — NewsDetailPage.css ustiga qo‘shimchalar */
+.ev-detail {
+  --ev-blue: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-primary-dark) 100%);
+}
+
+/* ===== Holat belgisi ===== */
+.ev-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ev-status__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ev-status--open {
+  background: rgba(124, 197, 32, 0.16);
+  color: #4f8a10;
+}
+
+.ev-status--open .ev-status__dot,
+.ev-status--live .ev-status__dot {
+  animation: ev-pulse 1.6s ease-in-out infinite;
+}
+
+.ev-status--few {
+  background: rgba(245, 158, 11, 0.16);
+  color: #c46a07;
+}
+
+.ev-status--live {
+  background: rgba(239, 68, 68, 0.14);
+  color: #dc2626;
+}
+
+.ev-status--ended {
+  background: color-mix(in srgb, var(--color-text-muted) 16%, transparent);
+  color: var(--color-text-muted);
+}
+
+[data-theme='dark'] .ev-status--open {
+  color: #9ee07a;
+}
+
+[data-theme='dark'] .ev-status--few {
+  color: #fbbf24;
+}
+
+[data-theme='dark'] .ev-status--live {
+  color: #f87171;
+}
+
+@keyframes ev-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ===== Muqova + sana chiptasi ===== */
+.ev-cover {
+  position: relative;
+}
+
+.ev-cover__ticket {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 128px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--ev-blue);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 16px 36px rgba(30, 111, 245, 0.4);
+}
+
+.ev-cover__day {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.ev-cover__year {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.ev-cover__time {
+  margin-top: 8px;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* ===== Asosiy faktlar ===== */
+.ev-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.ev-fact {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--nd-line);
+  border-radius: 16px;
+  background: var(--color-card);
+}
+
+.ev-fact__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--nd-soft);
+  color: var(--color-primary);
+  font-size: 18px;
+}
+
+.ev-fact__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ev-fact__text small {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.ev-fact__text strong {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--nd-title);
+}
+
+.ev-fact__text em {
+  font-size: 12.5px;
+  font-style: normal;
+  color: var(--color-text-muted);
+}
+
+/* ===== Maqola ichidagi bloklar ===== */
+.ev-h2 {
+  margin: 40px 0 16px;
+  padding-left: 12px;
+  border-left: 3px solid var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--nd-title);
+}
+
+.ev-article > .ev-h2:first-child {
+  margin-top: 0;
+}
+
+.ev-includes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ev-includes li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--nd-soft);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.ev-includes li > span {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+}
+
+/* Dastur */
+.ev-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 20px;
+  padding: 0 0 22px;
+}
+
+.ev-timeline li::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: -8px;
+  left: 125px;
+  width: 2px;
+  background: var(--nd-line);
+}
+
+.ev-timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.ev-timeline li:last-child::before {
+  display: none;
+}
+
+.ev-timeline__time {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-primary);
+  text-align: right;
+}
+
+.ev-timeline__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 22px;
+}
+
+.ev-timeline__body::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: -1px;
+  width: 12px;
+  height: 12px;
+  border: 3px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+
+.ev-timeline__body strong {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--nd-title);
+}
+
+.ev-timeline__body span {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* Shartlar */
+.ev-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ev-rules li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ev-rules li::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+
+/* Joy */
+.ev-venue {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--nd-line);
+  border-radius: 18px;
+  background: var(--color-card);
+}
+
+.ev-venue__pin {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--ev-blue);
+  color: #fff;
+  font-size: 22px;
+}
+
+.ev-venue__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.45;
+}
+
+.ev-venue__text strong {
+  font-size: 16px;
+  color: var(--nd-title);
+}
+
+.ev-venue__text span {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.ev-venue__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--nd-soft);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.ev-venue__btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* FAQ */
+.ev-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ev-faq details {
+  border: 1px solid var(--nd-line);
+  border-radius: 16px;
+  background: var(--color-card);
+  transition: border-color 0.2s ease;
+}
+
+.ev-faq details[open] {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--nd-line));
+}
+
+.ev-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  font-size: 15.5px;
+  font-weight: 650;
+  line-height: 1.45;
+  color: var(--nd-title);
+  cursor: pointer;
+  list-style: none;
+}
+
+.ev-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.ev-faq summary svg {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.25s ease;
+}
+
+.ev-faq details[open] summary svg {
+  transform: rotate(180deg);
+  color: var(--color-primary);
+}
+
+.ev-faq details p {
+  padding: 0 18px 16px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+/* ===== Ro‘yxatdan o‘tish chiptasi ===== */
+.ev-ticket {
+  overflow: hidden;
+  border: 1px solid var(--nd-line);
+  border-radius: 22px;
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.ev-ticket__head {
+  position: relative;
+  padding: 20px 20px 24px;
+  background: var(--ev-blue);
+  color: #fff;
+}
+
+/* Chipta “teshiklari” */
+.ev-ticket__head::before,
+.ev-ticket__head::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+
+.ev-ticket__head::before {
+  left: -11px;
+}
+
+.ev-ticket__head::after {
+  right: -11px;
+}
+
+.ev-ticket__label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.ev-ticket__date {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ev-countdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ev-countdown span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.ev-countdown strong {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ev-ticket__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 20px 20px;
+  border-top: 2px dashed var(--nd-line);
+}
+
+.ev-ticket__price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ev-ticket__price span {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.ev-ticket__price strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--nd-title);
+  text-align: right;
+}
+
+.ev-ticket__seats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ev-ticket__seats-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ev-ticket__seats-row span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ev-ticket__seats small {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.ev-ticket__bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--nd-soft);
+}
+
+.ev-ticket__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  transition: width 0.4s ease;
+}
+
+.ev-ticket__done {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(124, 197, 32, 0.14);
+  color: #4f8a10;
+  font-size: 22px;
+}
+
+.ev-ticket__done div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-ticket__done strong {
+  font-size: 14px;
+}
+
+.ev-ticket__done span {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+[data-theme='dark'] .ev-ticket__done {
+  color: #9ee07a;
+}
+
+.ev-ticket__btn,
+.ev-ticket__ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, color 0.2s ease;
+}
+
+.ev-ticket__btn {
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.ev-ticket__btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.ev-ticket__btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ev-ticket__btn.is-secondary {
+  background: var(--nd-soft);
+  color: var(--color-primary);
+}
+
+.ev-ticket__btn.is-secondary:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  box-shadow: none;
+}
+
+.ev-ticket__btn:disabled {
+  background: color-mix(in srgb, var(--color-text-muted) 22%, transparent);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.ev-ticket__ghost {
+  margin-top: -6px;
+  border: 1px solid var(--nd-line);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.ev-ticket__ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Sidebar: boshqa tadbirlar (raqam o‘rniga sana) */
+.ev-side__item {
+  grid-template-columns: 44px minmax(0, 1fr) 60px;
+}
+
+.ev-side__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  padding: 6px 0;
+  border-radius: 12px;
+  background: var(--nd-soft);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.ev-side__date strong {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* Orqaga havola */
+.ev-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 36px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.ev-back:hover {
+  text-decoration: underline;
+}
+
+/* ===== Moslashuvchanlik ===== */
+@media (max-width: 1200px) {
+  .ev-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .ev-detail .news-side {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+@media (max-width: 639px) {
+  .ev-cover__ticket {
+    left: 14px;
+    bottom: 14px;
+    min-width: 0;
+    padding: 10px 14px;
+    border-radius: 14px;
+  }
+
+  .ev-cover__day {
+    font-size: 15px;
+  }
+
+  .ev-cover__year {
+    display: none;
+  }
+
+  .ev-cover__time {
+    margin-top: 4px;
+    font-size: 22px;
+  }
+
+  .ev-facts,
+  .ev-includes {
+    grid-template-columns: 1fr;
+  }
+
+  .ev-h2 {
+    margin-top: 32px;
+    font-size: 19px;
+  }
+
+  .ev-timeline li {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .ev-timeline li::before {
+    left: 89px;
+  }
+
+  .ev-timeline__time {
+    font-size: 13.5px;
+  }
+
+  .ev-venue {
+    flex-wrap: wrap;
+  }
+
+  .ev-venue__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ev-detail .news-side {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-status__dot {
+    animation: none !important;
+  }
+}
