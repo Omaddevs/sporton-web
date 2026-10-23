@@ -12,10 +12,13 @@ export default function MainLayout({ children }) {
   const { pathname } = useLocation()
   if (AUTH_ROUTES.includes(pathname)) return <main>{children}</main>
 
-  const hideFooter = pathname.startsWith('/xabarlar') || pathname.startsWith('/xarita')
+  const isMap = pathname.startsWith('/xarita')
+  const hideFooter = pathname.startsWith('/xabarlar') || isMap
 
   return (
-    <div className={`app ${hideFooter ? 'app--chat' : ''}`}>
+    <div
+      className={`app ${hideFooter ? 'app--chat' : ''} ${pathname === '/' ? 'app--home' : ''} ${isMap ? 'app--map' : ''}`}
+    >
       <header className="app-header">
         <TopBar />
         <Navbar />

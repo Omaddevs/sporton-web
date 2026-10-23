@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Hero from '../components/Hero/Hero.jsx'
+import QuickLinks from '../components/QuickLinks/QuickLinks.jsx'
 import CategoryGrid from '../components/CategoryGrid/CategoryGrid.jsx'
 import AdBanner from '../components/AdBanner/AdBanner.jsx'
 import PromoCarousel from '../components/PromoCarousel/PromoCarousel.jsx'
@@ -15,6 +16,7 @@ export default function HomePage() {
 
   return (
     <>
+      <QuickLinks />
       <Hero activeTab={activeTab} onTabChange={setActiveTab} />
       <CategoryGrid activeTab={activeTab} />
       <PromoCarousel />

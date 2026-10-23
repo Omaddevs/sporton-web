@@ -28,12 +28,12 @@ export default function LocationMap({ coords, title, zoom = 16 }) {
     L.control.zoom({ position: 'bottomright', zoomInTitle: 'Yaqinlashtirish', zoomOutTitle: 'Uzoqlashtirish' }).addTo(map)
     map.attributionControl.setPrefix(false)
 
-    const tileOptions = { maxNativeZoom: 16, maxZoom: 18 }
+    const tileOptions = { maxNativeZoom: 19, maxZoom: 18 }
     const createTiles = (name) => {
-      const [base, labels] = TILES[name]
+      const [base, ...overlays] = TILES[name]
       return L.layerGroup([
         L.tileLayer(base, { ...tileOptions, attribution: ATTRIBUTION }),
-        L.tileLayer(labels, tileOptions),
+        ...overlays.map((url) => L.tileLayer(url, tileOptions)),
       ])
     }
     let theme = currentTheme()

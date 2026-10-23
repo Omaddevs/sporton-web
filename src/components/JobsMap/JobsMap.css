@@ -130,68 +130,86 @@
   transform: scale(0.94);
 }
 
-/* Majmua markeri: logotip / bosh harf tushirilgan pin */
+/* Majmua markeri: sport turi ikonkasi + nomi yozilgan pill, pastida ko‘rsatkich.
+   Marker o‘lchami 0×0 (langar nuqtasi) — pill shu nuqtadan tepaga, markazlab joylashadi. */
 .jm-pin {
-  position: relative;
-  width: 44px;
-  height: 52px;
-  transform-origin: 50% 100%;
-  transition: transform 0.18s ease-out;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding-bottom: 7px;
+  transform: translateX(-50%);
 }
 
-.jm-pin::after {
+.jm-pin__body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 11px 3px 3px;
+  border-radius: 999px;
+  background: #fff;
+  color: #12141a;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(18, 20, 28, 0.2);
+  transform-origin: 50% calc(100% + 7px);
+  transition:
+    transform 0.18s ease-out,
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+/* Ko‘rsatkich uchi */
+.jm-pin__body::after {
   content: '';
   position: absolute;
   left: 50%;
-  bottom: 3px;
-  width: 12px;
-  height: 12px;
-  background: #fff;
-  border-radius: 0 0 3px 0;
-  transform: translateX(-50%) rotate(45deg);
-  box-shadow: 2px 2px 4px rgba(18, 20, 28, 0.16);
+  top: 100%;
+  width: 0;
+  height: 0;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top: 7px solid #fff;
+  border-bottom: 0;
+  transition: border-color 0.18s ease;
 }
 
-.jm-pin__badge {
-  position: relative;
-  z-index: 1;
-  width: 44px;
-  height: 44px;
-  padding: 3px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(18, 20, 28, 0.2);
-}
-
-.jm-pin__badge img,
-.jm-pin__badge span {
+.jm-pin__icon {
   display: grid;
   place-items: center;
-  width: 100%;
-  height: 100%;
-  border-radius: 11px;
-  object-fit: cover;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 800;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 14%, #fff);
+  color: var(--color-primary);
 }
 
-.jm-pin-wrap:hover .jm-pin,
-.jm-pin-wrap.is-hover .jm-pin {
+.jm-pin__icon svg {
+  display: block;
+}
+
+.jm-pin__label {
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.jm-pin-wrap:hover .jm-pin__body,
+.jm-pin-wrap.is-hover .jm-pin__body {
   transform: translateY(-3px) scale(1.06);
 }
 
-.jm-pin-wrap.is-active .jm-pin {
-  transform: translateY(-4px) scale(1.16);
-}
-
-.jm-pin-wrap.is-active .jm-pin__badge,
-.jm-pin-wrap.is-active .jm-pin::after {
+.jm-pin-wrap.is-active .jm-pin__body {
   background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  transform: translateY(-4px) scale(1.12);
 }
 
-.jm-pin-wrap.is-active .jm-pin__badge {
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 45%, transparent);
+.jm-pin-wrap.is-active .jm-pin__body::after {
+  border-top-color: var(--color-primary);
 }
 
 /* Foydalanuvchi joylashuvi */
@@ -229,6 +247,125 @@
   }
 }
 
+/* «Siz shu yerdasiz» — nuqta ustida ingichka oyoqchali yorliq */
+.jm-user__tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 26px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px 7px 7px;
+  border-radius: 16px;
+  background: var(--color-card);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(18, 20, 28, 0.18);
+  transform: translateX(-50%);
+  animation: jm-tip-in 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+.jm-user__tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 3px;
+  height: 26px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--color-text);
+}
+
+.jm-user__tip-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--color-primary-light), var(--color-primary-dark));
+  color: #fff;
+}
+
+@keyframes jm-tip-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* Chizib belgilash: xarita ustida izni yig‘uvchi qatlam */
+.jobs-map__draw {
+  position: absolute;
+  inset: 0;
+  z-index: 640;
+  cursor: crosshair;
+  touch-action: none;
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.jobs-map__draw-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.jobs-map__draw-svg polyline {
+  fill: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  stroke: var(--color-primary);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.jm-area {
+  fill: var(--color-primary);
+  fill-opacity: 0.12;
+  stroke: var(--color-primary);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* Mobil: boshqaruvlar o‘ngda, «Ro‘yxat» tugmasi qatoridan yuqorida (--jmp-ui-bottom — sahifadan) */
+@media (max-width: 639px) {
+  .jobs-map .leaflet-bottom {
+    bottom: var(--jmp-ui-bottom, var(--tabbar-space));
+  }
+
+  .jobs-map .leaflet-control-zoom {
+    margin: 0 16px 72px 0;
+  }
+
+  .jobs-map .leaflet-bar,
+  .jobs-map__locate {
+    border-radius: 16px;
+  }
+
+  .jobs-map .leaflet-bar a {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    font-size: 24px;
+  }
+
+  .jobs-map__locate {
+    right: 16px;
+    bottom: calc(var(--jmp-ui-bottom, var(--tabbar-space)) + 72px + 96px + 12px);
+    width: 48px;
+    height: 48px;
+  }
+}
+
 .jm-radius {
   fill: var(--color-primary);
   fill-opacity: 0.05;
@@ -239,12 +376,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .jm-user__tip,
   .jm-user__pulse,
   .jobs-map__progress::before {
     animation: none;
   }
 
-  .jm-pin {
+  .jm-pin__body,
+  .jm-pin__body::after {
     transition: none;
   }
 }

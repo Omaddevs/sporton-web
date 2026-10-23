@@ -143,9 +143,18 @@ p {
     --gutter: 16px;
   }
 
-  /* Salomlashuv qatori skroll bilan ketadi, qidiruv qatori tepada qotib qoladi */
-  .app:not(.app--chat) .app-header {
+  /* Logo qatori skroll bilan ketadi, qidiruv qatori tepada qotib qoladi */
+  .app:not(.app--chat):not(.app--home) .app-header {
     top: calc(-1 * var(--header-topbar-h));
+  }
+
+  /* Bosh sahifa: logo ostidan darhol bo‘lim kartalari — qidiruv yon menyuda */
+  .app--home .app-header {
+    position: relative;
+  }
+
+  .app--home .navbar {
+    display: none;
   }
 
   /* Mobil ilova uslubi: och-moviy fon, oq kartalar, yumshoq ko‘k soya */

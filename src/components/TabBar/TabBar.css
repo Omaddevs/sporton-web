@@ -1,8 +1,16 @@
-/* Pastki tab bar — faqat mobil (≤639px): oq panel, ikon + yozuv, faol bo‘lim ko‘k nuqta bilan */
+/* Faol tab indeksi animatsiya qilinadi — doira ham, o‘yiq ham shundan hisoblanadi */
+@property --tab-i {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 2;
+}
+
+/* Pastki tab bar — faqat mobil (≤639px): oq panel, faol bo‘lim ko‘tarilgan doirada */
 .tabbar {
-  --tabbar-bg: #141416;
+  --tabbar-bg: #18181b;
   --tabbar-item-color: #8b8b94;
-  --tabbar-shadow: 0 -8px 28px rgba(0, 0, 0, 0.45);
+  --tabbar-label-active: #f4f5f7;
+  --tabbar-shadow: rgba(0, 0, 0, 0.5);
 
   display: none;
 }
@@ -10,7 +18,8 @@
 [data-theme='light'] .tabbar {
   --tabbar-bg: #ffffff;
   --tabbar-item-color: #9aa1af;
-  --tabbar-shadow: 0 -8px 28px rgba(30, 64, 140, 0.1);
+  --tabbar-label-active: #12141a;
+  --tabbar-shadow: rgba(30, 64, 140, 0.14);
 }
 
 @media (max-width: 639px) {
@@ -26,50 +35,124 @@
     right: 0;
     bottom: 0;
     z-index: var(--z-header);
+    pointer-events: none;
   }
 
   .tabbar__inner {
+    --tab-pad: 8px;
+    --bubble: 56px;
+    --notch-w: 0px;
+    --notch-h: 0px;
+    --hop-time: 0.62s;
+    /* Faol tab markazi (x) — bo‘limlar teng kenglikda, cqw — panel kengligi */
+    --tab-x: calc(var(--tab-pad) + (100cqw - 2 * var(--tab-pad)) * (var(--tab-i) + 0.5) / var(--tab-n));
+
+    position: relative;
     display: flex;
     align-items: stretch;
-    justify-content: space-around;
-    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-    border-radius: 24px 24px 0 0;
+    padding: 8px var(--tab-pad) calc(6px + env(safe-area-inset-bottom, 0px));
+    container-type: inline-size;
+    filter: drop-shadow(0 -6px 18px var(--tabbar-shadow));
+    pointer-events: auto;
+    transition: --tab-i var(--hop-time) cubic-bezier(0.45, 0, 0.2, 1);
+  }
+
+  .tabbar__inner.has-active {
+    --notch-w: 112px;
+    --notch-h: 34px;
+  }
+
+  /* Panel foni: faol doira ostida yumshoq to‘lqinsimon o‘yiq — SVG mask bilan kesiladi */
+  .tabbar__bg {
+    --notch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 112 34' preserveAspectRatio='none'%3E%3Cpath d='M0 0C16 0 22 3 28 12C36 26 45 34 56 34C67 34 76 26 84 12C90 3 96 0 112 0Z'/%3E%3C/svg%3E");
+
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 26px 26px 0 0;
     background: var(--tabbar-bg);
-    box-shadow: var(--tabbar-shadow);
+    -webkit-mask:
+      var(--notch) calc(var(--tab-x) - var(--notch-w) / 2) -0.5px / var(--notch-w) calc(var(--notch-h) + 0.5px)
+        no-repeat,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      var(--notch) calc(var(--tab-x) - var(--notch-w) / 2) -0.5px / var(--notch-w) calc(var(--notch-h) + 0.5px)
+        no-repeat exclude,
+      linear-gradient(#000 0 0);
+  }
+
+  /* Doira o‘yiq ustida: markazi panel chetida, x — --tab-i bilan birga siljiydi */
+  .tabbar__bubble {
+    position: absolute;
+    top: calc(var(--bubble) / -2 + 2px);
+    left: var(--tab-x);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: var(--bubble);
+    height: var(--bubble);
+    margin-left: calc(var(--bubble) / -2);
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    box-shadow:
+      0 10px 22px color-mix(in srgb, var(--color-primary) 45%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    animation: tabbar-hop var(--hop-time) cubic-bezier(0.33, 0, 0.3, 1);
+  }
+
+  /* Sakrash: yoy bo‘ylab ko‘tarilib, tushganda biroz yassilanadi */
+  @keyframes tabbar-hop {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    45% {
+      transform: translateY(-20px) scale(0.92);
+    }
+    78% {
+      transform: translateY(2px) scale(1.06, 0.92);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .tabbar__bubble-icon {
+    display: grid;
+    place-items: center;
+    animation: tabbar-icon-in var(--hop-time) ease;
+  }
+
+  @keyframes tabbar-icon-in {
+    0%,
+    30% {
+      opacity: 0;
+      transform: scale(0.5) rotate(-12deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
   }
 
   .tabbar__item {
     position: relative;
+    z-index: 1;
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    justify-content: flex-end;
+    gap: 4px;
     min-width: 0;
-    padding: 10px 2px 4px;
+    min-height: 58px;
+    padding: 6px 2px 4px;
     color: var(--tabbar-item-color);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
-    transition: color 0.2s ease;
-  }
-
-  /* Faol bo‘lim ustidagi kichik nuqta */
-  .tabbar__item::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    margin-left: -2.5px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    transform: scale(0);
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .tabbar__item:active .tabbar__icon {
-    transform: scale(0.9);
+    transition: color 0.25s ease;
   }
 
   .tabbar__item:focus-visible {
@@ -78,30 +161,42 @@
     border-radius: 12px;
   }
 
-  .tabbar__item--active {
-    color: var(--color-primary);
-  }
-
-  .tabbar__item--active::before {
-    transform: scale(1);
-  }
-
   .tabbar__icon {
     position: relative;
     display: grid;
     place-items: center;
     height: 24px;
-    transition: transform 0.15s ease;
+    transition:
+      opacity 0.2s ease,
+      transform 0.35s cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+
+  .tabbar__item:active .tabbar__icon {
+    transform: scale(0.88);
+  }
+
+  /* Faol ikonka doira ichida — joyidagisi yo‘qoladi */
+  .tabbar__item--active .tabbar__icon {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.6);
+  }
+
+  .tabbar__item--active {
+    color: var(--tabbar-label-active);
   }
 
   .tabbar__label {
     max-width: 100%;
     overflow: hidden;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
     line-height: 1.2;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  .tabbar__item--active .tabbar__label {
+    font-weight: 700;
   }
 
   .tabbar__dot {
@@ -121,8 +216,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tabbar__inner {
+    transition: none;
+  }
+
+  .tabbar__bubble,
+  .tabbar__bubble-icon {
+    animation: none;
+  }
+
   .tabbar__item,
-  .tabbar__item::before,
   .tabbar__icon {
     transition: none;
   }

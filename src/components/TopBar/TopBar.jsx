@@ -1,23 +1,28 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Moon, Sun } from 'lucide-react'
-import { FiChevronDown, FiGlobe, FiMapPin, FiUser } from 'react-icons/fi'
+import { Check, Menu, Moon, Sun } from 'lucide-react'
+import { FiChevronDown, FiGlobe, FiMapPin } from 'react-icons/fi'
 import { LANGUAGES } from '../../data/languages.js'
 import { REGIONS } from '../../data/regions.js'
 import { useLocalStorageState } from '../../hooks/useLocalStorageState.js'
 import { useTheme } from '../../hooks/useTheme.js'
 import useMediaQuery from '../../hooks/useMediaQuery.js'
 import { useAuth } from '../../context/auth.js'
+import { useNotifications } from '../../hooks/useNotifications.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import DropPanel from '../ui/DropPanel.jsx'
 import NotificationBell from './NotificationBell.jsx'
+import MobileMenu from './MobileMenu.jsx'
 import './TopBar.css'
 
 export default function TopBar() {
   const { theme, setTheme } = useTheme()
   const { user } = useAuth()
-  // Mobilda logo o‘rnida salomlashuv bloki, hudud tanlash uning ichiga ko‘chadi
+  const { unreadCount } = useNotifications()
+  // Mobilda: ☰ + markazda logo; hudud, til, mavzu va bildirishnomalar yon menyuda
   const isMobile = useMediaQuery('(max-width: 639px)')
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const closeDrawer = useCallback(() => setDrawerOpen(false), [])
   const [regionId, setRegionId] = useLocalStorageState('sporton-region', 'all')
   const [langId, setLangId] = useLocalStorageState('sporton-lang', 'uz')
   const [openMenu, setOpenMenu] = useState(null)
@@ -61,8 +66,6 @@ export default function TopBar() {
       language.id === 'en' ? 'en' : language.id === 'ru' ? 'ru' : 'uz'
   }, [language.id])
 
-  const initials = user ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() : ''
-
   const regionDropdown = (
     <Dropdown
       ref={regionRef}
@@ -100,21 +103,44 @@ export default function TopBar() {
     <div className="topbar">
       <div className="container topbar__inner">
         {isMobile ? (
-          <div className="topbar__greet">
-            <Link
-              to={user ? '/profil' : '/kirish'}
-              className="topbar__avatar"
-              aria-label={user ? `Profil: ${user.firstName} ${user.lastName}` : 'Kirish'}
+          <>
+            <button
+              type="button"
+              className="topbar__burger"
+              onClick={() => setDrawerOpen(true)}
+              aria-label={unreadCount ? `Menyu, ${unreadCount} ta o‘qilmagan bildirishnoma` : 'Menyu'}
+              aria-expanded={drawerOpen}
             >
-              {initials || <FiUser aria-hidden="true" />}
+              <Menu size={26} strokeWidth={2.2} />
+              {unreadCount > 0 && (
+                <span className="topbar__burger-badge" aria-hidden="true">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            <Link to="/" className="topbar__brand" aria-label="SportON — bosh sahifa">
+              <BrandLogo />
+              <span className="topbar__tagline">Sport bilan yaqinroq!</span>
             </Link>
-            <div className="topbar__greet-text">
-              <span className="topbar__hello">
-                {user?.firstName ? `Salom, ${user.firstName}` : 'Xush kelibsiz'} 👋
-              </span>
-              {regionDropdown}
-            </div>
-          </div>
+
+            <MobileMenu
+              open={drawerOpen}
+              onClose={closeDrawer}
+              user={user}
+              unreadCount={unreadCount}
+              onOpenNotifications={() => {
+                setDrawerOpen(false)
+                setOpenMenu('notif')
+              }}
+              regionId={region.id}
+              onRegionChange={setRegionId}
+              langId={language.id}
+              onLangChange={setLangId}
+              theme={theme}
+              onThemeChange={setTheme}
+            />
+          </>
         ) : (
           <Link to="/" className="topbar__logo" aria-label="SportON — bosh sahifa">
             <BrandLogo tone="onPrimary" />

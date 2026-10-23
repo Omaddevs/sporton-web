@@ -439,8 +439,9 @@
 }
 
 @media (max-width: 639px) {
+  /* Mobilda sport turlari ☰ menyu va QuickLinks orqali ochiladi */
   .category-grid {
-    --cg-per-view: 2.3;
+    display: none;
   }
 
   .category-card {

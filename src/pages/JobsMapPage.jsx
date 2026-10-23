@@ -1,7 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FiActivity, FiArrowRight, FiMapPin, FiNavigation, FiX } from 'react-icons/fi'
-import { Check, LocateFixed, MapPinOff, RefreshCw, ShieldCheck } from 'lucide-react'
+import {
+  Check,
+  ChevronLeft,
+  Lasso,
+  List,
+  LocateFixed,
+  MapPinOff,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react'
 import JobsMap from '../components/JobsMap/JobsMap.jsx'
 import { jobs } from '../data/jobs.js'
 import { useGeolocation } from '../hooks/useGeolocation.js'
@@ -35,6 +47,19 @@ function distanceKm(a, b) {
   return 12742 * Math.asin(Math.sqrt(h))
 }
 
+// Nuqta chizilgan ko‘pburchak ichidami (ray casting; kichik hududda lat/lng tekis deb olinadi)
+function insideArea(point, area) {
+  let inside = false
+  for (let i = 0, j = area.length - 1; i < area.length; j = i++) {
+    const a = area[i]
+    const b = area[j]
+    if (a.lat > point.lat !== b.lat > point.lat && point.lng < ((b.lng - a.lng) * (point.lat - a.lat)) / (b.lat - a.lat) + a.lng) {
+      inside = !inside
+    }
+  }
+  return inside
+}
+
 function formatDistance(km) {
   if (km < 1) return `${Math.round(km * 1000)} m`
   return `${km < 10 ? km.toFixed(1) : Math.round(km)} km`
@@ -47,17 +72,28 @@ export default function JobsMapPage() {
   const [type, setType] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId, setHoveredId] = useState(null)
+  // Mobil: ro‘yxat/filtrlar pastdan chiqadigan sheet’da, qidiruv — tepadagi kartada
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  // Chizib belgilash: hudud chizilgach, radius o‘rniga shu hudud bo‘yicha filtrlanadi
+  const [drawing, setDrawing] = useState(false)
+  const [area, setArea] = useState(null)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const located = geo.status === 'granted'
   const origin = located ? geo.position : useFallback ? FALLBACK_ORIGIN : null
 
   const visibleJobs = useMemo(() => {
     if (!origin) return []
+    const q = query.trim().toLowerCase()
     return MAPPABLE_JOBS.filter((job) => type === 'all' || job.type === type)
+      .filter((job) => !q || `${job.title} ${job.company}`.toLowerCase().includes(q))
       .map((job) => ({ ...job, distance: distanceKm(origin, job.coords) }))
-      .filter((job) => radiusKm == null || job.distance <= radiusKm)
+      .filter((job) => (area ? insideArea(job.coords, area) : radiusKm == null || job.distance <= radiusKm))
       .sort((a, b) => a.distance - b.distance)
-  }, [origin, type, radiusKm])
+  }, [origin, type, radiusKm, query, area])
 
   const selectedJob = visibleJobs.find((job) => job.id === selectedId) ?? null
   const nextRadius = RADII[RADII.findIndex((r) => r.km === radiusKm) + 1]
@@ -70,6 +106,47 @@ export default function JobsMapPage() {
     return () => window.removeEventListener('keydown', onKey)
   }, [selectedJob])
 
+  useEffect(() => {
+    if (!sheetOpen) return undefined
+    const onKey = (event) => event.key === 'Escape' && setSheetOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [sheetOpen])
+
+  function goBack() {
+    // Saytga to‘g‘ridan-to‘g‘ri shu sahifadan kirilgan bo‘lsa — bosh sahifaga
+    if (location.key === 'default') navigate('/')
+    else navigate(-1)
+  }
+
+  function toggleSearch() {
+    if (searchOpen) setQuery('')
+    setSearchOpen((value) => !value)
+  }
+
+  function toggleDraw() {
+    if (area) setArea(null)
+    else {
+      setSelectedId(null)
+      setDrawing((value) => !value)
+    }
+  }
+
+  function finishDrawing(points) {
+    setArea(points)
+    setDrawing(false)
+  }
+
+  function changeRadius(km) {
+    setArea(null)
+    setRadiusKm(km)
+  }
+
+  function selectFromList(id) {
+    setSelectedId(id)
+    setSheetOpen(false)
+  }
+
   function enableLocation() {
     setUseFallback(false)
     geo.request()
@@ -77,8 +154,22 @@ export default function JobsMapPage() {
 
   return (
     <div className="jobs-map-page">
-      <aside className="jmp-panel" aria-label="Yaqin atrofdagi majmualar">
+      <div
+        className={`jmp-sheet-backdrop${sheetOpen ? ' is-open' : ''}`}
+        onClick={() => setSheetOpen(false)}
+        aria-hidden="true"
+      />
+
+      <aside className={`jmp-panel${sheetOpen ? ' is-open' : ''}`} aria-label="Yaqin atrofdagi majmualar">
         <header className="jmp-panel__head">
+          <button
+            type="button"
+            className="jmp-panel__close"
+            onClick={() => setSheetOpen(false)}
+            aria-label="Ro‘yxatni yopish"
+          >
+            <X size={18} strokeWidth={2.4} />
+          </button>
           <h1 className="jmp-panel__title">Yaqin atrofdagi majmualar</h1>
           <p className="jmp-panel__subtitle">Sport majmualari sizdan uzoqligi bo&apos;yicha saralangan</p>
           <LocationStatus geo={geo} origin={origin} onEnable={enableLocation} />
@@ -99,7 +190,7 @@ export default function JobsMapPage() {
                       role="radio"
                       aria-checked={radiusKm === r.km}
                       className={`jmp-segmented__item${radiusKm === r.km ? ' is-active' : ''}`}
-                      onClick={() => setRadiusKm(r.km)}
+                      onClick={() => changeRadius(r.km)}
                     >
                       {r.label}
                     </button>
@@ -135,7 +226,8 @@ export default function JobsMapPage() {
                   {visibleJobs.length} ta joy
                 </p>
                 <p className="jmp-results__hint">
-                  {radiusKm ? `${radiusKm} km ichida` : 'Barcha hududlar'} · eng yaqini birinchi
+                  {area ? 'Chizilgan hudud' : radiusKm ? `${radiusKm} km ichida` : 'Barcha hududlar'} · eng yaqini
+                  birinchi
                 </p>
               </div>
 
@@ -146,7 +238,7 @@ export default function JobsMapPage() {
                       <JobItem
                         job={job}
                         active={job.id === selectedId}
-                        onSelect={() => setSelectedId(job.id)}
+                        onSelect={() => selectFromList(job.id)}
                         onHover={setHoveredId}
                       />
                     </li>
@@ -159,8 +251,12 @@ export default function JobsMapPage() {
                   </span>
                   <p className="jmp-empty__title">Bu radiusda majmua yo&apos;q</p>
                   <p className="jmp-empty__text">Qidiruv hududini kengaytiring yoki boshqa joy turini tanlang.</p>
-                  {nextRadius && (
-                    <button type="button" className="jmp-btn jmp-btn--primary" onClick={() => setRadiusKm(nextRadius.km)}>
+                  {area ? (
+                    <button type="button" className="jmp-btn jmp-btn--primary" onClick={() => setArea(null)}>
+                      Chizilgan hududni tozalash
+                    </button>
+                  ) : nextRadius && (
+                    <button type="button" className="jmp-btn jmp-btn--primary" onClick={() => changeRadius(nextRadius.km)}>
                       {nextRadius.km ? `${nextRadius.label} gacha kengaytirish` : "Barchasini ko'rsatish"}
                     </button>
                   )}
@@ -198,7 +294,89 @@ export default function JobsMapPage() {
           hoveredId={hoveredId}
           onSelect={setSelectedId}
           interactive={Boolean(origin)}
+          originLabel={located ? 'Siz shu yerdasiz' : null}
+          drawing={drawing}
+          onDrawEnd={finishDrawing}
+          area={area}
         />
+
+        {/* Mobil: xarita ustidagi suzuvchi boshqaruvlar */}
+        <div className="jmp-mtop">
+          <button type="button" className="jmp-fab" onClick={goBack} aria-label="Orqaga">
+            <ChevronLeft size={24} strokeWidth={2.2} />
+          </button>
+
+          {searchOpen ? (
+            <label className="jmp-mtop__card jmp-mtop__search">
+              <Search size={18} aria-hidden="true" />
+              <input
+                type="text"
+                enterKeyHint="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Majmua qidirish..."
+                aria-label="Majmua qidirish"
+                autoFocus
+              />
+            </label>
+          ) : (
+            <div className="jmp-mtop__card">
+              <strong>Xarita</strong>
+              <span>
+                {!origin
+                  ? 'Joylashuvni yoqing'
+                  : area
+                    ? `Hududda ${visibleJobs.length} ta majmua`
+                    : `${visibleJobs.length} ta majmua`}
+              </span>
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="jmp-fab"
+            onClick={toggleSearch}
+            aria-label={searchOpen ? 'Qidiruvni yopish' : 'Qidirish'}
+            aria-pressed={searchOpen}
+          >
+            {searchOpen ? <X size={21} strokeWidth={2.2} /> : <Search size={21} strokeWidth={2.2} />}
+          </button>
+          <button type="button" className="jmp-fab" onClick={() => setSheetOpen(true)} aria-label="Filtrlar">
+            <SlidersHorizontal size={20} strokeWidth={2.2} />
+          </button>
+        </div>
+
+        {drawing && (
+          <div className="jmp-draw-hint" role="status">
+            <Lasso size={18} aria-hidden="true" />
+            <span>Barmog‘ingiz bilan hududni aylantirib chizing</span>
+            <button type="button" onClick={() => setDrawing(false)}>
+              Bekor qilish
+            </button>
+          </div>
+        )}
+
+        {origin && (
+          <button
+            type="button"
+            className={`jmp-draw-btn${drawing || area ? ' is-active' : ''}`}
+            onClick={toggleDraw}
+            aria-pressed={drawing || Boolean(area)}
+            aria-label={area ? 'Chizilgan hududni tozalash' : drawing ? 'Chizishni bekor qilish' : 'Hududni chizib belgilash'}
+            title={area ? 'Hududni tozalash' : 'Chizib belgilash'}
+          >
+            {area ? <X size={22} strokeWidth={2.2} /> : <Lasso size={22} strokeWidth={2.2} />}
+          </button>
+        )}
+
+        {origin && !drawing && (
+          <button type="button" className="jmp-list-toggle" onClick={() => setSheetOpen(true)}>
+            <List size={20} strokeWidth={2.2} aria-hidden="true" />
+            <span>
+              Ro&apos;yxat<span className="jmp-list-toggle__more"> ko&apos;rinishida</span>
+            </span>
+          </button>
+        )}
 
         {!origin && (
           <PermissionCard

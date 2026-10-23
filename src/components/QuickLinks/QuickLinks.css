@@ -1,0 +1,109 @@
+/* Faqat mobil — desktop’da bu bo‘limlar navbar va sahifa bo‘limlarida bor */
+.quick-links {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 18px;
+    padding: 30px 24px 22px;
+  }
+
+  .quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--color-text);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quick-link:active .quick-link__media {
+    transform: scale(0.96);
+  }
+
+  .quick-link:focus-visible {
+    outline: none;
+  }
+
+  .quick-link:focus-visible .quick-link__media {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  /* Rasm kartadan tepaga chiqib turadi — 3D effekt */
+  .quick-link__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2.55;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #eaf2fe 0%, #dce8fc 100%);
+    transition: transform 0.15s ease;
+  }
+
+  [data-theme='dark'] .quick-link__media {
+    background: linear-gradient(180deg, rgba(75, 141, 255, 0.2) 0%, rgba(30, 111, 245, 0.1) 100%);
+  }
+
+  .quick-link__img {
+    position: absolute;
+    left: var(--ql-x, 50%);
+    bottom: var(--ql-bottom, 4%);
+    width: var(--ql-w, 90%);
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 6px 8px rgba(30, 64, 140, 0.16));
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .quick-link--complexes {
+    --ql-w: 93%;
+    --ql-bottom: 7%;
+  }
+
+  .quick-link--news {
+    --ql-w: 86%;
+    --ql-x: 54%;
+    --ql-bottom: 1%;
+  }
+
+  .quick-link--events {
+    --ql-w: 76%;
+    --ql-x: 54%;
+    --ql-bottom: 5%;
+  }
+
+  .quick-link--competitions {
+    --ql-w: 64%;
+    --ql-bottom: 1%;
+  }
+
+  .quick-link__label {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: clamp(13px, 3.9vw, 17px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 359px) {
+  .quick-links {
+    gap: 26px 12px;
+    padding-inline: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-link__media {
+    transition: none;
+  }
+}

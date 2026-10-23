@@ -1,14 +1,15 @@
-// Esri Canvas basemap'lari kalitsiz, CDN orqali tez yuklanadi va yorug'/qorong'i variantlari tayyor —
-// tile'larga CSS filtr berish shart emas (filtr pan/zoom paytida xaritani qotirib qo'yardi).
-// Fon va yorliqlar alohida qatlam: yorliqlar lotin yozuvida va kichik hajmli.
-const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas'
+// OpenStreetMap standart tile'lari — kalitsiz; yorliqlar fon bilan bitta qatlamda.
+// OSM'da qorong'i variant yo'q: ikkala mavzuda bir xil xarita (tile'larga CSS filtr berilmaydi —
+// filtr pan/zoom paytida xaritani qotirib qo'yardi). Massiv: [fon, ...ustki qatlamlar].
+const OSM = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
 export const TILES = {
-  light: [`${ESRI}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, `${ESRI}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`],
-  dark: [`${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, `${ESRI}/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`],
+  light: [OSM],
+  dark: [OSM],
 }
 
-export const ATTRIBUTION = 'Tiles &copy; <a href="https://www.esri.com">Esri</a> &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap'
+// OSM tile foydalanish siyosati bo'yicha atributsiya majburiy
+export const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
 export function currentTheme() {
   return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
