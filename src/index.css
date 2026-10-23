@@ -71,6 +71,15 @@ textarea {
   font-size: 16px;
 }
 
+/* Komponentlar input shriftini kichraytirgan — sensorli ekranda baribir 16px (aks holda iOS zoom qiladi) */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 button {
   cursor: pointer;
 }
@@ -132,5 +141,18 @@ p {
 @media (max-width: 639px) {
   :root {
     --gutter: 16px;
+  }
+
+  /* Salomlashuv qatori skroll bilan ketadi, qidiruv qatori tepada qotib qoladi */
+  .app:not(.app--chat) .app-header {
+    top: calc(-1 * var(--header-topbar-h));
+  }
+
+  /* Mobil ilova uslubi: och-moviy fon, oq kartalar, yumshoq ko‘k soya */
+  [data-theme='light'] {
+    --color-bg: #f3f6fc;
+    --color-tabs: #e8edf7;
+    --color-border: #e4e9f2;
+    --shadow-card: 0 6px 20px rgba(30, 64, 140, 0.08);
   }
 }

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
+  ArrowLeft,
   ArrowRight,
   Briefcase,
   Building2,
@@ -8,56 +9,29 @@ import {
   MapPin,
   MessageCircle,
   Newspaper,
-  RotateCcw,
   Share2,
+  SlidersHorizontal,
   UsersRound,
+  X,
 } from 'lucide-react'
 import { categoryMenuById } from '../data/categoryMenu.js'
 import { getCandidatesForCategory } from '../data/candidates.js'
 import { getComplexesForCategory } from '../data/complexes.js'
 import { getCategoryArticles } from '../data/articles.js'
-import { REGIONS } from '../data/regions.js'
 import Select from '../components/ui/Select.jsx'
 import CategoryComplexes from '../components/CategoryContent/CategoryComplexes.jsx'
 import CategoryArticles from '../components/CategoryContent/CategoryArticles.jsx'
+import { EmptyState } from '../components/CategoryContent/CategoryComplexes.jsx'
+import CoachFilterPanel from '../components/CategoryContent/CoachFilters.jsx'
+import {
+  CLEARED_FILTERS,
+  SORT_OPTIONS,
+  activeFilterChips,
+  filterCoaches,
+  readCoachFilters,
+  writeCoachFilters,
+} from '../components/CategoryContent/coachFilters.js'
 import './CategoryPage.css'
-
-const JOB_TYPES = [
-  { id: 'full', label: 'Yakka mashg‘ulot' },
-  { id: 'part', label: 'Guruh mashg‘uloti' },
-  { id: 'remote', label: 'Onlayn' },
-  { id: 'intern', label: 'Bolalar uchun' },
-]
-
-const FIELDS = [
-  { id: 'beginner', label: 'Boshlang‘ichlar uchun' },
-  { id: 'competition', label: 'Musobaqaga tayyorlov' },
-  { id: 'weight', label: 'Ozish va forma' },
-  { id: 'rehab', label: 'Reabilitatsiya' },
-  { id: 'kids', label: 'Bolalar bilan ishlash' },
-]
-
-const SORT_OPTIONS = [
-  { id: 'recommended', label: 'Tavsiya etilgan' },
-  { id: 'newest', label: 'Eng yangi' },
-  { id: 'salary', label: 'Narx bo‘yicha' },
-]
-
-const SALARY_OPTIONS = [
-  { id: 'all', label: 'Barchasi' },
-  { id: '100', label: '100 ming gacha' },
-  { id: '100-150', label: '100–150 ming' },
-  { id: '150-200', label: '150–200 ming' },
-  { id: '200', label: '200 ming+' },
-]
-
-const EXPERIENCE_OPTIONS = [
-  { id: 'all', label: 'Barchasi' },
-  { id: '0', label: 'Tajribasiz' },
-  { id: '1', label: '1–2 yil' },
-  { id: '3', label: '3–5 yil' },
-  { id: '5', label: '5+ yil' },
-]
 
 const TABS = [
   { id: 'majmualar', label: 'Sport majmualari', Icon: Building2 },
@@ -76,9 +50,8 @@ export default function CategoryPage() {
   const tabRefs = useRef({})
 
   const tab = TABS.some((t) => t.id === searchParams.get('tab')) ? searchParams.get('tab') : TABS[0].id
-  const coachCount = candidates.length * 6 + 4
   const tabCounts = {
-    murabbiylar: coachCount,
+    murabbiylar: candidates.length,
     majmualar: categoryComplexes.length,
     maqolalar: articles.length,
   }
@@ -103,12 +76,19 @@ export default function CategoryPage() {
 
   const [selectedId, setSelectedId] = useState(candidates[0]?.id)
   const [saved, setSaved] = useState(() => new Set())
-  const [region, setRegion] = useState('toshkent-shahar')
-  const [jobTypes, setJobTypes] = useState(() => new Set(['full']))
-  const [fields, setFields] = useState(() => new Set())
-  const [salary, setSalary] = useState('all')
-  const [experience, setExperience] = useState('all')
-  const [sortBy, setSortBy] = useState('recommended')
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  const detailRef = useRef(null)
+
+  // Filtrlar URL’da saqlanadi — sahifani yangilash, ulashish va «orqaga» tugmasi ishlaydi
+  const filters = useMemo(() => readCoachFilters(searchParams), [searchParams])
+  const visible = useMemo(() => filterCoaches(candidates, filters), [candidates, filters])
+  const chips = activeFilterChips(filters)
+
+  function updateFilters(patch) {
+    setSearchParams((prev) => writeCoachFilters(prev, patch), { replace: true })
+  }
+
+  const closeFilters = useCallback(() => setFiltersOpen(false), [])
 
   // Kategoriya almashganda birinchi elementni tanlaymiz (render paytida — effekt kerak emas)
   const [prevCandidates, setPrevCandidates] = useState(candidates)
@@ -121,17 +101,9 @@ export default function CategoryPage() {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [candidates])
 
-  const selected = candidates.find((item) => item.id === selectedId) ?? candidates[0]
+  // Tanlangan murabbiy filtrdan chiqib ketsa — birinchi mosini ko‘rsatamiz
+  const selected = visible.find((item) => item.id === selectedId) ?? visible[0]
   const Icon = category.Icon
-
-  function toggleSet(setter, id) {
-    setter((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
 
   function toggleSaved(id) {
     setSaved((prev) => {
@@ -143,11 +115,15 @@ export default function CategoryPage() {
   }
 
   function clearFilters() {
-    setRegion('all')
-    setJobTypes(new Set())
-    setFields(new Set())
-    setSalary('all')
-    setExperience('all')
+    updateFilters(CLEARED_FILTERS)
+  }
+
+  // Tor ekranda batafsil panel ro‘yxat ostida — tanlanganda unga o‘tamiz
+  function showDetail(id) {
+    setSelectedId(id)
+    if (window.matchMedia('(max-width: 1199px)').matches) {
+      requestAnimationFrame(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
   }
 
   return (
@@ -163,6 +139,9 @@ export default function CategoryPage() {
           </nav>
 
           <div className="cat-results__title">
+            <Link to="/sport-turlari" className="cat-header__back" aria-label="Sport turlariga qaytish">
+              <ArrowLeft size={20} strokeWidth={2.2} />
+            </Link>
             <span
               className="cat-results__icon"
               style={{ background: category.iconBg, color: category.iconColor }}
@@ -214,83 +193,37 @@ export default function CategoryPage() {
 
           {tab === 'murabbiylar' && (
             <div className="category-page__inner">
-              <aside className="cat-filters">
-                <FilterGroup title="Viloyat / Shahar">
-                  <Select
-                    value={region}
-                    onChange={setRegion}
-                    options={REGIONS}
-                    ariaLabel="Viloyat / Shahar"
-                  />
-                </FilterGroup>
-
-                <FilterGroup title="Mashg&apos;ulot turi">
-                  <div className="cat-checks">
-                    {JOB_TYPES.map((item) => (
-                      <label key={item.id} className="cat-check">
-                        <input
-                          type="checkbox"
-                          checked={jobTypes.has(item.id)}
-                          onChange={() => toggleSet(setJobTypes, item.id)}
-                        />
-                        <span>{item.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </FilterGroup>
-
-                <FilterGroup title="Narx (bir dars)">
-                  <Select
-                    value={salary}
-                    onChange={setSalary}
-                    options={SALARY_OPTIONS}
-                    ariaLabel="Narx"
-                  />
-                </FilterGroup>
-
-                <FilterGroup title="Tajriba">
-                  <Select
-                    value={experience}
-                    onChange={setExperience}
-                    options={EXPERIENCE_OPTIONS}
-                    ariaLabel="Tajriba"
-                  />
-                </FilterGroup>
-
-                <FilterGroup title="Mutaxassislik">
-                  <div className="cat-checks">
-                    {FIELDS.map((item) => (
-                      <label key={item.id} className="cat-check">
-                        <input
-                          type="checkbox"
-                          checked={fields.has(item.id)}
-                          onChange={() => toggleSet(setFields, item.id)}
-                        />
-                        <span>{item.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </FilterGroup>
-
-                <button type="button" className="cat-filters__apply">
-                  Qidiruvni qo‘llash
-                </button>
-                <button type="button" className="cat-filters__clear" onClick={clearFilters}>
-                  <RotateCcw size={14} />
-                  Filtrlarni tozalash
-                </button>
-              </aside>
+              <CoachFilterPanel
+                filters={filters}
+                onChange={updateFilters}
+                onClear={clearFilters}
+                activeCount={chips.length}
+                resultCount={visible.length}
+                open={filtersOpen}
+                onClose={closeFilters}
+              />
 
               <section className="cat-results">
                 <div className="cat-results__head">
-                  <p className="cat-results__found">
-                    <strong>{coachCount}</strong> ta murabbiy topildi
+                  <p className="cat-results__found" aria-live="polite">
+                    <strong>{visible.length}</strong> ta murabbiy topildi
                   </p>
 
                   <div className="cat-results__meta">
+                    <button
+                      type="button"
+                      className={`cat-filter-toggle ${chips.length ? 'is-active' : ''}`}
+                      onClick={() => setFiltersOpen(true)}
+                      aria-controls="cat-filters"
+                      aria-expanded={filtersOpen}
+                    >
+                      <SlidersHorizontal size={16} strokeWidth={2.2} />
+                      Filtrlar
+                      {chips.length > 0 && <span className="cat-filter-toggle__count">{chips.length}</span>}
+                    </button>
                     <Select
-                      value={sortBy}
-                      onChange={setSortBy}
+                      value={filters.sort}
+                      onChange={(sort) => updateFilters({ sort })}
                       options={SORT_OPTIONS}
                       ariaLabel="Saralash"
                       size="sm"
@@ -298,14 +231,47 @@ export default function CategoryPage() {
                   </div>
                 </div>
 
+                {chips.length > 0 && (
+                  <div className="cat-active-filters" aria-label="Faol filtrlar">
+                    {chips.map((chip) => (
+                      <button
+                        key={chip.key}
+                        type="button"
+                        className="cat-active-chip"
+                        onClick={() => updateFilters(chip.patch)}
+                        aria-label={`Filtrni olib tashlash: ${chip.label}`}
+                      >
+                        {chip.label}
+                        <X size={13} strokeWidth={2.6} />
+                      </button>
+                    ))}
+                    <button type="button" className="cat-active-chip cat-active-chip--clear" onClick={clearFilters}>
+                      Barchasini tozalash
+                    </button>
+                  </div>
+                )}
+
+                {visible.length === 0 && (
+                  <EmptyState
+                    Icon={UsersRound}
+                    title="Mos murabbiy topilmadi"
+                    text="Tanlangan filtrlarga mos murabbiy yo‘q. Ba’zi filtrlarni olib tashlab ko‘ring."
+                    action={
+                      <button type="button" className="cc-btn cc-btn--primary" onClick={clearFilters}>
+                        Filtrlarni tozalash
+                      </button>
+                    }
+                  />
+                )}
+
                 <div className="cat-results__list">
-                  {candidates.map((person) => (
+                  {visible.map((person) => (
                     <article
                       key={person.id}
                       className={`cand-card ${selected?.id === person.id ? 'cand-card--active' : ''} ${
                         person.premium ? 'cand-card--premium' : ''
                       }`}
-                      onClick={() => setSelectedId(person.id)}
+                      onClick={() => showDetail(person.id)}
                     >
                       <img className="cand-card__avatar" src={person.avatar} alt="" />
                       <div className="cand-card__body">
@@ -345,7 +311,7 @@ export default function CategoryPage() {
                           className="cand-card__detail"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setSelectedId(person.id)
+                            showDetail(person.id)
                           }}
                         >
                           Batafsil
@@ -369,7 +335,7 @@ export default function CategoryPage() {
               </section>
 
               {selected && (
-                <aside className="cat-detail">
+                <aside className="cat-detail" ref={detailRef}>
                   <div className="cat-detail__toolbar">
                     <button type="button" aria-label="Ulashish">
                       <Share2 size={17} />
@@ -476,15 +442,6 @@ export default function CategoryPage() {
           )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function FilterGroup({ title, children }) {
-  return (
-    <div className="cat-filters__group">
-      <h3>{title}</h3>
-      {children}
     </div>
   )
 }

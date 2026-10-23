@@ -58,17 +58,23 @@
   }
 
   .sport-complexes__title {
-    margin-bottom: 16px;
-    font-size: 24px;
+    margin-bottom: 14px;
+    font-size: 20px;
   }
 
   .sport-complexes__grid {
-    gap: 20px 12px;
+    gap: 12px;
   }
 
   .sport-complexes__more {
-    margin-top: 24px;
+    margin-top: 20px;
     padding: 14px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-card);
+    color: var(--color-primary);
     font-size: 15px;
+    font-weight: 600;
+    box-shadow: var(--shadow-card);
   }
 }

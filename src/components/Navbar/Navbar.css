@@ -257,39 +257,57 @@
   }
 }
 
+/* Mobil: qidiruv pill + o‘ngda kvadrat tugmalar (sport turlari, ko‘proq) */
 @media (max-width: 639px) {
   :root {
-    --header-navbar-h: 68px;
+    --header-navbar-h: 64px;
+  }
+
+  .navbar {
+    border-bottom: none;
   }
 
   .navbar__inner {
-    height: 68px;
-    gap: 8px;
+    height: 64px;
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+
+  .navbar__inner > .categories-menu {
+    order: 2;
+  }
+
+  .navbar__actions {
+    order: 3;
+    gap: 10px;
   }
 
   .navbar__categories .btn__label {
     display: none;
   }
 
+  .navbar__categories,
+  .navbar__more {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 16px;
+  }
+
   .navbar__categories {
-    padding: 0;
-    width: 44px;
-    height: 44px;
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--color-primary) 32%, transparent);
   }
 
-  .navbar__action-hide-sm {
-    display: none;
+  .navbar__more {
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
   }
 
-  .navbar__profile {
-    display: none;
-  }
-
+  .navbar__action-hide-sm,
+  .navbar__profile,
   .navbar__login {
-    width: 44px;
-    padding: 0;
-    justify-content: center;
-    font-size: 0;
+    display: none;
   }
 }
 

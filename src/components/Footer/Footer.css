@@ -861,25 +861,9 @@
     height: 190px;
   }
 
+  /* Mobilda logo, tavsif va havola ustunlari kerak emas — navigatsiya tab bar’da */
   .footer-main {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-
-  .footer-brand {
-    grid-column: auto;
-  }
-
-  .footer-brand__text {
-    max-width: none;
-  }
-
-  .footer-main__quote {
-    position: static;
-    transform: none;
-    margin-top: 4px;
-    white-space: normal;
-    font-size: 22px;
+    display: none;
   }
 
   .footer-bottom {

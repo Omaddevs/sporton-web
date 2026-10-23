@@ -451,7 +451,7 @@
     position: static;
   }
 
-  .notif-panel {
+  .topbar-menu.notif-panel {
     position: fixed;
     top: calc(var(--header-topbar-h) + 6px);
     left: 12px;

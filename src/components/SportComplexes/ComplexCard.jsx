@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Gift } from 'lucide-react'
+import { Check, Gift, Star } from 'lucide-react'
 import { FiHeart } from 'react-icons/fi'
 import { FALLBACK_IMAGE, formatPrice } from '../../data/complexes.js'
 import './ComplexCard.css'
@@ -12,6 +12,9 @@ export default function ComplexCard({ complex }) {
   const [saved, setSaved] = useState(false)
   const images = complex.images.slice(0, CARD_IMAGES)
   const url = `/sport-majmua/${complex.id}`
+  const priceLabel = complex.minPrice
+    ? `${formatPrice(complex.minPrice)} so‘mdan`
+    : (complex.priceNote ?? 'Bepul')
 
   // Kursor rasm ustida yurganda — slayd kursor turgan qismga mos almashadi
   const handleMove = (event) => {
@@ -75,6 +78,11 @@ export default function ComplexCard({ complex }) {
           ))}
         </div>
 
+        {/* Mobil kartada narx rasm ustida ko‘k belgi bo‘lib turadi */}
+        <span className="complex-card__price-tag" aria-hidden="true">
+          {priceLabel}
+        </span>
+
         <button
           type="button"
           className={`complex-card__save ${saved ? 'complex-card__save--active' : ''}`}
@@ -87,9 +95,14 @@ export default function ComplexCard({ complex }) {
       </div>
 
       <Link to={url} className="complex-card__body">
-        <p className="complex-card__price">
-          {complex.minPrice ? `${formatPrice(complex.minPrice)} so‘mdan` : (complex.priceNote ?? 'Bepul')}
-        </p>
+        <p className="complex-card__price">{priceLabel}</p>
+        {complex.rating ? (
+          <p className="complex-card__rating">
+            <Star size={13} aria-hidden="true" />
+            {complex.rating}
+            {complex.reviews > 0 && <span>({complex.reviews})</span>}
+          </p>
+        ) : null}
         <p className="complex-card__name">{complex.name}</p>
         <p className="complex-card__meta">
           {complex.location}

@@ -1,24 +1,22 @@
-/* Pastki tab bar — faqat mobil (≤639px). Dark: qora kapsula, light: oq kapsula */
+/* Pastki tab bar — faqat mobil (≤639px): oq panel, ikon + yozuv, faol bo‘lim ko‘k nuqta bilan */
 .tabbar {
   --tabbar-bg: #141416;
-  --tabbar-item-bg: #2a2a2e;
-  --tabbar-item-color: #d6d6dc;
-  --tabbar-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --tabbar-item-color: #8b8b94;
+  --tabbar-shadow: 0 -8px 28px rgba(0, 0, 0, 0.45);
 
   display: none;
 }
 
 [data-theme='light'] .tabbar {
   --tabbar-bg: #ffffff;
-  --tabbar-item-bg: #eef0f4;
-  --tabbar-item-color: #3b414d;
-  --tabbar-shadow: 0 10px 30px rgba(18, 20, 28, 0.14);
+  --tabbar-item-color: #9aa1af;
+  --tabbar-shadow: 0 -8px 28px rgba(30, 64, 140, 0.1);
 }
 
 @media (max-width: 639px) {
   :root {
     /* Sahifalar pastki qismi tab bar ostida qolib ketmasligi uchun */
-    --tabbar-space: calc(88px + env(safe-area-inset-bottom, 0px));
+    --tabbar-space: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
   .tabbar {
@@ -26,73 +24,95 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    bottom: 0;
     z-index: var(--z-header);
-    padding: 0 16px;
-    pointer-events: none;
   }
 
   .tabbar__inner {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    max-width: 420px;
-    margin: 0 auto;
-    padding: 8px;
-    border-radius: 999px;
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    border-radius: 24px 24px 0 0;
     background: var(--tabbar-bg);
-    border: 1px solid var(--color-border);
     box-shadow: var(--tabbar-shadow);
-    pointer-events: auto;
   }
 
   .tabbar__item {
     position: relative;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--tabbar-item-bg);
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 10px 2px 4px;
     color: var(--tabbar-item-color);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
-    transition:
-      background-color 0.2s ease,
-      color 0.2s ease,
-      transform 0.15s ease;
+    transition: color 0.2s ease;
   }
 
-  .tabbar__item:active {
-    transform: scale(0.92);
+  /* Faol bo‘lim ustidagi kichik nuqta */
+  .tabbar__item::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    transform: scale(0);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tabbar__item:active .tabbar__icon {
+    transform: scale(0.9);
   }
 
   .tabbar__item:focus-visible {
     outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline-offset: -2px;
+    border-radius: 12px;
   }
 
   .tabbar__item--active {
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 45%, transparent);
+    color: var(--color-primary);
+  }
+
+  .tabbar__item--active::before {
+    transform: scale(1);
+  }
+
+  .tabbar__icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 24px;
+    transition: transform 0.15s ease;
+  }
+
+  .tabbar__label {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .tabbar__dot {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 0;
+    right: -3px;
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--tabbar-item-bg);
-  }
-
-  .tabbar__item--active .tabbar__dot {
-    box-shadow: 0 0 0 2px var(--color-primary);
+    box-shadow: 0 0 0 2px var(--tabbar-bg);
   }
 
   .app {
@@ -100,15 +120,10 @@
   }
 }
 
-@media (max-width: 359px) {
-  .tabbar__item {
-    width: 46px;
-    height: 46px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tabbar__item {
+  .tabbar__item,
+  .tabbar__item::before,
+  .tabbar__icon {
     transition: none;
   }
 }

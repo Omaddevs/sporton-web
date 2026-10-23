@@ -258,3 +258,51 @@
   }
 }
 
+
+/* Mobil: filtr chiplari gorizontal scroll, majmualar 2 ustunli kartalar */
+@media (max-width: 639px) {
+  .cc-panel {
+    gap: 14px;
+  }
+
+  .cc-toolbar__info h2 {
+    font-size: 17px;
+  }
+
+  .cc-chips {
+    flex-wrap: nowrap;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 2px var(--gutter) 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .cc-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cc-chip {
+    flex: none;
+    min-height: 38px;
+    border-color: var(--color-border);
+    border-radius: 12px;
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
+    white-space: nowrap;
+  }
+
+  .cc-chip.is-active {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .cc-chip--ghost {
+    box-shadow: none;
+  }
+
+  .cc-complex-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}

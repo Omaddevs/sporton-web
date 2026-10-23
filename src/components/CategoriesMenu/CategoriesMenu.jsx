@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronRight, Clock3, LayoutGrid } from 'lucide-react'
+import { ChevronRight, Clock3, LayoutGrid, X } from 'lucide-react'
 import { categoryMenuById, categoryMenuItems } from '../../data/categoryMenu.js'
 import DropPanel from '../ui/DropPanel.jsx'
+import useMediaQuery from '../../hooks/useMediaQuery.js'
 import './CategoriesMenu.css'
 
 const RECENT_KEY = 'sporton-recent-categories'
@@ -55,6 +56,9 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
     [recent],
   )
 
+  // Mobilda panel bottom sheet bo‘lib ochiladi — orqadagi sahifa scroll bo‘lmasin
+  const isSheet = useMediaQuery('(max-width: 639px)')
+
   const close = useCallback(() => onOpenChange(false), [onOpenChange])
   const toggle = useCallback(() => onOpenChange(!open), [onOpenChange, open])
 
@@ -77,6 +81,13 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
       document.removeEventListener('keydown', onKeyDown)
     }
   }, [open, close])
+
+  useEffect(() => {
+    if (!open || !isSheet) return undefined
+    const root = document.documentElement
+    root.classList.add('categories-sheet-open')
+    return () => root.classList.remove('categories-sheet-open')
+  }, [open, isSheet])
 
   function rememberCategory(id) {
     setRecent((prev) => {
@@ -122,6 +133,8 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
         },
       })}
 
+      <div className="categories-menu__backdrop" onClick={close} aria-hidden="true" />
+
       <DropPanel
         open={open}
         id={panelId}
@@ -131,6 +144,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
         aria-label="Sport turlari"
       >
         <span className="categories-menu__caret" aria-hidden="true" />
+        <span className="categories-menu__handle" aria-hidden="true" />
 
         <div className="categories-menu__header">
           <div className="categories-menu__title">
@@ -139,6 +153,15 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
             </span>
             <h2>Sport turlari</h2>
           </div>
+          <button
+            type="button"
+            className="categories-menu__close"
+            onClick={close}
+            aria-label="Yopish"
+            tabIndex={open ? 0 : -1}
+          >
+            <X size={18} strokeWidth={2.4} />
+          </button>
           <p className="categories-menu__tagline">
             Majmualar, mashg&apos;ulotlar va murabbiylar — bir joyda!
           </p>

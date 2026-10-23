@@ -12,8 +12,13 @@ export default function TabBar() {
   const { user } = useAuth()
 
   const tabs = [
-    { to: '/', label: 'Bosh sahifa', icon: <FiHome size={21} />, end: true },
-    { to: '/saqlanganlar', label: 'Saqlanganlar', icon: <HeartIcon size={22} strokeWidth={1.8} /> },
+    { to: '/', label: 'Bosh sahifa', short: 'Asosiy', icon: <FiHome size={21} />, end: true },
+    {
+      to: '/saqlanganlar',
+      label: 'Saqlanganlar',
+      short: 'Saqlangan',
+      icon: <HeartIcon size={22} strokeWidth={1.8} />,
+    },
     {
       to: '/xarita',
       label: 'Xarita',
@@ -29,19 +34,23 @@ export default function TabBar() {
   return (
     <nav className="tabbar" aria-label="Asosiy navigatsiya">
       <div className="tabbar__inner">
-        {tabs.map(({ to, label, icon, end, dot, prefetch }) => (
+        {tabs.map(({ to, label, short, icon, end, dot, prefetch }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) => `tabbar__item${isActive ? ' tabbar__item--active' : ''}`}
             aria-label={label}
-            title={label}
             onTouchStart={prefetch}
             onFocus={prefetch}
           >
-            {icon}
-            {dot ? <span className="tabbar__dot" aria-hidden="true" /> : null}
+            <span className="tabbar__icon">
+              {icon}
+              {dot ? <span className="tabbar__dot" aria-hidden="true" /> : null}
+            </span>
+            <span className="tabbar__label" aria-hidden="true">
+              {short ?? label}
+            </span>
           </NavLink>
         ))}
       </div>

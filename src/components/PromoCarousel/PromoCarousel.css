@@ -137,7 +137,8 @@
 
 @media (max-width: 639px) {
   .promo-carousel {
-    border-radius: 16px;
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(0, 120, 253, 0.22);
   }
 
   .promo-carousel__dots {

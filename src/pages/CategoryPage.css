@@ -24,44 +24,139 @@
   top: calc(var(--header-h) + 16px);
 }
 
+.cat-filters__sheet-head,
+.cat-filters-backdrop,
+.cat-filter-toggle {
+  display: none;
+}
+
+.cat-filters__group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 .cat-filters__group + .cat-filters__group {
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }
 
-.cat-filters__group h3 {
+.cat-filters__group legend {
+  float: left;
+  width: 100%;
   margin: 0 0 10px;
+  padding: 0;
   font-size: 13.5px;
   font-weight: 700;
   color: var(--color-text);
 }
 
+.cat-filters__group legend + * {
+  clear: both;
+}
+
 .cat-checks {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
+/* Maxsus checkbox: haqiqiy input ko‘rinmaydi, lekin klaviatura va screen reader uchun ishlaydi */
 .cat-check {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 32px;
+  padding: 2px 0;
   font-size: 13.5px;
   font-weight: 500;
   color: var(--color-text);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cat-check input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-primary);
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.cat-check__box {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--color-control-border);
+  border-radius: 6px;
+  background: var(--color-control);
+  color: transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.cat-check:hover .cat-check__box {
+  border-color: var(--color-primary);
+}
+
+.cat-check.is-checked .cat-check__box {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.cat-check input:focus-visible + .cat-check__box {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.cat-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cat-pill {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 999px;
+  background: var(--color-control);
+  color: var(--color-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.cat-pill:hover {
+  border-color: var(--color-primary);
+}
+
+.cat-pill.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.cat-pill:focus-visible,
+.cat-filter-toggle:focus-visible,
+.cat-active-chip:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Desktop: o‘zgarish darhol qo‘llanadi — «ko‘rsatish» tugmasi faqat sheet’da kerak */
+.cat-filters__footer {
+  margin-top: 18px;
 }
 
 .cat-filters__apply {
-  width: 100%;
-  margin-top: 20px;
+  display: none;
   border: none;
   border-radius: 15px;
   background: var(--color-primary);
@@ -77,17 +172,91 @@
 
 .cat-filters__clear {
   width: 100%;
-  margin-top: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  border: none;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   background: transparent;
   color: var(--color-primary);
   font-size: 13px;
   font-weight: 600;
-  padding: 8px;
+  padding: 10px;
+}
+
+.cat-filters__clear:disabled {
+  color: var(--color-text-subtle);
+  cursor: default;
+}
+
+/* Faol filtrlar chiplari */
+.cat-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.cat-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px 0 12px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.cat-active-chip:hover {
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.cat-active-chip--clear {
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.cat-active-chip--clear:hover {
+  background: var(--color-overlay);
+  color: var(--color-text);
+}
+
+.cat-filter-toggle {
+  position: relative;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 999px;
+  background: var(--color-control);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cat-filter-toggle.is-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cat-filter-toggle__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .cat-results__crumbs {
@@ -550,13 +719,158 @@
     grid-template-columns: 1fr;
   }
 
+  /* Filtr — bottom sheet: pastdan chiqadi, ichi scroll, natija tugmasi pastda qotgan */
+  .cat-filters-open .app-header {
+    z-index: var(--z-dropdown);
+  }
+
+  .cat-filters-open,
+  .cat-filters-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .cat-filters-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-dropdown) + 1);
+    background: rgba(8, 10, 16, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0s linear 0.28s;
+  }
+
+  .cat-filters-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.28s ease, visibility 0s linear 0s;
+  }
+
   .cat-filters {
-    position: static;
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: calc(var(--z-dropdown) + 2);
+    display: flex;
+    flex-direction: column;
+    max-height: 88dvh;
+    padding: 0;
+    border-radius: 24px 24px 0 0;
+    border-bottom: none;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.18);
+    transform: translate3d(0, 100%, 0);
+    visibility: hidden;
+    transition:
+      transform 0.36s cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s linear 0.36s;
+  }
+
+  .cat-filters.is-open {
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+    transition:
+      transform 0.36s cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s linear 0s;
+  }
+
+  .cat-filters__sheet-head {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 16px 12px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cat-filters__handle {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 40px;
+    height: 5px;
+    margin-left: -20px;
+    border-radius: 999px;
+    background: var(--color-control-border);
+  }
+
+  .cat-filters__sheet-head h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .cat-filters__close {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-overlay);
+    color: var(--color-text-muted);
+  }
+
+  .cat-filters__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+  }
+
+  .cat-filters__footer {
+    flex: none;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--color-border);
+    background: var(--color-card);
+  }
+
+  .cat-filters__clear {
+    width: auto;
+    padding: 0 16px;
+  }
+
+  .cat-filters__apply {
+    display: block;
+    min-height: 48px;
+  }
+
+  .cat-check {
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  .cat-pill {
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .cat-filter-toggle {
+    display: inline-flex;
   }
 
   .cat-results__head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .cat-results__meta {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .cat-header .cat-results__title h1 {
@@ -576,5 +890,100 @@
     grid-column: 1 / -1;
     flex-direction: row;
     justify-content: space-between;
+  }
+}
+
+/* Orqaga tugmasi faqat mobil sarlavhada */
+.cat-header__back {
+  display: none;
+}
+
+/* Mobil: breadcrumb o‘rnida orqaga tugmasi, tablar — segment pill */
+@media (max-width: 639px) {
+  .category-page {
+    padding-top: 8px;
+  }
+
+  .cat-header {
+    margin-bottom: 16px;
+  }
+
+  .cat-results__crumbs {
+    display: none;
+  }
+
+  .cat-header .cat-results__title {
+    gap: 10px;
+  }
+
+  .cat-header__back {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-card);
+    color: var(--color-text);
+    box-shadow: var(--shadow-card);
+  }
+
+  .cat-header__back:active {
+    transform: scale(0.94);
+  }
+
+  .cat-header .cat-results__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cat-header .cat-results__title h1 {
+    font-size: 20px;
+  }
+
+  .cat-header .cat-results__title p {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 12.5px;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .cat-tabs {
+    gap: 4px;
+    margin-top: 16px;
+    padding: 4px;
+    border: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .cat-tab {
+    flex: 1 0 auto;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .cat-tab::after {
+    display: none;
+  }
+
+  .cat-tab.is-active {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .cat-tab.is-active .cat-tab__count {
+    background: rgba(255, 255, 255, 0.24);
   }
 }

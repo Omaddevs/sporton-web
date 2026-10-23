@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Building2, LayoutGrid, Users } from 'lucide-react'
 import './Hero.css'
 
 const TABS = [
-  { id: 'jobs', label: 'Sport turlari' },
-  { id: 'companies', label: 'Majmualar' },
-  { id: 'courses', label: 'Murabbiylar', soon: true },
+  { id: 'jobs', label: 'Sport turlari', Icon: LayoutGrid },
+  { id: 'companies', label: 'Majmualar', Icon: Building2 },
+  { id: 'courses', label: 'Murabbiylar', Icon: Users, soon: true },
 ]
 
 export default function Hero({ activeTab = 'jobs', onTabChange }) {
@@ -82,6 +83,7 @@ export default function Hero({ activeTab = 'jobs', onTabChange }) {
                 className={`hero__tab${isActive ? ' hero__tab--active' : ''}${tab.soon ? ' hero__tab--soon' : ''}`}
                 onClick={() => onTabClick(tab)}
               >
+                <tab.Icon className="hero__tab-icon" size={15} strokeWidth={2.2} aria-hidden="true" />
                 {tab.label}
                 {tab.soon && <span className="hero__tab-badge">Soon</span>}
               </button>

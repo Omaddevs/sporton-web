@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Moon, Sun } from 'lucide-react'
-import { FiChevronDown, FiGlobe, FiMapPin } from 'react-icons/fi'
+import { FiChevronDown, FiGlobe, FiMapPin, FiUser } from 'react-icons/fi'
 import { LANGUAGES } from '../../data/languages.js'
 import { REGIONS } from '../../data/regions.js'
 import { useLocalStorageState } from '../../hooks/useLocalStorageState.js'
 import { useTheme } from '../../hooks/useTheme.js'
+import useMediaQuery from '../../hooks/useMediaQuery.js'
+import { useAuth } from '../../context/auth.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import DropPanel from '../ui/DropPanel.jsx'
 import NotificationBell from './NotificationBell.jsx'
@@ -13,6 +15,9 @@ import './TopBar.css'
 
 export default function TopBar() {
   const { theme, setTheme } = useTheme()
+  const { user } = useAuth()
+  // Mobilda logo o‘rnida salomlashuv bloki, hudud tanlash uning ichiga ko‘chadi
+  const isMobile = useMediaQuery('(max-width: 639px)')
   const [regionId, setRegionId] = useLocalStorageState('sporton-region', 'all')
   const [langId, setLangId] = useLocalStorageState('sporton-lang', 'uz')
   const [openMenu, setOpenMenu] = useState(null)
@@ -56,12 +61,65 @@ export default function TopBar() {
       language.id === 'en' ? 'en' : language.id === 'ru' ? 'ru' : 'uz'
   }, [language.id])
 
+  const initials = user ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() : ''
+
+  const regionDropdown = (
+    <Dropdown
+      ref={regionRef}
+      open={openMenu === 'region'}
+      onToggle={() => setOpenMenu((current) => (current === 'region' ? null : 'region'))}
+      trigger={
+        <>
+          <FiMapPin />
+          <span>{region.label}</span>
+          <FiChevronDown
+            className={`topbar__chevron ${openMenu === 'region' ? 'topbar__chevron--open' : ''}`}
+          />
+        </>
+      }
+      ariaLabel="Hududni tanlash"
+      menuClassName="topbar-menu--regions"
+      origin="start"
+    >
+      {REGIONS.map((item) => (
+        <DropdownOption
+          key={item.id}
+          selected={item.id === region.id}
+          onSelect={() => {
+            setRegionId(item.id)
+            closeMenus()
+          }}
+        >
+          {item.label}
+        </DropdownOption>
+      ))}
+    </Dropdown>
+  )
+
   return (
     <div className="topbar">
       <div className="container topbar__inner">
-        <Link to="/" className="topbar__logo" aria-label="SportON — bosh sahifa">
-          <BrandLogo tone="onPrimary" />
-        </Link>
+        {isMobile ? (
+          <div className="topbar__greet">
+            <Link
+              to={user ? '/profil' : '/kirish'}
+              className="topbar__avatar"
+              aria-label={user ? `Profil: ${user.firstName} ${user.lastName}` : 'Kirish'}
+            >
+              {initials || <FiUser aria-hidden="true" />}
+            </Link>
+            <div className="topbar__greet-text">
+              <span className="topbar__hello">
+                {user?.firstName ? `Salom, ${user.firstName}` : 'Xush kelibsiz'} 👋
+              </span>
+              {regionDropdown}
+            </div>
+          </div>
+        ) : (
+          <Link to="/" className="topbar__logo" aria-label="SportON — bosh sahifa">
+            <BrandLogo tone="onPrimary" />
+          </Link>
+        )}
 
         <div className="topbar__right">
           <NotificationBell
@@ -71,36 +129,7 @@ export default function TopBar() {
             onClose={closeMenus}
           />
 
-          <Dropdown
-            ref={regionRef}
-            open={openMenu === 'region'}
-            onToggle={() => setOpenMenu((current) => (current === 'region' ? null : 'region'))}
-            trigger={
-              <>
-                <FiMapPin />
-                <span>{region.label}</span>
-                <FiChevronDown
-                  className={`topbar__chevron ${openMenu === 'region' ? 'topbar__chevron--open' : ''}`}
-                />
-              </>
-            }
-            ariaLabel="Hududni tanlash"
-            menuClassName="topbar-menu--regions"
-            origin="start"
-          >
-            {REGIONS.map((item) => (
-              <DropdownOption
-                key={item.id}
-                selected={item.id === region.id}
-                onSelect={() => {
-                  setRegionId(item.id)
-                  closeMenus()
-                }}
-              >
-                {item.label}
-              </DropdownOption>
-            ))}
-          </Dropdown>
+          {isMobile ? null : regionDropdown}
 
           <div className="topbar__theme" role="group" aria-label="Mavzu">
             <button
