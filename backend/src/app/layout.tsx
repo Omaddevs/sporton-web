@@ -16,7 +16,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="uz" className={urbanist.variable}>
-      <body>{children}</body>
+      {/* Brauzer kengaytmalari (ColorZilla, Grammarly…) <body> ga atribut qo‘shadi — faqat shu element uchun e’tiborsiz */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   )
 }

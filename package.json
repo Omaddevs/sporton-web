@@ -9,7 +9,9 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "setup:api": "npm --prefix backend install && npm --prefix backend run db:setup && npm --prefix backend run admin:create"
+    "setup:api": "npm --prefix backend install && npm --prefix backend run db:setup && npm --prefix backend run admin:create",
+    "test": "node --test tests/*.test.js",
+    "test:all": "npm run lint && npm test && npm --prefix backend test && npm --prefix backend run typecheck"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

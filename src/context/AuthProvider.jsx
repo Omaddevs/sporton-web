@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as authApi from '../services/authApi.js'
 import { disablePush } from '../services/push.js'
+import { syncFavorites } from '../hooks/useSaved.js'
 import { AuthContext } from './auth.js'
 
 // Sessiyaning o‘zi httpOnly cookie’da. Bu yerda faqat UI darhol chizilishi uchun profil nusxasi
@@ -48,6 +49,12 @@ export default function AuthProvider({ children }) {
       active = false
     }
   }, [start])
+
+  // Saqlanganlar hisobga bog‘langan: foydalanuvchi o‘zgarganda serverdan qayta yuklanadi
+  const userId = user?.id ?? null
+  useEffect(() => {
+    syncFavorites(userId)
+  }, [userId])
 
   const login = useCallback((data) => authApi.login(data).then(start), [start])
   const register = useCallback((data) => authApi.register(data).then(start), [start])

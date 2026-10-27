@@ -17,6 +17,7 @@ import { REGIONS } from '../data/regions.js'
 import Select from '../components/ui/Select.jsx'
 import { formatLocal, formatPhone, isValidPhone, PHONE_PREFIX, toLocalDigits } from '../utils/phone.js'
 import './AddComplexPage.css'
+import { tr } from '../i18n/index.js'
 
 const MAX_DESCRIPTION = 600
 
@@ -35,25 +36,25 @@ const AMENITIES = [
 ]
 
 const SECTIONS = [
-  { id: 'basic', label: 'Asosiy ma’lumotlar' },
-  { id: 'location', label: 'Manzil' },
-  { id: 'pricing', label: 'Narx va ish vaqti' },
-  { id: 'amenities', label: 'Qulayliklar' },
-  { id: 'photos', label: 'Rasm va video' },
-  { id: 'contact', label: 'Aloqa' },
+  { id: 'basic', label: tr('Asosiy ma’lumotlar') },
+  { id: 'location', label: tr('Manzil') },
+  { id: 'pricing', label: tr('Narx va ish vaqti') },
+  { id: 'amenities', label: tr('Qulayliklar') },
+  { id: 'photos', label: tr('Rasm va video') },
+  { id: 'contact', label: tr('Aloqa') },
 ]
 
 function validate(form) {
   const errors = {}
-  if (form.name.trim().length < 3) errors.name = 'Majmua nomini kiriting'
-  if (form.sports.length === 0) errors.sports = 'Kamida bitta sport turini tanlang'
-  if (form.description.trim().length < 30) errors.description = 'Tavsif kamida 30 ta belgidan iborat bo‘lsin'
-  if (!form.address.trim()) errors.address = 'Manzilni kiriting'
-  if (!Number(form.price)) errors.price = 'Narxni kiriting'
-  if (!form.opens || !form.closes) errors.hours = 'Ish vaqtini kiriting'
-  if (isUploading(form.media)) errors.photos = 'Fayllar yuklanmoqda — tugashini kuting'
-  else if (readyMedia(form.media).length === 0) errors.photos = 'Kamida bitta rasm yoki video qo‘shing'
-  if (!isValidPhone(form.phone)) errors.phone = 'Telefon raqamni to‘liq kiriting'
+  if (form.name.trim().length < 3) errors.name = tr('Majmua nomini kiriting')
+  if (form.sports.length === 0) errors.sports = tr('Kamida bitta sport turini tanlang')
+  if (form.description.trim().length < 30) errors.description = tr('Tavsif kamida 30 ta belgidan iborat bo‘lsin')
+  if (!form.address.trim()) errors.address = tr('Manzilni kiriting')
+  if (!Number(form.price)) errors.price = tr('Narxni kiriting')
+  if (!form.opens || !form.closes) errors.hours = tr('Ish vaqtini kiriting')
+  if (isUploading(form.media)) errors.photos = tr('Fayllar yuklanmoqda — tugashini kuting')
+  else if (readyMedia(form.media).length === 0) errors.photos = tr('Kamida bitta rasm yoki video qo‘shing')
+  if (!isValidPhone(form.phone)) errors.phone = tr('Telefon raqamni to‘liq kiriting')
   return errors
 }
 
@@ -165,17 +166,16 @@ export default function AddComplexPage() {
           <span className="acf-success__icon" aria-hidden="true">
             <FiCheckCircle />
           </span>
-          <h1>Majmua moderatsiyaga yuborildi</h1>
+          <h1>{tr('Majmua moderatsiyaga yuborildi')}</h1>
           <p>
-            «{submitted.name}» ma’lumotlari tekshiruvga yuborildi. Odatda bu 24 soatgacha davom etadi —
-            natija haqida sizga xabar beramiz.
+            «{submitted.name}{tr('» ma’lumotlari tekshiruvga yuborildi. Odatda bu 24 soatgacha davom etadi — natija haqida sizga xabar beramiz.')}
           </p>
           <div className="acf-success__actions">
             <Link to="/profil" className="acf-btn acf-btn--primary">
-              Profilimga o‘tish
+              {tr('Profilimga o‘tish')}
             </Link>
             <Link to="/" className="acf-btn">
-              Bosh sahifa
+              {tr('Bosh sahifa')}
             </Link>
           </div>
         </div>
@@ -186,28 +186,27 @@ export default function AddComplexPage() {
   return (
     <div className="acf-page">
       <div className="container">
-        <nav className="acf-crumbs" aria-label="Breadcrumb">
-          <Link to="/">Bosh sahifa</Link>
+        <nav className="acf-crumbs" aria-label={tr('Breadcrumb')}>
+          <Link to="/">{tr('Bosh sahifa')}</Link>
           <span aria-hidden="true">/</span>
-          <span aria-current="page">Majmua qo‘shish</span>
+          <span aria-current="page">{tr('Majmua qo‘shish')}</span>
         </nav>
 
         <header className="acf-head">
-          <h1>Sport majmuasini qo‘shish</h1>
+          <h1>{tr('Sport majmuasini qo‘shish')}</h1>
           <p>
-            Ma’lumotlarni to‘ldiring — moderatsiyadan so‘ng majmuangiz minglab foydalanuvchilarga
-            ko‘rinadi.
+            {tr('Ma’lumotlarni to‘ldiring — moderatsiyadan so‘ng majmuangiz minglab foydalanuvchilarga ko‘rinadi.')}
           </p>
         </header>
 
         <form className="acf-layout" onSubmit={handleSubmit} noValidate>
           <div className="acf-sections">
-            <Section id="basic" index={1} title="Asosiy ma’lumotlar" text="Mijozlar birinchi ko‘radigan ma’lumotlar.">
-              <Control label="Majmua nomi" required error={errors.name}>
+            <Section id="basic" index={1} title={tr('Asosiy ma’lumotlar')} text={tr('Mijozlar birinchi ko‘radigan ma’lumotlar.')}>
+              <Control label={tr('Majmua nomi')} required error={errors.name}>
                 {(a11y) => (
                   <input
                     className="acf-input"
-                    placeholder="Masalan, Olimpiya Sport Majmuasi"
+                    placeholder={tr('Masalan, Olimpiya Sport Majmuasi')}
                     value={form.name}
                     onChange={(e) => set('name', e.target.value)}
                     {...a11y}
@@ -215,7 +214,7 @@ export default function AddComplexPage() {
                 )}
               </Control>
 
-              <Control label="Sport turlari" required error={errors.sports} hint="Bir nechtasini tanlash mumkin.">
+              <Control label={tr('Sport turlari')} required error={errors.sports} hint={tr('Bir nechtasini tanlash mumkin.')}>
                 {(a11y) => (
                   <div className="acf-chips" role="group" {...a11y}>
                     {SPORTS.map(({ id, title, Icon, iconColor }) => {
@@ -237,14 +236,14 @@ export default function AddComplexPage() {
                 )}
               </Control>
 
-              <Control label="Tavsif" required error={errors.description}>
+              <Control label={tr('Tavsif')} required error={errors.description}>
                 {(a11y) => (
                   <div className="acf-textarea">
                     <textarea
                       className="acf-input"
                       rows={5}
                       maxLength={MAX_DESCRIPTION}
-                      placeholder="Majmua, maydonlar, murabbiylar va xizmatlar haqida yozing…"
+                      placeholder={tr('Majmua, maydonlar, murabbiylar va xizmatlar haqida yozing…')}
                       value={form.description}
                       onChange={(e) => set('description', e.target.value)}
                       {...a11y}
@@ -257,18 +256,18 @@ export default function AddComplexPage() {
               </Control>
             </Section>
 
-            <Section id="location" index={2} title="Manzil" text="Mijozlar sizni xaritada oson topishi uchun.">
+            <Section id="location" index={2} title={tr('Manzil')} text={tr('Mijozlar sizni xaritada oson topishi uchun.')}>
               <div className="acf-grid">
-                <Control label="Viloyat / Shahar" required>
+                <Control label={tr('Viloyat / Shahar')} required>
                   {() => (
-                    <Select value={form.region} onChange={(v) => set('region', v)} options={REGION_OPTIONS} ariaLabel="Viloyat / Shahar" />
+                    <Select value={form.region} onChange={(v) => set('region', v)} options={REGION_OPTIONS} ariaLabel={tr('Viloyat / Shahar')} />
                   )}
                 </Control>
-                <Control label="Manzil" required error={errors.address}>
+                <Control label={tr('Manzil')} required error={errors.address}>
                   {(a11y) => (
                     <input
                       className="acf-input"
-                      placeholder="Ko‘cha, uy raqami"
+                      placeholder={tr('Ko‘cha, uy raqami')}
                       value={form.address}
                       onChange={(e) => set('address', e.target.value)}
                       {...a11y}
@@ -276,11 +275,11 @@ export default function AddComplexPage() {
                   )}
                 </Control>
               </div>
-              <Control label="Mo‘ljal" hint="Ixtiyoriy.">
+              <Control label={tr('Mo‘ljal')} hint={tr('Ixtiyoriy.')}>
                 {(a11y) => (
                   <input
                     className="acf-input"
-                    placeholder="Masalan, Minor metro bekati yonida"
+                    placeholder={tr('Masalan, Minor metro bekati yonida')}
                     value={form.landmark}
                     onChange={(e) => set('landmark', e.target.value)}
                     {...a11y}
@@ -289,9 +288,9 @@ export default function AddComplexPage() {
               </Control>
             </Section>
 
-            <Section id="pricing" index={3} title="Narx va ish vaqti">
+            <Section id="pricing" index={3} title={tr('Narx va ish vaqti')}>
               <div className="acf-grid acf-grid--3">
-                <Control label="Narx (1 soat)" required error={errors.price}>
+                <Control label={tr('Narx (1 soat)')} required error={errors.price}>
                   {(a11y) => (
                     <div className="acf-input acf-input--group">
                       <input
@@ -301,16 +300,16 @@ export default function AddComplexPage() {
                         onChange={(e) => set('price', e.target.value.replace(/\D/g, '').slice(0, 9))}
                         {...a11y}
                       />
-                      <span className="acf-input__suffix">so‘m</span>
+                      <span className="acf-input__suffix">{tr('so‘m')}</span>
                     </div>
                   )}
                 </Control>
-                <Control label="Ochilish" required error={errors.hours}>
+                <Control label={tr('Ochilish')} required error={errors.hours}>
                   {(a11y) => (
                     <input type="time" className="acf-input" value={form.opens} onChange={(e) => set('opens', e.target.value)} {...a11y} />
                   )}
                 </Control>
-                <Control label="Yopilish" required>
+                <Control label={tr('Yopilish')} required>
                   {(a11y) => (
                     <input type="time" className="acf-input" value={form.closes} onChange={(e) => set('closes', e.target.value)} {...a11y} />
                   )}
@@ -318,7 +317,7 @@ export default function AddComplexPage() {
               </div>
             </Section>
 
-            <Section id="amenities" index={4} title="Qulayliklar" text="Majmuangizda mavjud bo‘lganlarini belgilang.">
+            <Section id="amenities" index={4} title={tr('Qulayliklar')} text={tr('Majmuangizda mavjud bo‘lganlarini belgilang.')}>
               <div className="acf-checks">
                 {AMENITIES.map((item) => (
                   <label key={item} className={`acf-check ${form.amenities.includes(item) ? 'is-active' : ''}`}>
@@ -335,8 +334,8 @@ export default function AddComplexPage() {
             <Section
               id="photos"
               index={5}
-              title="Rasm va video"
-              text="Sifatli rasm va videolar ko‘proq bron olib keladi. Istalgancha qo‘shing — birinchi rasm muqova bo‘ladi."
+              title={tr('Rasm va video')}
+              text={tr('Sifatli rasm va videolar ko‘proq bron olib keladi. Istalgancha qo‘shing — birinchi rasm muqova bo‘ladi.')}
             >
               <MediaUploader
                 value={form.media}
@@ -351,9 +350,9 @@ export default function AddComplexPage() {
               )}
             </Section>
 
-            <Section id="contact" index={6} title="Aloqa" text="Bron va savollar uchun mijozlar shu raqamga murojaat qiladi.">
+            <Section id="contact" index={6} title={tr('Aloqa')} text={tr('Bron va savollar uchun mijozlar shu raqamga murojaat qiladi.')}>
               <div className="acf-grid">
-                <Control label="Telefon raqam" required error={errors.phone}>
+                <Control label={tr('Telefon raqam')} required error={errors.phone}>
                   {(a11y) => (
                     <div className="acf-input acf-input--group">
                       <span className="acf-input__prefix">{PHONE_PREFIX}</span>
@@ -368,11 +367,11 @@ export default function AddComplexPage() {
                     </div>
                   )}
                 </Control>
-                <Control label="Telegram" hint="Ixtiyoriy.">
+                <Control label={tr('Telegram')} hint={tr('Ixtiyoriy.')}>
                   {(a11y) => (
                     <input
                       className="acf-input"
-                      placeholder="@username"
+                      placeholder={'@username'}
                       value={form.telegram}
                       onChange={(e) => set('telegram', e.target.value)}
                       {...a11y}
@@ -386,10 +385,10 @@ export default function AddComplexPage() {
           <aside className="acf-aside">
             <div className="acf-card">
               <div className="acf-progress__head">
-                <p className="acf-aside__label">To‘ldirilganlik</p>
+                <p className="acf-aside__label">{tr('To‘ldirilganlik')}</p>
                 <strong>{percent}%</strong>
               </div>
-              <div className="acf-progress__bar" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label="To‘ldirilganlik">
+              <div className="acf-progress__bar" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label={tr('To‘ldirilganlik')}>
                 <span style={{ width: `${percent}%` }} />
               </div>
               <ul className="acf-progress__list">
@@ -412,26 +411,26 @@ export default function AddComplexPage() {
               )}
               <button type="submit" className="acf-btn acf-btn--primary acf-submit" disabled={submitting} aria-busy={submitting}>
                 {submitting && <span className="acf-spinner" aria-hidden="true" />}
-                Moderatsiyaga yuborish
+                {tr('Moderatsiyaga yuborish')}
               </button>
-              <p className="acf-note">Tekshiruv 24 soatgacha davom etadi. Joylash bepul.</p>
+              <p className="acf-note">{tr('Tekshiruv 24 soatgacha davom etadi. Joylash bepul.')}</p>
             </div>
             <div className="acf-card acf-preview">
-              <p className="acf-aside__label">Ko‘rinishi</p>
+              <p className="acf-aside__label">{tr('Ko‘rinishi')}</p>
               <div className="acf-preview__media">
                 {coverUrl ? (
                   <img src={coverUrl} alt="" />
                 ) : (
                   <span>
                     <FiImage aria-hidden="true" />
-                    Muqova rasmi
+                    {tr('Muqova rasmi')}
                   </span>
                 )}
               </div>
               <p className="acf-preview__price">
-                {form.price ? `${Number(form.price).toLocaleString('ru-RU')} so‘mdan` : 'Narx ko‘rsatilmagan'}
+                {form.price ? `${Number(form.price).toLocaleString('ru-RU')} so‘mdan` : tr('Narx ko‘rsatilmagan')}
               </p>
-              <p className="acf-preview__name">{form.name || 'Majmua nomi'}</p>
+              <p className="acf-preview__name">{form.name || tr('Majmua nomi')}</p>
               <p className="acf-preview__meta">
                 <FiMapPin aria-hidden="true" />
                 {regionLabel}

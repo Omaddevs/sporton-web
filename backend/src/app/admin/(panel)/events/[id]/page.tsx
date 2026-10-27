@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { Copy, ExternalLink } from 'lucide-react'
 import { getDb } from '@/db'
-import { events } from '@/db/schema'
+import { eventRegistrations, events, users } from '@/db/schema'
 import ConfirmButton from '@/components/admin/ConfirmButton'
 import EventForm from '@/components/admin/EventForm'
-import { Flash, PageHeader, StatusBadge } from '@/components/admin/ui'
+import { Empty, Flash, PageHeader, StatusBadge } from '@/components/admin/ui'
 import { formatDateTime, requireStaff } from '@/lib/admin'
+import { formatPhone } from '@/lib/phone'
 import { deleteEvent, duplicateEvent, updateEvent } from '../actions'
 import { eventCategories } from '../categories'
 
@@ -22,6 +23,12 @@ export default async function EditEventPage({
   const db = await getDb()
   const [item] = await db.select().from(events).where(eq(events.id, decodeURIComponent(id))).limit(1)
   if (!item) notFound()
+  const participants = await db
+    .select({ at: eventRegistrations.createdAt, firstName: users.firstName, lastName: users.lastName, phone: users.phone })
+    .from(eventRegistrations)
+    .innerJoin(users, eq(users.id, eventRegistrations.userId))
+    .where(eq(eventRegistrations.eventId, item.id))
+    .orderBy(desc(eventRegistrations.createdAt))
   const siteUrl = process.env.PUBLIC_SITE_URL?.replace(/\/$/, '')
 
   return (
@@ -57,6 +64,38 @@ export default async function EditEventPage({
         }
       />
       <Flash params={await searchParams} />
+      <section className="card" style={{ marginBottom: 20 }}>
+        <div className="card-head">
+          <h2>Saytdan ro‘yxatdan o‘tganlar ({participants.length})</h2>
+          <span className="muted">
+            Jami: {item.registered + participants.length} / {item.capacity} (oflayn: {item.registered})
+          </span>
+        </div>
+        {participants.length ? (
+          <div className="table-wrap">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Ishtirokchi</th>
+                  <th>Telefon</th>
+                  <th>Ro‘yxatdan o‘tgan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {participants.map((p, i) => (
+                  <tr key={i}>
+                    <td className="cell-main">{`${p.firstName} ${p.lastName}`.trim()}</td>
+                    <td>{p.phone ? <a href={`tel:+998${p.phone}`}>{formatPhone(p.phone)}</a> : '—'}</td>
+                    <td className="nowrap">{formatDateTime(p.at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Empty title="Hali hech kim yozilmagan">Saytdagi «Ro‘yxatdan o‘tish» tugmasi orqali yozilganlar shu yerda chiqadi.</Empty>
+        )}
+      </section>
       <EventForm item={item} action={updateEvent} submitLabel="Saqlash" categories={await eventCategories()} />
     </>
   )

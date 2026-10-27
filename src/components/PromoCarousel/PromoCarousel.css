@@ -6,7 +6,7 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  /* Banner rasmlarining fon rangi — rasm yonlari shu rang bilan to'ladi */
+  /* Rasm yuklanguncha ko'rinadigan fon */
   background: #0078fd;
   box-shadow: var(--shadow-card);
   /* Safari'da border-radius ichidagi transform kesilishi uchun */
@@ -37,9 +37,14 @@
 .promo-carousel__slide {
   flex: 0 0 100%;
   min-width: 0;
-  /* Keng ekranda 315px, tor ekranda rasm nisbatida kichrayadi */
-  aspect-ratio: 851 / 315;
-  max-height: 315px;
+  /* Qat'iy nisbat: admin paneldagi kesish (24:5 va 2:1) bilan bir xil, rasm to'liq egallaydi */
+  aspect-ratio: 24 / 5;
+}
+
+@media (max-width: 639px) {
+  .promo-carousel__slide {
+    aspect-ratio: 2 / 1;
+  }
 }
 
 .promo-carousel__link {
@@ -48,51 +53,18 @@
   -webkit-user-drag: none;
 }
 
+.promo-carousel__link picture {
+  display: block;
+  height: 100%;
+}
+
 .promo-carousel__image {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   pointer-events: none;
   -webkit-user-drag: none;
-}
-
-/* Logo suv belgisi — rasm yonidagi bo'sh ko'k joyda */
-.promo-carousel__decor {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.promo-carousel__watermark {
-  position: absolute;
-  height: auto;
-  user-select: none;
-  opacity: 0.18;
-  filter: brightness(0) invert(1);
-}
-
-.promo-carousel__watermark--left {
-  left: -40px;
-  bottom: -56px;
-  width: 300px;
-  transform: rotate(-8deg);
-}
-
-.promo-carousel__watermark--right {
-  right: -32px;
-  top: -40px;
-  width: 260px;
-  opacity: 0.14;
-  transform: rotate(6deg);
-}
-
-@media (min-width: 1200px) {
-  .promo-carousel__decor {
-    display: block;
-  }
 }
 
 .promo-carousel__dots {

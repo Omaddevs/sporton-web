@@ -1,5 +1,6 @@
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import './Pagination.css'
+import { tr } from '../../i18n/index.js'
 
 /** 1 … 4 5 [6] 7 8 … 20 ko‘rinishidagi sahifalar ro‘yxati */
 function getPages(current, total, siblings = 1) {
@@ -20,16 +21,16 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
   if (totalPages <= 1) return null
 
   return (
-    <nav className={`pagination ${className}`} aria-label="Sahifalar">
+    <nav className={`pagination ${className}`} aria-label={tr('Sahifalar')}>
       <button
         type="button"
         className="pagination__arrow"
-        aria-label="Oldingi sahifa"
+        aria-label={tr('Oldingi sahifa')}
         disabled={page === 1}
         onClick={() => onChange(page - 1)}
       >
         <FiChevronLeft />
-        <span className="pagination__arrow-label">Oldingi</span>
+        <span className="pagination__arrow-label">{tr('Oldingi')}</span>
       </button>
 
       <ul className="pagination__list">
@@ -57,11 +58,11 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
       <button
         type="button"
         className="pagination__arrow"
-        aria-label="Keyingi sahifa"
+        aria-label={tr('Keyingi sahifa')}
         disabled={page === totalPages}
         onClick={() => onChange(page + 1)}
       >
-        <span className="pagination__arrow-label">Keyingi</span>
+        <span className="pagination__arrow-label">{tr('Keyingi')}</span>
         <FiChevronRight />
       </button>
     </nav>

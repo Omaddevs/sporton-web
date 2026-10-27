@@ -32,6 +32,7 @@ import { companies } from '../data/companies.js'
 import { courses } from '../data/courses.js'
 import { toggleSaved, useSavedList } from '../hooks/useSaved.js'
 import './SavedPage.css'
+import { tr } from '../i18n/index.js'
 
 const COURSE_ICONS = {
   dumbbell: Dumbbell,
@@ -45,22 +46,22 @@ const COURSE_ICONS = {
 }
 
 const TABS = [
-  { id: 'jobs', label: 'Bo‘sh joylar', icon: CalendarCheck },
-  { id: 'companies', label: 'Majmualar', icon: Building2 },
-  { id: 'courses', label: 'Mashg‘ulotlar', icon: Dumbbell },
+  { id: 'jobs', label: tr('Bo‘sh joylar'), icon: CalendarCheck },
+  { id: 'companies', label: tr('Majmualar'), icon: Building2 },
+  { id: 'courses', label: tr('Mashg‘ulotlar'), icon: Dumbbell },
 ]
 
 const SORT_OPTIONS = [
-  { id: 'newest', label: 'Eng yangi' },
-  { id: 'oldest', label: 'Eng eski' },
-  { id: 'views', label: "Ko'p ko'rilgan" },
+  { id: 'newest', label: tr('Eng yangi') },
+  { id: 'oldest', label: tr('Eng eski') },
+  { id: 'views', label: tr('Ko\'p ko\'rilgan') },
   { id: 'az', label: 'A–Z' },
 ]
 
 
 function VerifiedBadge() {
   return (
-    <span className="saved-verified" title="Tasdiqlangan" aria-label="Tasdiqlangan">
+    <span className="saved-verified" title={tr('Tasdiqlangan')} aria-label={tr('Tasdiqlangan')}>
       <Check size={9} strokeWidth={3.5} />
     </span>
   )
@@ -156,21 +157,21 @@ export default function SavedPage() {
 
   const emptyCopy = {
     jobs: {
-      title: "Saqlangan joylar yo'q",
-      text: "Yoqtirgan maydon va zallaringizni yurakcha orqali saqlang — ular shu yerda paydo bo'ladi.",
-      cta: "Bo'sh joylarni ko'rish",
+      title: tr('Saqlangan joylar yo\'q'),
+      text: tr('Yoqtirgan maydon va zallaringizni yurakcha orqali saqlang — ular shu yerda paydo bo\'ladi.'),
+      cta: tr('Bo\'sh joylarni ko\'rish'),
       to: '/bron',
     },
     companies: {
-      title: "Saqlangan majmualar yo'q",
-      text: "Sevimli majmualaringizni saqlang va bo'sh vaqtlarini kuzatib boring.",
-      cta: "Majmualarni ko'rish",
+      title: tr('Saqlangan majmualar yo\'q'),
+      text: tr('Sevimli majmualaringizni saqlang va bo\'sh vaqtlarini kuzatib boring.'),
+      cta: tr('Majmualarni ko\'rish'),
       to: '/majmualar',
     },
     courses: {
-      title: "Saqlangan mashg'ulotlar yo'q",
-      text: "Qiziqarli mashg'ulot dasturlarini saqlang va keyinroq qayting.",
-      cta: "Mashg'ulotlarni ko'rish",
+      title: tr('Saqlangan mashg\'ulotlar yo\'q'),
+      text: tr('Qiziqarli mashg\'ulot dasturlarini saqlang va keyinroq qayting.'),
+      cta: tr('Mashg\'ulotlarni ko\'rish'),
       to: '/#majmualar',
     },
   }
@@ -188,7 +189,7 @@ export default function SavedPage() {
               <span className="saved-hero__icon" aria-hidden="true">
                 <Heart size={28} fill="currentColor" strokeWidth={0} />
               </span>
-              Saqlanganlar
+              {tr('Saqlanganlar')}
             </h1>
             <p className="saved-hero__sub">
               Yoqtirgan maydonlar, majmualar va mashg&apos;ulotlaringiz — barchasi bir joyda.
@@ -196,7 +197,7 @@ export default function SavedPage() {
           </div>
         </header>
 
-        <div className="saved-tabs" role="tablist" aria-label="Saqlanganlar bo'limi">
+        <div className="saved-tabs" role="tablist" aria-label={tr('Saqlanganlar bo\'limi')}>
           {TABS.map((item) => {
             const Icon = item.icon
             const active = tab === item.id
@@ -229,22 +230,22 @@ export default function SavedPage() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={
                 tab === 'jobs'
-                  ? "Saqlangan joylar ichidan qidirish..."
+                  ? tr('Saqlangan joylar ichidan qidirish...')
                   : tab === 'companies'
-                    ? 'Majmua nomi bo‘yicha qidirish...'
-                    : 'Mashg‘ulot yoki murabbiy bo‘yicha qidirish...'
+                    ? tr('Majmua nomi bo‘yicha qidirish...')
+                    : tr('Mashg‘ulot yoki murabbiy bo‘yicha qidirish...')
               }
-              aria-label="Saqlanganlar ichidan qidirish"
+              aria-label={tr('Saqlanganlar ichidan qidirish')}
             />
           </label>
 
           <div className="saved-sort">
-            <span className="saved-sort__label">Saralash</span>
+            <span className="saved-sort__label">{tr('Saralash')}</span>
             <Select
               value={sort}
               onChange={setSort}
               options={SORT_OPTIONS}
-              ariaLabel="Saralash"
+              ariaLabel={tr('Saralash')}
               size="sm"
               className="saved-sort__select"
             />
@@ -357,12 +358,12 @@ function SavedJobCard({ job, onUnsave }) {
         <button
           type="button"
           className="saved-card__heart is-active"
-          aria-label="Saqlashdan olib tashlash"
+          aria-label={tr('Saqlashdan olib tashlash')}
           onClick={onUnsave}
         >
           <Heart size={18} fill="currentColor" strokeWidth={0} />
         </button>
-        <button type="button" className="saved-card__more" aria-label="Qo'shimcha">
+        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
           <MoreVertical size={18} strokeWidth={2.25} />
         </button>
       </div>
@@ -388,13 +389,13 @@ function SavedCompanyCard({ company, onUnsave }) {
           <div className="saved-card__sub">
             <span className="saved-card__loc">
               <FiCalendar aria-hidden />
-              {company.adsCount} ta xizmat
+              {company.adsCount} {tr('ta xizmat')}
             </span>
           </div>
           <div className="saved-card__tags">
-            <span className="saved-tag saved-tag--pink">Majmua</span>
+            <span className="saved-tag saved-tag--pink">{tr('Majmua')}</span>
             {company.verified ? (
-              <span className="saved-tag saved-tag--green">Tasdiqlangan</span>
+              <span className="saved-tag saved-tag--green">{tr('Tasdiqlangan')}</span>
             ) : null}
           </div>
         </div>
@@ -402,7 +403,7 @@ function SavedCompanyCard({ company, onUnsave }) {
         <div className="saved-card__meta">
           <span className="saved-card__stat">
             <FiTrendingUp aria-hidden />
-            Faol majmua
+            {tr('Faol majmua')}
           </span>
         </div>
       </div>
@@ -415,12 +416,12 @@ function SavedCompanyCard({ company, onUnsave }) {
         <button
           type="button"
           className="saved-card__heart is-active"
-          aria-label="Saqlashdan olib tashlash"
+          aria-label={tr('Saqlashdan olib tashlash')}
           onClick={onUnsave}
         >
           <Heart size={18} fill="currentColor" strokeWidth={0} />
         </button>
-        <button type="button" className="saved-card__more" aria-label="Qo'shimcha">
+        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
           <MoreVertical size={18} strokeWidth={2.25} />
         </button>
       </div>
@@ -466,12 +467,12 @@ function SavedCourseCard({ course, onUnsave }) {
         <button
           type="button"
           className="saved-card__heart is-active"
-          aria-label="Saqlashdan olib tashlash"
+          aria-label={tr('Saqlashdan olib tashlash')}
           onClick={onUnsave}
         >
           <Heart size={18} fill="currentColor" strokeWidth={0} />
         </button>
-        <button type="button" className="saved-card__more" aria-label="Qo'shimcha">
+        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
           <MoreVertical size={18} strokeWidth={2.25} />
         </button>
       </div>

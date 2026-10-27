@@ -1,3 +1,4 @@
+import { tr } from '../../i18n/index.js'
 import { useId, useRef, useState } from 'react'
 import { FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi'
 import { FcGoogle } from 'react-icons/fc'
@@ -78,7 +79,7 @@ export function PasswordInput({ label = 'Parol', error, hint, ...props }) {
             type="button"
             className="auth-input__toggle"
             onClick={() => setVisible((v) => !v)}
-            aria-label={visible ? 'Parolni yashirish' : 'Parolni ko‘rsatish'}
+            aria-label={visible ? tr('Parolni yashirish') : tr('Parolni ko‘rsatish')}
             aria-pressed={visible}
           >
             {visible ? <FiEye /> : <FiEyeOff />}
@@ -139,7 +140,7 @@ export function OtpInput({ length = 6, value, onChange, error, disabled, autoFoc
   }
 
   return (
-    <div className={`auth-otp ${error ? 'has-error' : ''}`} role="group" aria-label="Tasdiqlash kodi">
+    <div className={`auth-otp ${error ? 'has-error' : ''}`} role="group" aria-label={tr('Tasdiqlash kodi')}>
       {digits.map((digit, index) => (
         <input
           key={index}
@@ -166,16 +167,34 @@ export function OtpInput({ length = 6, value, onChange, error, disabled, autoFoc
   )
 }
 
+// Ijtimoiy kirish hozircha o‘chiq: hisob faqat Telegram bot orqali tasdiqlangan raqam bilan ochiladi
+const SOCIAL_SOON = true
+
 export function SocialButtons({ onSelect, loading }) {
+  const soon = SOCIAL_SOON && <span className="auth-social__soon">{tr('Tez orada')}</span>
   return (
     <div className="auth-social">
-      <button type="button" className="auth-social__btn" onClick={() => onSelect('google')} disabled={Boolean(loading)}>
+      <button
+        type="button"
+        className="auth-social__btn"
+        onClick={() => onSelect('google')}
+        disabled={SOCIAL_SOON || Boolean(loading)}
+        aria-label={SOCIAL_SOON ? tr('Google orqali kirish — tez orada') : undefined}
+      >
         {loading === 'google' ? <Spinner /> : <FcGoogle />}
-        Google
+        {tr('Google')}
+        {soon}
       </button>
-      <button type="button" className="auth-social__btn" onClick={() => onSelect('telegram')} disabled={Boolean(loading)}>
+      <button
+        type="button"
+        className="auth-social__btn"
+        onClick={() => onSelect('telegram')}
+        disabled={SOCIAL_SOON || Boolean(loading)}
+        aria-label={SOCIAL_SOON ? tr('Telegram orqali kirish — tez orada') : undefined}
+      >
         {loading === 'telegram' ? <Spinner /> : <FaTelegram className="auth-social__tg" />}
-        Telegram
+        {tr('Telegram')}
+        {soon}
       </button>
     </div>
   )

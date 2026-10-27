@@ -1,10 +1,10 @@
+import { tr } from '../i18n/index.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   FiArrowLeft,
   FiArrowRight,
   FiArrowUpRight,
-  FiBookmark,
   FiCalendar,
   FiCheck,
   FiClock,
@@ -19,6 +19,9 @@ import {
 import { FaFacebookF, FaLinkedinIn, FaTelegram, FaXTwitter } from 'react-icons/fa6'
 import LogoIcon from '../components/icons/LogoIcon.jsx'
 import { allNews, formatRelative, getRelatedNews, latestNews } from '../data/news.js'
+import { useAuthGate } from '../hooks/useAuthGate.jsx'
+import { useLike } from '../hooks/useLike.js'
+import { useSeo } from '../hooks/useSeo.js'
 import { useAuth } from '../context/auth.js'
 import { api } from '../services/apiClient.js'
 import { isEmbed } from '../utils/media.js'
@@ -48,9 +51,9 @@ function NewsNotFound() {
   return (
     <div className="news-page">
       <div className="container news-notfound">
-        <h1>Maqola topilmadi</h1>
-        <p>Bu maqola o‘chirilgan yoki manzil noto‘g‘ri.</p>
-        <Link to="/" className="news-notfound__btn">Bosh sahifaga qaytish</Link>
+        <h1>{tr('Maqola topilmadi')}</h1>
+        <p>{tr('Bu maqola o‘chirilgan yoki manzil noto‘g‘ri.')}</p>
+        <Link to="/" className="news-notfound__btn">{tr('Bosh sahifaga qaytish')}</Link>
       </div>
     </div>
   )
@@ -58,15 +61,16 @@ function NewsNotFound() {
 
 function NewsDetailView({ newsId }) {
   const news = useMemo(() => getArticleById(newsId), [newsId])
+  useSeo({ title: news.title, description: news.excerpt, image: news.image, type: 'article' })
   const related = useMemo(() => getRelatedNews(news.id, 3), [news.id])
   const sidebarNews = useMemo(
     () => latestNews.filter((n) => n.id !== news.id).slice(0, 4),
     [news.id],
   )
 
-  const [liked, setLiked] = useState(false)
+  // Layklar serverda: haqiqiy soni, mehmonga ro‘yxatdan o‘tish oynasi
+  const { liked, count: likeCount, toggle: toggleLike } = useLike('news', news.id)
   const [commentCount, setCommentCount] = useState(null)
-  const [saved, setSaved] = useState(false)
   const [copied, setCopied] = useState(false)
   const articleRef = useRef(null)
   const commentsRef = useRef(null)
@@ -76,7 +80,6 @@ function NewsDetailView({ newsId }) {
     window.scrollTo({ top: 0 })
   }, [])
 
-  const likeCount = news.likes + (liked ? 1 : 0)
   const pageUrl = typeof window !== 'undefined' ? window.location.href : ''
 
   const copyLink = async () => {
@@ -106,10 +109,10 @@ function NewsDetailView({ newsId }) {
 
   const enc = encodeURIComponent
   const shareLinks = [
-    { label: 'Telegram', icon: <FaTelegram />, href: `https://t.me/share/url?url=${enc(pageUrl)}&text=${enc(news.title)}` },
-    { label: 'Facebook', icon: <FaFacebookF />, href: `https://www.facebook.com/sharer/sharer.php?u=${enc(pageUrl)}` },
+    { label: tr('Telegram'), icon: <FaTelegram />, href: `https://t.me/share/url?url=${enc(pageUrl)}&text=${enc(news.title)}` },
+    { label: tr('Facebook'), icon: <FaFacebookF />, href: `https://www.facebook.com/sharer/sharer.php?u=${enc(pageUrl)}` },
     { label: 'X', icon: <FaXTwitter />, href: `https://x.com/intent/tweet?url=${enc(pageUrl)}&text=${enc(news.title)}` },
-    { label: 'LinkedIn', icon: <FaLinkedinIn />, href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(pageUrl)}` },
+    { label: tr('LinkedIn'), icon: <FaLinkedinIn />, href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(pageUrl)}` },
   ]
 
   return (
@@ -117,10 +120,10 @@ function NewsDetailView({ newsId }) {
       <div className="news-detail__progress" style={{ transform: `scaleX(${progress})` }} />
 
       <div className="container">
-        <nav className="news-detail__crumbs" aria-label="Breadcrumb">
-          <Link to="/">Bosh sahifa</Link>
+        <nav className="news-detail__crumbs" aria-label={tr('Breadcrumb')}>
+          <Link to="/">{tr('Bosh sahifa')}</Link>
           <span>/</span>
-          <Link to="/#yangiliklar">Yangiliklar</Link>
+          <Link to="/#yangiliklar">{tr('Yangiliklar')}</Link>
           <span>/</span>
           <strong>{news.category}</strong>
         </nav>
@@ -145,7 +148,7 @@ function NewsDetailView({ newsId }) {
             </div>
             <ul className="news-head__stats">
               <li><FiCalendar /> {news.date}</li>
-              <li><FiClock /> {news.readTime} daqiqa o‘qish</li>
+              <li><FiClock /> {news.readTime} {tr('daqiqa o‘qish')}</li>
               <li><FiEye /> {news.views.toLocaleString('ru-RU')}</li>
             </ul>
           </div>
@@ -158,31 +161,22 @@ function NewsDetailView({ newsId }) {
 
         <div className="news-detail__grid">
           {/* ===== Chap: harakatlar paneli ===== */}
-          <aside className="news-rail" aria-label="Maqola amallari">
+          <aside className="news-rail" aria-label={tr('Maqola amallari')}>
             <button
               type="button"
               className={`news-rail__btn ${liked ? 'is-active' : ''}`}
-              onClick={() => setLiked((v) => !v)}
+              onClick={toggleLike}
               aria-pressed={liked}
-              aria-label="Yoqdi"
+              aria-label={tr('Yoqdi')}
             >
               <FiHeart />
               <span>{likeCount}</span>
             </button>
-            <button type="button" className="news-rail__btn" onClick={scrollToComments} aria-label="Izohlar">
+            <button type="button" className="news-rail__btn" onClick={scrollToComments} aria-label={tr('Izohlar')}>
               <FiMessageCircle />
               <span>{commentCount ?? news.commentsCount ?? 0}</span>
             </button>
-            <button
-              type="button"
-              className={`news-rail__btn ${saved ? 'is-active' : ''}`}
-              onClick={() => setSaved((v) => !v)}
-              aria-pressed={saved}
-              aria-label="Saqlash"
-            >
-              <FiBookmark />
-            </button>
-            <button type="button" className="news-rail__btn" onClick={share} aria-label="Ulashish">
+            <button type="button" className="news-rail__btn" onClick={share} aria-label={tr('Ulashish')}>
               {copied ? <FiCheck /> : <FiShare2 />}
             </button>
           </aside>
@@ -207,7 +201,7 @@ function NewsDetailView({ newsId }) {
               {news.gallery?.length > 0 && <ArticleGallery items={news.gallery} />}
 
               <div className="news-article__tags">
-                <span>Mavzular</span>
+                <span>{tr('Mavzular')}</span>
                 {news.tags.map((t) => (
                   <Link key={t} to="/#yangiliklar" className="news-tag">
                     {t}
@@ -218,18 +212,18 @@ function NewsDetailView({ newsId }) {
 
             <section className="news-share">
               <div className="news-share__text">
-                <h2>Maqola foydali bo‘ldimi?</h2>
-                <p>Yoqtirganingizni bildiring yoki do‘stlaringiz bilan ulashing.</p>
+                <h2>{tr('Maqola foydali bo‘ldimi?')}</h2>
+                <p>{tr('Yoqtirganingizni bildiring yoki do‘stlaringiz bilan ulashing.')}</p>
               </div>
               <div className="news-share__actions">
                 <button
                   type="button"
                   className={`news-share__like ${liked ? 'is-active' : ''}`}
-                  onClick={() => setLiked((v) => !v)}
+                  onClick={toggleLike}
                   aria-pressed={liked}
                 >
                   <FiHeart />
-                  Yoqdi
+                  {tr('Yoqdi')}
                   <span>{likeCount}</span>
                 </button>
                 {shareLinks.map((s) => (
@@ -248,17 +242,17 @@ function NewsDetailView({ newsId }) {
                   type="button"
                   className="news-share__icon"
                   onClick={copyLink}
-                  aria-label="Havolani nusxalash"
+                  aria-label={tr('Havolani nusxalash')}
                 >
                   {copied ? <FiCheck /> : <FiLink />}
                 </button>
               </div>
             </section>
 
-            <nav className="news-pager" aria-label="Boshqa maqolalar">
+            <nav className="news-pager" aria-label={tr('Boshqa maqolalar')}>
               {news.prev ? (
                 <Link to={`/yangilik/${news.prev.id}`} className="news-pager__item">
-                  <span><FiArrowLeft /> Oldingi maqola</span>
+                  <span><FiArrowLeft /> {tr('Oldingi maqola')}</span>
                   <strong>{news.prev.title}</strong>
                 </Link>
               ) : (
@@ -266,7 +260,7 @@ function NewsDetailView({ newsId }) {
               )}
               {news.next && (
                 <Link to={`/yangilik/${news.next.id}`} className="news-pager__item news-pager__item--next">
-                  <span>Keyingi maqola <FiArrowRight /></span>
+                  <span>{tr('Keyingi maqola')} <FiArrowRight /></span>
                   <strong>{news.next.title}</strong>
                 </Link>
               )}
@@ -283,7 +277,7 @@ function NewsDetailView({ newsId }) {
           {/* ===== O‘ng: sidebar ===== */}
           <aside className="news-side">
             <section className="news-side__card">
-              <h2 className="news-side__title">So‘nggi yangiliklar</h2>
+              <h2 className="news-side__title">{tr('So‘nggi yangiliklar')}</h2>
               <ol className="news-side__list">
                 {sidebarNews.map((item, i) => (
                   <li key={item.id}>
@@ -303,10 +297,10 @@ function NewsDetailView({ newsId }) {
             <section className="news-promo">
               <img src="/images/sport/banner.jpg" alt="" loading="lazy" />
               <div className="news-promo__body">
-                <span className="news-promo__eyebrow">SportON · Bron</span>
-                <h3>Sevimli maydoningizni hoziroq bron qiling</h3>
+                <span className="news-promo__eyebrow">{tr('SportON · Bron')}</span>
+                <h3>{tr('Sevimli maydoningizni hoziroq bron qiling')}</h3>
                 <Link to="/bron" className="news-promo__btn">
-                  Bron qilish <FiArrowUpRight />
+                  {tr('Bron qilish')} <FiArrowUpRight />
                 </Link>
               </div>
             </section>
@@ -315,9 +309,9 @@ function NewsDetailView({ newsId }) {
 
         <section className="news-related">
           <div className="news-related__head">
-            <h2>O‘xshash yangiliklar</h2>
+            <h2>{tr('O‘xshash yangiliklar')}</h2>
             <Link to="/#yangiliklar" className="news-related__all">
-              Barcha yangiliklar <FiArrowRight />
+              {tr('Barcha yangiliklar')} <FiArrowRight />
             </Link>
           </div>
           <div className="news-related__grid">
@@ -346,9 +340,9 @@ const avatarColor = (name = '') => AVATAR_COLORS[[...name].reduce((s, c) => s + 
 
 function Comments({ ref, newsId, enabled, onCount }) {
   const { user } = useAuth()
+  const { guard, modal } = useAuthGate()
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(enabled)
-  const [name, setName] = useState('')
   const [text, setText] = useState('')
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
@@ -370,6 +364,8 @@ function Comments({ ref, newsId, enabled, onCount }) {
 
   const submit = async (e) => {
     e?.preventDefault()
+    // Izohni faqat ro‘yxatdan o‘tgan foydalanuvchi yozadi
+    if (!guard('comment')) return
     const value = text.trim()
     if (value.length < 2 || sending) return
     setSending(true)
@@ -377,7 +373,7 @@ function Comments({ ref, newsId, enabled, onCount }) {
     try {
       const { comment } = await api(`/news/${encodeURIComponent(newsId)}/comments`, {
         method: 'POST',
-        body: { text: value, name: name.trim() || undefined },
+        body: { text: value },
       })
       setComments((prev) => {
         const next = [{ ...comment, isNew: true }, ...prev]
@@ -392,13 +388,13 @@ function Comments({ ref, newsId, enabled, onCount }) {
     }
   }
 
-  const author = user ? `${user.firstName} ${user.lastName}`.trim() : name.trim()
+  const author = user ? `${user.firstName} ${user.lastName}`.trim() : ''
 
   return (
     <section className="news-comments" ref={ref} id="izohlar">
       <div className="news-comments__head">
         <h2>
-          Izohlar <span>{comments.length}</span>
+          {tr('Izohlar')} <span>{comments.length}</span>
         </h2>
       </div>
 
@@ -409,20 +405,13 @@ function Comments({ ref, newsId, enabled, onCount }) {
               {author ? initials(author) : 'M'}
             </span>
             <div className="news-form__box">
-              {!user && (
-                <input
-                  type="text"
-                  placeholder="Ismingiz (ixtiyoriy)"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  maxLength={60}
-                />
-              )}
               <textarea
-                placeholder="Fikringizni yozing…"
+                placeholder={user ? tr('Fikringizni yozing…') : tr('Izoh yozish uchun ro‘yxatdan o‘ting yoki kiring…')}
                 rows={3}
                 value={text}
                 maxLength={MAX_COMMENT}
+                readOnly={!user}
+                onFocus={() => !user && guard('comment')}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submit(e)
@@ -438,23 +427,24 @@ function Comments({ ref, newsId, enabled, onCount }) {
                   <FiSmile />
                   {MAX_COMMENT - text.length}
                 </span>
-                <span className="news-form__hint">Ctrl + Enter — yuborish</span>
-                <button type="submit" disabled={text.trim().length < 2 || sending}>
-                  {sending ? 'Yuborilmoqda…' : 'Yuborish'} <FiSend />
+                <span className="news-form__hint">{tr('Ctrl + Enter — yuborish')}</span>
+                <button type="submit" disabled={Boolean(user) && (text.trim().length < 2 || sending)}>
+                  {sending ? tr('Yuborilmoqda…') : tr('Yuborish')} <FiSend />
                 </button>
               </div>
             </div>
           </form>
+          {modal}
           <p className="news-form__rules">
-            Hurmat bilan va mavzu doirasida yozing. Haqoratli yoki spam izohlar o‘chiriladi.
+            {tr('Hurmat bilan va mavzu doirasida yozing. Haqoratli yoki spam izohlar o‘chiriladi.')}
           </p>
         </>
       ) : (
-        <p className="news-form__rules">Bu maqola uchun izohlar yopiq.</p>
+        <p className="news-form__rules">{tr('Bu maqola uchun izohlar yopiq.')}</p>
       )}
 
       {!loading && enabled && comments.length === 0 && (
-        <p className="news-comments__empty">Hali izoh yo‘q. Birinchi bo‘lib fikr bildiring!</p>
+        <p className="news-comments__empty">{tr('Hali izoh yo‘q. Birinchi bo‘lib fikr bildiring!')}</p>
       )}
 
       <ul className="news-comments__list">
@@ -504,13 +494,13 @@ function ArticleGallery({ items }) {
             type="button"
             className="news-gallery__item"
             onClick={() => setOpen(images.indexOf(item))}
-            aria-label="Rasmni kattalashtirish"
+            aria-label={tr('Rasmni kattalashtirish')}
           >
             <img src={item.url} alt="" loading="lazy" />
           </button>
         ) : isEmbed(item) ? (
           <div key={item.url} className={`news-gallery__item news-gallery__embed${item.provider === 'instagram' ? ' is-portrait' : ''}`}>
-            <iframe src={item.url} title="Video" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+            <iframe src={item.url} title={tr('Video')} loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
           </div>
         ) : (
           <div key={item.url} className="news-gallery__item news-gallery__video">
@@ -520,9 +510,9 @@ function ArticleGallery({ items }) {
       )}
 
       {open !== null && images[open] && (
-        <div className="news-lightbox" role="dialog" aria-modal="true" aria-label="Rasm" onClick={() => setOpen(null)}>
+        <div className="news-lightbox" role="dialog" aria-modal="true" aria-label={tr('Rasm')} onClick={() => setOpen(null)}>
           <img src={images[open].url} alt="" onClick={(e) => e.stopPropagation()} />
-          <button type="button" className="news-lightbox__close" aria-label="Yopish" onClick={() => setOpen(null)}>
+          <button type="button" className="news-lightbox__close" aria-label={tr('Yopish')} onClick={() => setOpen(null)}>
             ×
           </button>
           {images.length > 1 && <span className="news-lightbox__count">{open + 1} / {images.length}</span>}

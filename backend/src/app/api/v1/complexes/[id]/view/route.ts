@@ -9,7 +9,7 @@ export const POST = route<{ id: string }>(async (request, { params }) => {
   const { id } = await params
   const serviceId = Number(new URL(request.url).searchParams.get('service')) || null
   try {
-    rateLimit(`view:${clientIp(request)}:${id}:${serviceId ?? ''}`, 1, 30 * 60_000)
+    await rateLimit(`view:${clientIp(request)}:${id}:${serviceId ?? ''}`, 1, 30 * 60_000)
   } catch {
     return json({ ok: true, counted: false })
   }

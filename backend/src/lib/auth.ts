@@ -114,6 +114,10 @@ export function publicUser(user: User) {
     provider: user.provider,
     role: user.role,
     avatar: user.avatar ?? '',
+    bio: user.bio ?? '',
+    city: user.city ?? '',
+    sports: user.sports ?? [],
+    phoneVerified: Boolean(user.phoneVerifiedAt),
     createdAt: user.createdAt,
   }
 }

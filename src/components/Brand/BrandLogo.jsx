@@ -1,5 +1,6 @@
 import LogoIcon from '../icons/LogoIcon.jsx'
 import './BrandLogo.css'
+import { tr } from '../../i18n/index.js'
 
 /**
  * SportON wordmark: belgi + «SPORT» + yashil «ON» plashka.
@@ -9,7 +10,7 @@ export default function BrandLogo({ size = 'md', tone = 'default', className = '
   return (
     <span
       className={`brand-logo brand-logo--${size} brand-logo--${tone} ${className}`.trim()}
-      aria-label="SportON"
+      aria-label={tr('SportON')}
       role="img"
     >
       <LogoIcon className="brand-logo__mark" size={24} />

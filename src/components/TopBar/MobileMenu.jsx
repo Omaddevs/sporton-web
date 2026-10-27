@@ -9,7 +9,6 @@ import {
   LayoutGrid,
   Map as MapIcon,
   MapPin,
-  MessageCircle,
   Moon,
   Plus,
   Sun,
@@ -21,14 +20,14 @@ import { REGIONS } from '../../data/regions.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import SearchBar from '../SearchBar/SearchBar.jsx'
 import './MobileMenu.css'
+import { tr } from '../../i18n/index.js'
 
 const LINKS = [
-  { to: '/sport-turlari', label: 'Sport turlari', Icon: LayoutGrid },
-  { to: '/xabarlar', label: 'Xabarlar', Icon: MessageCircle },
-  { to: '/saqlanganlar', label: 'Saqlanganlar', Icon: Heart },
-  { to: '/xarita', label: 'Xarita', Icon: MapIcon },
-  { to: '/bron', label: 'Bron qilish', Icon: CalendarDays },
-  { to: '/majmua-qoshish', label: 'Majmua qo‘shish', Icon: Plus },
+  { to: '/sport-turlari', label: tr('Sport turlari'), Icon: LayoutGrid },
+  { to: '/saqlanganlar', label: tr('Saqlanganlar'), Icon: Heart },
+  { to: '/xarita', label: tr('Xarita'), Icon: MapIcon },
+  { to: '/bron', label: tr('Bron qilish'), Icon: CalendarDays },
+  { to: '/majmua-qoshish', label: tr('Majmua qo‘shish'), Icon: Plus },
 ]
 
 /** Mobil (≤639px) chap yon menyu: header’dan ko‘chgan sozlamalar va bo‘limlar */
@@ -73,10 +72,10 @@ export default function MobileMenu({
     <div className={`mobile-menu ${open ? 'is-open' : ''}`} aria-hidden={!open} inert={!open}>
       <div className="mobile-menu__backdrop" onClick={onClose} />
 
-      <aside className="mobile-menu__panel" role="dialog" aria-modal="true" aria-label="Menyu">
+      <aside className="mobile-menu__panel" role="dialog" aria-modal="true" aria-label={tr('Menyu')}>
         <div className="mobile-menu__head">
           <BrandLogo />
-          <button type="button" className="mobile-menu__close" onClick={onClose} aria-label="Yopish" tabIndex={tab}>
+          <button type="button" className="mobile-menu__close" onClick={onClose} aria-label={tr('Yopish')} tabIndex={tab}>
             <X size={20} strokeWidth={2.4} />
           </button>
         </div>
@@ -87,20 +86,20 @@ export default function MobileMenu({
               {initials || <FiUser />}
             </span>
             <span className="mobile-menu__user-text">
-              <strong>{user ? `${user.firstName} ${user.lastName ?? ''}`.trim() : 'Mehmon'}</strong>
-              <span>{user ? 'Profilni ko‘rish' : 'Kirish yoki ro‘yxatdan o‘tish'}</span>
+              <strong>{user ? `${user.firstName} ${user.lastName ?? ''}`.trim() : tr('Mehmon')}</strong>
+              <span>{user ? tr('Profilni ko‘rish') : tr('Kirish yoki ro‘yxatdan o‘tish')}</span>
             </span>
             <ChevronRight size={18} className="mobile-menu__chevron" aria-hidden="true" />
           </Link>
 
           <SearchBar />
 
-          <section className="mobile-menu__group" aria-label="Sozlamalar">
+          <section className="mobile-menu__group" aria-label={tr('Sozlamalar')}>
             <button type="button" className="mobile-menu__row" onClick={onOpenNotifications} tabIndex={tab}>
               <span className="mobile-menu__icon">
                 <Bell size={18} />
               </span>
-              <span className="mobile-menu__label">Bildirishnomalar</span>
+              <span className="mobile-menu__label">{tr('Bildirishnomalar')}</span>
               {unreadCount > 0 && (
                 <span className="mobile-menu__badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
               )}
@@ -111,7 +110,7 @@ export default function MobileMenu({
               <span className="mobile-menu__icon">
                 <MapPin size={18} />
               </span>
-              <span className="mobile-menu__label">Hudud</span>
+              <span className="mobile-menu__label">{tr('Hudud')}</span>
               <select
                 className="mobile-menu__select"
                 value={regionId}
@@ -130,7 +129,7 @@ export default function MobileMenu({
               <span className="mobile-menu__icon">
                 <Globe size={18} />
               </span>
-              <span className="mobile-menu__label">Til</span>
+              <span className="mobile-menu__label">{tr('Til')}</span>
               <select
                 className="mobile-menu__select"
                 value={langId}
@@ -147,8 +146,8 @@ export default function MobileMenu({
 
             <div className="mobile-menu__row">
               <span className="mobile-menu__icon">{theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}</span>
-              <span className="mobile-menu__label">Mavzu</span>
-              <div className="mobile-menu__theme" role="group" aria-label="Mavzu">
+              <span className="mobile-menu__label">{tr('Mavzu')}</span>
+              <div className="mobile-menu__theme" role="group" aria-label={tr('Mavzu')}>
                 <button
                   type="button"
                   className={theme === 'light' ? 'is-active' : ''}
@@ -156,7 +155,7 @@ export default function MobileMenu({
                   onClick={() => onThemeChange('light')}
                   tabIndex={tab}
                 >
-                  Kunduzgi
+                  {tr('Kunduzgi')}
                 </button>
                 <button
                   type="button"
@@ -165,13 +164,13 @@ export default function MobileMenu({
                   onClick={() => onThemeChange('dark')}
                   tabIndex={tab}
                 >
-                  Tungi
+                  {tr('Tungi')}
                 </button>
               </div>
             </div>
           </section>
 
-          <nav className="mobile-menu__group" aria-label="Bo‘limlar">
+          <nav className="mobile-menu__group" aria-label={tr('Bo‘limlar')}>
             {LINKS.map(({ to, label, Icon }) => (
               <Link key={to} to={to} className="mobile-menu__row" tabIndex={tab}>
                 <span className="mobile-menu__icon">

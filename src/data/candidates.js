@@ -181,7 +181,3 @@ export function getCandidatesForCategory(categoryId) {
   return TRAINERS.map((trainer) => buildTrainer(trainer, categoryId))
 }
 
-// Xabarlar sahifasi murabbiyni id bo'yicha topishi uchun
-export const candidatesByCategory = {
-  boshqa: getCandidatesForCategory('boshqa'),
-}

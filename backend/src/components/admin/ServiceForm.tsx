@@ -1,5 +1,5 @@
 import type { Service } from '@/db/schema'
-import { SERVICE_TYPE_LABELS } from '@/lib/constants'
+import { BOOKING_MODE_LABELS, LISTING_STATUS_LABELS, SERVICE_TYPE_LABELS } from '@/lib/constants'
 import ConfirmButton from './ConfirmButton'
 
 export default function ServiceForm({
@@ -20,6 +20,22 @@ export default function ServiceForm({
     <form action={action} className="form">
       {s && <input type="hidden" name="id" value={s.id} />}
       <input type="hidden" name="complexId" value={complexId} />
+      <section className="card card-pad form">
+        <h2 className="section-title">Bron usuli</h2>
+        <p className="muted" style={{ margin: 0 }}>
+          Saytdagi tugma va forma shunga qarab chiqadi. Maydon/kort ijarasi — soatlik bron; sektsiya va guruh
+          darslari — ariza; oylik abonementli zallar — faqat qo‘ng‘iroq (majmua telefoni va Telegrami ko‘rsatiladi).
+        </p>
+        <div className="radio-list">
+          {Object.entries(BOOKING_MODE_LABELS).map(([id, label]) => (
+            <label key={id} className="radio-row">
+              <input type="radio" name="bookingMode" value={id} defaultChecked={(s?.bookingMode ?? 'slot') === id} required />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
       <section className="card card-pad form">
         <div className="form-grid">
           <label className="fld span-2">
@@ -51,7 +67,7 @@ export default function ServiceForm({
           <label className="fld">
             <span>Ish vaqti</span>
             <input className="input" name="hours" defaultValue={s?.hours ?? ''} placeholder="07:00 - 23:00" />
-            <small>«07:00 - 23:00» formatida bo‘lsa, saytda soat bo‘yicha bron ochiladi.</small>
+            <small>Soatlik bron uchun majburiy: «07:00 - 23:00» yoki «24/7». Boshqa usullarda istalgan matn.</small>
           </label>
           <label className="fld">
             <span>Shahar</span>
@@ -84,8 +100,9 @@ export default function ServiceForm({
           <label className="fld">
             <span>Holat</span>
             <select className="select" name="status" defaultValue={s?.status ?? 'published'}>
-              <option value="published">E’lon qilingan</option>
-              <option value="hidden">Yashirin</option>
+              {Object.entries(LISTING_STATUS_LABELS).map(([id, label]) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
             </select>
           </label>
           <label className="fld span-2">

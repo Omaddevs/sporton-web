@@ -1,5 +1,6 @@
 import 'server-only'
 import { randomBytes } from 'node:crypto'
+import type { BookingMode } from '@/db/schema'
 
 /** Toshkent vaqti (UTC+5, yozgi vaqt yo‘q) */
 const TZ_OFFSET_MS = 5 * 60 * 60_000
@@ -27,9 +28,9 @@ export function parseHours(hours: string | null | undefined) {
   return { open, close }
 }
 
-/** Sana/vaqt tanlanadigan xizmatmi (frontend mantiqi bilan bir xil) */
-export function isTimedService(service: { type: string; hours: string | null }) {
-  return service.type !== 'remote' && /^\d/.test(service.hours ?? '')
+/** Sana va soat tanlanadigan xizmat: «slot» rejimi va ish vaqti aniq («07:00 - 23:00» yoki «24/7») */
+export function isTimedService(service: { bookingMode: BookingMode; hours: string | null }) {
+  return service.bookingMode === 'slot' && parseHours(service.hours) != null
 }
 
 export function bookingCode() {

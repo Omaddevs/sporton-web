@@ -24,6 +24,8 @@ function toRow(b) {
     date: b.date ?? b.createdAt.slice(0, 10),
     hour: b.hour,
     time: b.hour == null ? 'Vaqt kelishiladi' : `${pad(b.hour)}:00–${pad(b.hour + 1)}:00`,
+    // Ariza (vaqtsiz) bron — sana yo‘q, faol bo‘lsa bekor qilish mumkin
+    flexible: b.date == null,
     price: b.priceLabel,
     status: b.status,
   }

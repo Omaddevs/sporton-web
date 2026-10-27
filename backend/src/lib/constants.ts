@@ -26,6 +26,24 @@ export const REGIONS = [
   { id: 'xorazm', label: 'Xorazm', city: 'Xorazm' },
 ] as const
 
+export const BOOKING_MODE_LABELS = {
+  slot: 'Soatlik bron — sana va vaqt tanlanadi',
+  request: 'Ariza — vaqtsiz, majmua qo‘ng‘iroq qiladi',
+  call: 'Faqat qo‘ng‘iroq — onlayn bron yo‘q',
+} as const
+
+export const BOOKING_MODE_SHORT = {
+  slot: 'Soatlik bron',
+  request: 'Ariza',
+  call: 'Faqat qo‘ng‘iroq',
+} as const
+
+export const LISTING_STATUS_LABELS = {
+  draft: 'Qoralama (saytda ko‘rinmaydi)',
+  published: 'E’lon qilingan',
+  hidden: 'Yashirin (vaqtincha olib qo‘yilgan)',
+} as const
+
 export const SERVICE_TYPE_LABELS = {
   full: 'Yopiq zal',
   part: 'Ochiq maydon',

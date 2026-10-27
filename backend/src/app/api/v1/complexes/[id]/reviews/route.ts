@@ -1,9 +1,9 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, sql } from 'drizzle-orm'
 import { getDb } from '@/db'
 import { complexes, reviews } from '@/db/schema'
-import { getCurrentUser } from '@/lib/auth'
+import { requireUser } from '@/lib/auth'
 import { invalidateCatalog } from '@/lib/catalog'
-import { json, notFound, readJson, route } from '@/lib/http'
+import { ApiError, json, notFound, readJson, route } from '@/lib/http'
 import { clientIp, rateLimit } from '@/lib/rate-limit'
 import { reviewSchema } from '@/lib/validation'
 
@@ -29,18 +29,34 @@ export const GET = route<{ id: string }>(async (_request, { params }) => {
 
 export const POST = route<{ id: string }>(async (request, { params }) => {
   const { id } = await params
-  rateLimit(`review:${clientIp(request)}`, 5, 60 * 60_000)
+  // Sharhni faqat ro‘yxatdan o‘tgan (raqami tasdiqlangan) foydalanuvchi yozadi
+  const user = await requireUser()
+  if (!user.phoneVerifiedAt) {
+    throw new ApiError(403, 'PHONE_NOT_VERIFIED', 'Sharh yozish uchun raqamingizni Telegram bot orqali tasdiqlang (Profil → Raqamni tasdiqlash)')
+  }
+  await rateLimit(`review:${user.id}`, 5, 60 * 60_000)
+  await rateLimit(`review:${clientIp(request)}`, 20, 60 * 60_000)
   const data = await readJson(request, reviewSchema)
-  const user = await getCurrentUser()
   const db = await getDb()
 
-  const [complex] = await db.select({ id: complexes.id }).from(complexes).where(eq(complexes.id, id)).limit(1)
+  const [complex] = await db
+    .select({ id: complexes.id })
+    .from(complexes)
+    .where(and(eq(complexes.id, id), eq(complexes.status, 'published')))
+    .limit(1)
   if (!complex) throw notFound('Majmua')
 
-  const authorName = user ? `${user.firstName} ${user.lastName}`.trim() : data.name || 'Mehmon'
+  const authorName = `${user.firstName} ${user.lastName}`.trim()
+  // Bitta foydalanuvchi — bitta majmuaga bitta sharh: qayta yozsa avvalgisi yangilanadi
   const [review] = await db
     .insert(reviews)
-    .values({ complexId: id, userId: user?.id ?? null, authorName, rating: data.rating, text: data.text })
+    .values({ complexId: id, userId: user.id, authorName, rating: data.rating, text: data.text })
+    .onConflictDoUpdate({
+      target: [reviews.complexId, reviews.userId],
+      targetWhere: sql`user_id is not null`,
+      // Holat (admin yashirgan bo‘lsa) saqlanadi — tahrir moderatsiyani chetlab o‘tmasin
+      set: { authorName, rating: data.rating, text: data.text, createdAt: new Date() },
+    })
     .returning()
   invalidateCatalog()
   return json(

@@ -82,12 +82,47 @@ qabul qilinmaydi. Chegaralar: `MAX_IMAGE_MB`, `MAX_VIDEO_MB`. Birinchi rasm — 
 ## Admin panel
 
 `/admin` — boshqaruv paneli (KPI, 14 kunlik bronlar grafigi), bronlar (tasdiqlash/bekor/yakunlash),
-majmua arizalari moderatsiyasi (tasdiqlash → majmua avtomatik yaratiladi), majmualar va
-xizmatlar CRUD, yangiliklar, sharh/izoh moderatsiyasi, foydalanuvchilar (rol, bloklash),
-murojaatlar, obunachilar (CSV eksport), sport turlari, amallar jurnali.
+majmua arizalari moderatsiyasi (tasdiqlash → majmua avtomatik yaratiladi, ariza muallifi — egasi),
+majmualar va xizmatlar (bron usuli: soatlik / ariza / faqat qo‘ng‘iroq; qoralama → e’lon), majmua
+egasini biriktirish, qoralamani oldindan ko‘rish, reklama va promo karusel, Reels, yangiliklar,
+tadbirlar (saytdan ro‘yxatdan o‘tganlar ro‘yxati), sharh/izoh moderatsiyasi, foydalanuvchilar,
+bildirishnomalar (hammaga yoki bitta foydalanuvchiga), murojaatlar, obunachilar, amallar jurnali,
+xatolar jurnali.
 
 Rollar: `moderator` — kontent va bronlar; `admin` — qo‘shimcha ravishda foydalanuvchilar,
-o‘chirish va jurnal.
+o‘chirish, jurnallar.
+
+## Majmua egasi kabineti
+
+`/kabinet` — admin tasdiqlagan majmua egasi saytdagi **telefon raqami va paroli** bilan kiradi:
+yangi bronlarni tasdiqlash/bekor qilish/yakunlash (mijozga sayt va Telegram orqali xabar boradi),
+majmua ma’lumotlari, rasm/videolar va xizmatlarni tahrirlash, sharhlarni ko‘rish. Holat (e’lon),
+«Tasdiqlangan» belgisi va tartib — faqat admin. Egalik: ariza tasdiqlanganda avtomatik yoki
+Admin → Majmua → «Majmua egasi» orqali telefon raqami bo‘yicha.
+
+## Til
+
+O‘zbek (asosiy) va rus. Matnlar kodda o‘zbekcha `tr('…')` ichida, ruscha tarjima — `src/i18n/ru.js`.
+Til tepadagi menyuda va Profil → Sozlamalar’da almashtiriladi. Backenddagi xato xabarlari ham
+shu lug‘at orqali tarjima qilinadi. Bazadagi kontent (majmua tavsiflari, yangiliklar) — o‘zbekcha.
+
+## Testlar va sifat
+
+```bash
+npm run lint            # oxlint (no-undef bilan — aniqlanmagan o‘zgaruvchi build’dan oldin ushlanadi)
+npm test                # frontend: bron rejimi, telefon, i18n lug‘ati
+npm --prefix backend test       # backend: bron qoidalari, qoralama havolasi, SEO (XSS)
+npm run test:all        # hammasi + backend typecheck
+```
+
+## Monitoring va SEO
+
+- Server 500 xatolari va brauzerdagi JS xatolari bazaga yoziladi (Admin → Xatolar), yangi turdagi
+  xato haqida `TELEGRAM_ADMIN_CHAT_ID` ga xabar boradi.
+- `/sitemap.xml` — bazadagi majmua, xizmat, yangilik, tadbir va sport turlaridan; `robots.txt`
+  undagi domenni production domeningizga moslang.
+- Ijtimoiy tarmoq va qidiruv botlariga nginx meta teglari va JSON-LD bor sahifa beradi
+  (`/api/v1/seo`), foydalanuvchilarga — SPA (`useSeo` sarlavha va OG teglarni yangilaydi).
 
 ## Production (Docker)
 
@@ -98,8 +133,12 @@ docker compose run --rm backend npm run db:setup
 docker compose run --rm -e ADMIN_PHONE=901234567 -e ADMIN_PASSWORD='...' backend npm run admin:create
 ```
 
-Sayt, `/api` va `/admin` bitta domenda nginx orqali xizmat qiladi. HTTPS’ni oldidagi
-Caddy/Cloudflare/certbot bilan yoqing.
+Sayt, `/api`, `/admin` va `/kabinet` bitta domenda nginx orqali xizmat qiladi. HTTPS’ni oldidagi
+Caddy/Cloudflare/certbot bilan yoqing (keyin `deploy/security-headers.conf` dagi HSTS qatorini oching).
+
+**Zaxira:** `backup` xizmati har kuni bazani (`pg_dump`) va yuklangan fayllarni `./backups` ga
+saqlaydi, `BACKUP_KEEP_DAYS` (standart 14) kundan eskilarini o‘chiradi. Tiklash buyruqlari —
+`deploy/backup.sh` boshida. Zaxirani boshqa serverga ham nusxalab turing.
 
 ### Launch checklist
 
@@ -110,11 +149,13 @@ Caddy/Cloudflare/certbot bilan yoqing.
       `TELEGRAM_ADMIN_CHAT_ID` — yangi bron/arizalar haqida xabar
 - [ ] Brauzer push: `npx web-push generate-vapid-keys` → `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`
 - [ ] Google/Telegram orqali kirish kerak bo‘lsa — `GOOGLE_CLIENT_ID`, `VITE_TELEGRAM_BOT_ID`
-- [ ] Postgres zaxira nusxasi (`pg_dump`) va `uploads` volume zaxirasi
-- [ ] Bir nechta backend instansiyasi bo‘lsa — rate-limit’ni Redis’ga ko‘chirish (`src/lib/rate-limit.ts`)
+- [ ] `backups/` papkasini boshqa joyga (S3, boshqa server) nusxalash
+- [ ] `public/robots.txt` dagi Sitemap domeni, `PUBLIC_SITE_URL`
+- [ ] Telegram bot tokeni chatda/ochiq joyda ko‘rsatilgan bo‘lsa — @BotFather → /revoke
 
 ## Ma’lum cheklovlar
 
-- Xabarlar (chat), bildirishnomalar va profilning ba’zi bo‘limlari (tajriba, yutuqlar) hali
-  brauzerda (demo) saqlanadi — backend API’si keyingi bosqichda.
-- API ishlamay qolsa, frontend bundle’dagi statik katalog bilan ochiladi (faqat ko‘rish uchun).
+- Bir nechta backend instansiyasida real-vaqt bildirishnomalar (SSE) uchun Redis pub/sub kerak
+  (`src/lib/events.ts`); so‘rovlar cheklovi esa bazada — instansiyalar orasida umumiy.
+- Murabbiylar bo‘limi hali haqiqiy ma’lumotga ulanmagan («tez orada»).
+- Rus tili interfeys uchun; bazadagi kontent va «Bo‘limlar» (blog) maqolalari o‘zbekcha.

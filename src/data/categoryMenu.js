@@ -1,9 +1,10 @@
 import { sportIcons } from '../components/icons/sportIcons.jsx'
+import { tr } from '../i18n/index.js'
 
 export const categoryMenuItems = [
   {
     id: 'futbol',
-    title: 'Futbol',
+    title: tr('Futbol'),
     count: '1 245',
     Icon: sportIcons.futbol,
     iconBg: '#e3f6e0',
@@ -11,7 +12,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'basketbol',
-    title: 'Basketbol',
+    title: tr('Basketbol'),
     count: '486',
     Icon: sportIcons.basketbol,
     iconBg: '#ffeedd',
@@ -19,7 +20,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'tennis',
-    title: 'Tennis',
+    title: tr('Tennis'),
     count: '532',
     Icon: sportIcons.tennis,
     iconBg: '#f4f8d6',
@@ -27,7 +28,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'suzish',
-    title: 'Suzish',
+    title: tr('Suzish'),
     count: '398',
     Icon: sportIcons.suzish,
     iconBg: '#e3f1ff',
@@ -35,7 +36,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'fitnes',
-    title: 'Fitnes va trenajyor zal',
+    title: tr('Fitnes va trenajyor zal'),
     count: '1 832',
     Icon: sportIcons.fitnes,
     iconBg: '#e3edff',
@@ -43,7 +44,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'boks',
-    title: 'Boks va MMA',
+    title: tr('Boks va MMA'),
     count: '364',
     Icon: sportIcons.boks,
     iconBg: '#ffe4e4',
@@ -51,7 +52,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'kurash',
-    title: 'Kurash va yakkakurash',
+    title: tr('Kurash va yakkakurash'),
     count: '421',
     Icon: sportIcons.kurash,
     iconBg: '#eee6ff',
@@ -59,7 +60,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'voleybol',
-    title: 'Voleybol',
+    title: tr('Voleybol'),
     count: '289',
     Icon: sportIcons.voleybol,
     iconBg: '#fff4d6',
@@ -67,7 +68,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'yoga',
-    title: 'Yoga va pilates',
+    title: tr('Yoga va pilates'),
     count: '343',
     Icon: sportIcons.yoga,
     iconBg: '#e3f8ef',
@@ -75,7 +76,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'stol-tennisi',
-    title: 'Stol tennisi',
+    title: tr('Stol tennisi'),
     count: '176',
     Icon: sportIcons['stol-tennisi'],
     iconBg: '#e5f5ff',
@@ -83,7 +84,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'padel',
-    title: 'Padel',
+    title: tr('Padel'),
     count: '94',
     Icon: sportIcons.padel,
     iconBg: '#e9e7ff',
@@ -91,7 +92,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'yengil-atletika',
-    title: 'Yugurish va atletika',
+    title: tr('Yugurish va atletika'),
     count: '267',
     Icon: sportIcons['yengil-atletika'],
     iconBg: '#fff0e0',
@@ -99,7 +100,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'velosport',
-    title: 'Velosport',
+    title: tr('Velosport'),
     count: '158',
     Icon: sportIcons.velosport,
     iconBg: '#e6f8ec',
@@ -107,7 +108,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'shaxmat',
-    title: 'Shaxmat va shashka',
+    title: tr('Shaxmat va shashka'),
     count: '212',
     Icon: sportIcons.shaxmat,
     iconBg: '#eef0f4',
@@ -115,7 +116,7 @@ export const categoryMenuItems = [
   },
   {
     id: 'boshqa',
-    title: 'Boshqa sport turlari',
+    title: tr('Boshqa sport turlari'),
     count: '890',
     Icon: sportIcons.boshqa,
     iconBg: '#eef0f4',

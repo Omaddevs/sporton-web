@@ -1,18 +1,19 @@
 import { Link } from 'react-router-dom'
 import './QuickLinks.css'
+import { tr } from '../../i18n/index.js'
 
 // Bosh sahifadagi bo‘limlar — anchor bilan, alohida sahifalar — route bilan
 const LINKS = [
-  { id: 'complexes', label: 'Sport majmualari', href: '#majmualar', image: '/images/quick/complexes.webp' },
-  { id: 'news', label: 'Sport yangiliklari', to: '/bolim/yangiliklar', image: '/images/quick/news.webp' },
-  { id: 'events', label: 'Tadbirlar', href: '#tadbirlar', image: '/images/quick/events.webp' },
-  { id: 'competitions', label: 'Musobaqalar', to: '/bolim/musobaqalar', image: '/images/quick/competitions.webp' },
+  { id: 'complexes', label: tr('Sport majmualari'), href: '#majmualar', image: '/images/quick/complexes.webp' },
+  { id: 'news', label: tr('Sport yangiliklari'), to: '/bolim/yangiliklar', image: '/images/quick/news.webp' },
+  { id: 'events', label: tr('Tadbirlar'), href: '#tadbirlar', image: '/images/quick/events.webp' },
+  { id: 'competitions', label: tr('Musobaqalar'), to: '/bolim/musobaqalar', image: '/images/quick/competitions.webp' },
 ]
 
 /** Mobil (≤639px) bosh sahifa: 3D rasmli 2×2 bo‘lim kartalari */
 export default function QuickLinks() {
   return (
-    <nav className="quick-links container" aria-label="Asosiy bo‘limlar">
+    <nav className="quick-links container" aria-label={tr('Asosiy bo‘limlar')}>
       {LINKS.map(({ id, label, href, to, image }) => {
         const content = (
           <>

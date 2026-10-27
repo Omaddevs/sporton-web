@@ -1,3 +1,4 @@
+import { panelUrl } from '@/lib/env'
 import { and, count, desc, eq, inArray } from 'drizzle-orm'
 import { getDb } from '@/db'
 import { bookings, complexes, services } from '@/db/schema'
@@ -44,18 +45,21 @@ export const GET = route(async () => {
 
 export const POST = route(async (request) => {
   const user = await requireUser()
-  rateLimit(`booking:${user.id}`, 20, 60 * 60_000)
+  await rateLimit(`booking:${user.id}`, 20, 60 * 60_000)
   const data = await readJson(request, bookingSchema)
   const db = await getDb()
 
   const [row] = await db
-    .select({ service: services, complexStatus: complexes.status, complexName: complexes.name })
+    .select({ service: services, complexStatus: complexes.status, complexName: complexes.name, ownerId: complexes.ownerId })
     .from(services)
     .innerJoin(complexes, eq(complexes.id, services.complexId))
     .where(eq(services.id, data.serviceId))
     .limit(1)
   if (!row || row.service.status !== 'published' || row.complexStatus !== 'published') throw notFound('Xizmat')
   const service = row.service
+  if (service.bookingMode === 'call') {
+    throw new ApiError(422, 'BOOKING_DISABLED', 'Bu xizmatni onlayn band qilib bo‘lmaydi. Majmuaga qo‘ng‘iroq qiling')
+  }
 
   let date: string | null = null
   let hour: number | null = null
@@ -118,6 +122,13 @@ export const POST = route(async (request) => {
       date ? `${date} · ${String(hour).padStart(2, '0')}:00` : 'Vaqt: kelishiladi',
       `${data.name} · ${formatPhone(data.phone)}`,
     ])
+    // Majmua egasiga — sayt, Telegram va push orqali (kabinetda tasdiqlaydi)
+    notifyUserSafe(row.ownerId, {
+      type: 'booking',
+      title: date ? '🆕 Yangi bron' : '🆕 Yangi ariza',
+      body: `${booking.code} · ${service.title}${date ? `, ${date.split('-').reverse().join('.')} ${String(hour).padStart(2, '0')}:00` : ''} — ${data.name}, ${formatPhone(data.phone)}. Kabinetda tasdiqlang.`,
+      link: panelUrl('/kabinet/bronlar?status=pending'),
+    })
     return json({ booking }, { status: 201 })
   } catch (error) {
     if (isUniqueViolation(error)) {

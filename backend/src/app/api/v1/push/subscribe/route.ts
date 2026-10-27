@@ -15,7 +15,7 @@ const subscriptionSchema = z.object({
 export const POST = route(async (request) => {
   const user = await requireUser()
   if (!pushEnabled()) throw new ApiError(503, 'PUSH_DISABLED', 'Push bildirishnomalar sozlanmagan')
-  rateLimit(`push:${user.id}`, 30, 60 * 60_000)
+  await rateLimit(`push:${user.id}`, 30, 60 * 60_000)
   const sub = await readJson(request, subscriptionSchema)
   const db = await getDb()
   await db

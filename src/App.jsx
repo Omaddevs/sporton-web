@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout.jsx'
 import AuthProvider from './context/AuthProvider.jsx'
 import { RequireAuth } from './components/Auth/AuthGate.jsx'
+import AuthGateProvider from './components/Auth/AuthGateProvider.jsx'
 import LoginPage from './pages/auth/LoginPage.jsx'
 import RegisterPage from './pages/auth/RegisterPage.jsx'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx'
@@ -12,7 +13,6 @@ import CategoryPage from './pages/CategoryPage.jsx'
 import CategoriesPage from './pages/CategoriesPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import InfoPage from './pages/InfoPage.jsx'
-import MessagesPage from './pages/MessagesPage.jsx'
 import JobDetailPage from './pages/JobDetailPage.jsx'
 import CompanyDetailPage from './pages/CompanyDetailPage.jsx'
 import SavedPage from './pages/SavedPage.jsx'
@@ -34,6 +34,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AuthGateProvider>
         <MainLayout>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -56,8 +57,14 @@ export default function App() {
             <Route path="/sport-turlari" element={<CategoriesPage />} />
             <Route path="/sport/:categoryId" element={<CategoryPage />} />
             <Route path="/profil" element={<ProfilePage />} />
-            <Route path="/saqlanganlar" element={<SavedPage />} />
-            <Route path="/xabarlar" element={<MessagesPage />} />
+            <Route
+              path="/saqlanganlar"
+              element={
+                <RequireAuth from="/saqlanganlar" reason="saved">
+                  <SavedPage />
+                </RequireAuth>
+              }
+            />
             <Route
               path="/xarita"
               element={
@@ -74,6 +81,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </MainLayout>
+        </AuthGateProvider>
       </AuthProvider>
     </BrowserRouter>
   )

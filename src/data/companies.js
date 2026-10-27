@@ -50,7 +50,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 18,
-    phone: '+998 90 345 03 64',
     telegram: null,
     hours: '09:00 - 21:00',
     bannerImage: '/images/sport/clubs/tennis-club.jpg',
@@ -68,7 +67,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 15,
-    phone: '+998 93 133 09 99',
     telegram: null,
     hours: '08:00 - 22:00',
     bannerImage: '/images/sport/clubs/judo-club.jpg',
@@ -86,7 +84,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 12,
-    phone: '+998 99 849 45 74',
     telegram: null,
     // E’londa narx va ish vaqti ko‘rsatilmagan — o‘ylab topilmaydi
     hours: 'Telefon orqali aniqlang',
@@ -106,7 +103,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 14,
-    phone: '+998 99 641 44 11',
     telegram: null,
     // E’londa narx va ish vaqti ko‘rsatilmagan — o‘ylab topilmaydi
     hours: 'Telefon orqali aniqlang',
@@ -126,7 +122,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 11,
-    phone: '+998 99 894 84 75',
     telegram: null,
     // E’londa narx va ish vaqti ko‘rsatilmagan — o‘ylab topilmaydi
     hours: 'Telefon orqali aniqlang',
@@ -146,7 +141,6 @@ const detailOverrides = {
     years: '3+',
     employees: '2+',
     reviews: 16,
-    phone: '+998 90 949 14 19',
     telegram: null,
     // E’londa soat va narx yo‘q, faqat mashg‘ulot kunlari bor — o‘ylab topilmaydi
     hours: 'Dushanba, Chorshanba, Juma',

@@ -94,6 +94,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                     <td>
                       {u.phone ? formatPhone(u.phone) : '—'}
                       {u.email && <span className="cell-sub">{u.email}</span>}
+                      <span className="cell-sub">{u.telegramChatId ? 'Telegram ulangan' : 'Telegram ulanmagan'}</span>
                     </td>
                     <td>{u.role === 'user' ? ROLE_LABEL.user : <Badge tone="primary">{ROLE_LABEL[u.role]}</Badge>}</td>
                     <td className="num">{byUser.get(u.id) ?? 0}</td>

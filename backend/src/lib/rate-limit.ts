@@ -1,28 +1,38 @@
 import 'server-only'
+import { lt, sql } from 'drizzle-orm'
+import { getDb } from '@/db'
+import { rateLimits } from '@/db/schema'
 import { ApiError } from './http'
 
-type Bucket = { count: number; resetAt: number }
-
-const globalStore = globalThis as unknown as { __sportonRate?: Map<string, Bucket> }
-const buckets = (globalStore.__sportonRate ??= new Map())
+let lastCleanup = 0
 
 /**
- * Oddiy xotiradagi (bitta server jarayoni uchun) cheklovchi. Bir nechta instansiyada
- * ishlatilsa — Redis’ga ko‘chirish kerak (interfeys o‘zgarmaydi).
+ * Bazadagi cheklovchi: server qayta ishga tushganda nolga tushmaydi va bir nechta instansiyada ham
+ * umumiy. Bitta atomik so‘rov — oyna tugagan bo‘lsa hisob 1 dan boshlanadi, aks holda +1.
  */
-export function rateLimit(key: string, limit: number, windowMs: number) {
-  const now = Date.now()
-  const bucket = buckets.get(key)
-  if (!bucket || bucket.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs })
-    if (buckets.size > 10_000) {
-      for (const [k, b] of buckets) if (b.resetAt <= now) buckets.delete(k)
-    }
-    return
+export async function rateLimit(key: string, limit: number, windowMs: number) {
+  const db = await getDb()
+  const resetAt = new Date(Date.now() + windowMs)
+  const [row] = await db
+    .insert(rateLimits)
+    .values({ key, count: 1, resetAt })
+    .onConflictDoUpdate({
+      target: rateLimits.key,
+      set: {
+        count: sql`case when ${rateLimits.resetAt} <= now() then 1 else ${rateLimits.count} + 1 end`,
+        resetAt: sql`case when ${rateLimits.resetAt} <= now() then excluded.reset_at else ${rateLimits.resetAt} end`,
+      },
+    })
+    .returning({ count: rateLimits.count, resetAt: rateLimits.resetAt })
+
+  // Eskirgan yozuvlarni vaqti-vaqti bilan tozalaymiz (jadval o‘smasin)
+  if (Date.now() - lastCleanup > 10 * 60_000) {
+    lastCleanup = Date.now()
+    void db.delete(rateLimits).where(lt(rateLimits.resetAt, new Date())).catch(() => null)
   }
-  bucket.count += 1
-  if (bucket.count > limit) {
-    const seconds = Math.ceil((bucket.resetAt - now) / 1000)
+
+  if (row.count > limit) {
+    const seconds = Math.max(1, Math.ceil((row.resetAt.getTime() - Date.now()) / 1000))
     throw new ApiError(429, 'RATE_LIMITED', `Juda ko‘p urinish. ${seconds} soniyadan so‘ng qayta urinib ko‘ring`)
   }
 }

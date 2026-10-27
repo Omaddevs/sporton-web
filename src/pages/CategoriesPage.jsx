@@ -4,6 +4,7 @@ import { FiArrowRight, FiSearch } from 'react-icons/fi'
 import { categoryMenuItems } from '../data/categoryMenu.js'
 import { categories } from '../data/categories.js'
 import './CategoriesPage.css'
+import { tr } from '../i18n/index.js'
 
 const categoryImageById = Object.fromEntries(categories.map((c) => [c.id, c]))
 
@@ -28,17 +29,17 @@ export default function CategoriesPage() {
   return (
     <div className="categories-page">
       <div className="container categories-page__inner">
-        <nav className="categories-page__crumbs" aria-label="Navigatsiya">
-          <Link to="/">Bosh sahifa</Link>
+        <nav className="categories-page__crumbs" aria-label={tr('Navigatsiya')}>
+          <Link to="/">{tr('Bosh sahifa')}</Link>
           <span aria-hidden="true">/</span>
-          <span>Sport turlari</span>
+          <span>{tr('Sport turlari')}</span>
         </nav>
 
         <header className="categories-page__header">
           <div className="categories-page__intro">
-            <h1>Barcha sport turlari</h1>
+            <h1>{tr('Barcha sport turlari')}</h1>
             <p>
-              {categoryMenuItems.length} ta sport turi — jami{' '}
+              {categoryMenuItems.length} {tr('ta sport turi — jami')}{' '}
               {totalAds.toLocaleString('uz-UZ')} ta majmua va mashg&apos;ulot
             </p>
           </div>
@@ -47,10 +48,10 @@ export default function CategoriesPage() {
             <FiSearch aria-hidden="true" />
             <input
               type="search"
-              placeholder="Sport turini qidirish..."
+              placeholder={tr('Sport turini qidirish...')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Sport turini qidirish"
+              aria-label={tr('Sport turini qidirish')}
             />
           </label>
         </header>
@@ -73,7 +74,7 @@ export default function CategoriesPage() {
 
                   <span className="cat-tile__body">
                     <span className="cat-tile__title">{item.title}</span>
-                    <span className="cat-tile__count">{item.count} ta joy</span>
+                    <span className="cat-tile__count">{item.count} {tr('ta joy')}</span>
                   </span>
 
                   {visual?.image ? (

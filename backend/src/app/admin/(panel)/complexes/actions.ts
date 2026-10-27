@@ -1,77 +1,18 @@
 'use server'
 
+import { panelUrl } from '@/lib/env'
 import { and, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
-import { complexes, PUBLISH_STATUSES } from '@/db/schema'
+import { complexes, LISTING_STATUSES, users, type ListingStatus } from '@/db/schema'
+import { readComplex } from '@/lib/complex-form'
 import { field, requireStaff, slugify } from '@/lib/admin'
 import { audit } from '@/lib/audit'
 import { invalidateCatalog } from '@/lib/catalog'
-import { REGIONS } from '@/lib/constants'
 import { isUniqueViolation } from '@/lib/booking'
-import { imagesOf, normalizeMedia } from '@/lib/media'
-
-function num(form: FormData, name: string) {
-  const raw = field(form, name)
-  if (raw == null) return null
-  const n = Number(raw.replace(',', '.'))
-  return Number.isFinite(n) ? n : null
-}
-
-function readComplex(form: FormData) {
-  const name = field(form, 'name')
-  if (!name || name.length < 2) throw new Error('Majmua nomini kiriting')
-  const status = String(form.get('status') ?? 'published')
-  const region = field(form, 'region')
-  const lat = num(form, 'lat')
-  const lng = num(form, 'lng')
-  if ((lat == null) !== (lng == null)) throw new Error('Koordinata uchun lat va lng ikkalasini ham kiriting')
-  if (lat != null && (lat < 37 || lat > 46 || lng! < 55 || lng! > 74)) throw new Error('Koordinata O‘zbekiston hududida emas')
-  let rawMedia: unknown = []
-  try {
-    rawMedia = JSON.parse(String(form.get('media') ?? '[]'))
-  } catch {
-    throw new Error('Media ro‘yxati noto‘g‘ri')
-  }
-  const media = normalizeMedia(rawMedia)
-  const phone = field(form, 'phone')
-  const telegram = field(form, 'telegram')
-  return {
-    name,
-    status: ((PUBLISH_STATUSES as readonly string[]).includes(status) ? status : 'hidden') as 'published' | 'hidden',
-    color: field(form, 'color') ?? '#1e6ff5',
-    verified: form.get('verified') === 'on',
-    listed: form.get('listed') === 'on',
-    isDemo: form.get('isDemo') === 'on',
-    tagline: field(form, 'tagline'),
-    region,
-    city: field(form, 'city') ?? REGIONS.find((r) => r.id === region)?.city ?? null,
-    location: field(form, 'location'),
-    address: field(form, 'address'),
-    landmark: field(form, 'landmark'),
-    website: field(form, 'website'),
-    industry: field(form, 'industry'),
-    years: field(form, 'years'),
-    employees: field(form, 'employees'),
-    phone,
-    telegram: telegram ? (telegram.startsWith('@') ? telegram : `@${telegram.replace(/^https?:\/\/t\.me\//, '')}`) : null,
-    hours: field(form, 'hours'),
-    priceNote: field(form, 'priceNote'),
-    bannerImage: field(form, 'bannerImage'),
-    bannerSlogan: field(form, 'bannerSlogan'),
-    about: field(form, 'about'),
-    amenities: form.getAll('amenities').map(String),
-    media,
-    images: imagesOf(media),
-    similarIds: String(form.get('similarIds') ?? '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean),
-    lat,
-    lng,
-  }
-}
+import { notifyUserSafe } from '@/lib/notify'
+import { toLocalDigits } from '@/lib/phone'
 
 function fail(path: string, error: unknown): never {
   const message = error instanceof Error ? error.message : 'Saqlashda xatolik'
@@ -114,7 +55,8 @@ export async function updateComplex(form: FormData) {
 export async function setComplexStatus(form: FormData) {
   const actor = await requireStaff()
   const id = String(form.get('id'))
-  const status = form.get('status') === 'published' ? 'published' : 'hidden'
+  const raw = String(form.get('status'))
+  const status = ((LISTING_STATUSES as readonly string[]).includes(raw) ? raw : 'hidden') as ListingStatus
   const db = await getDb()
   await db.update(complexes).set({ status }).where(eq(complexes.id, id))
   await audit(actor.id, `complex.${status}`, 'complex', id)
@@ -144,4 +86,30 @@ export async function deleteComplex(form: FormData) {
   await audit(actor.id, 'complex.delete', 'complex', id)
   invalidateCatalog()
   redirect(`/admin/complexes?ok=${encodeURIComponent('Majmua o‘chirildi')}`)
+}
+
+/** Majmua egasini biriktirish (telefon raqami bo‘yicha) yoki olib tashlash — kabinetga kirish shu orqali */
+export async function setComplexOwner(form: FormData) {
+  const actor = await requireStaff('admin')
+  const id = String(form.get('id'))
+  const path = `/admin/complexes/${encodeURIComponent(id)}`
+  const db = await getDb()
+  if (form.get('op') === 'remove') {
+    await db.update(complexes).set({ ownerId: null }).where(eq(complexes.id, id))
+    await audit(actor.id, 'complex.owner_remove', 'complex', id)
+    redirect(`${path}?ok=${encodeURIComponent('Egasi olib tashlandi')}`)
+  }
+  const phone = toLocalDigits(form.get('phone'))
+  const [owner] = phone.length === 9 ? await db.select().from(users).where(eq(users.phone, phone)).limit(1) : []
+  if (!owner) redirect(`${path}?error=${encodeURIComponent('Bu raqam bilan ro‘yxatdan o‘tgan foydalanuvchi topilmadi')}`)
+  await db.update(complexes).set({ ownerId: owner.id }).where(eq(complexes.id, id))
+  await audit(actor.id, 'complex.owner_set', 'complex', id, { ownerId: owner.id })
+  const [c] = await db.select({ name: complexes.name }).from(complexes).where(eq(complexes.id, id)).limit(1)
+  notifyUserSafe(owner.id, {
+    type: 'submission',
+    title: 'Majmua kabineti ochildi',
+    body: `Siz «${c?.name ?? id}» majmuasining egasi sifatida tasdiqlandingiz. Bronlar va ma’lumotlarni kabinetda boshqaring.`,
+    link: panelUrl('/kabinet'),
+  })
+  redirect(`${path}?ok=${encodeURIComponent('Egasi biriktirildi — kabinetga kira oladi')}`)
 }

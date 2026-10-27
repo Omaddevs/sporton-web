@@ -1,6 +1,13 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /kabinet
 Disallow: /api/
 Disallow: /profil
-Disallow: /xabarlar
+Disallow: /saqlanganlar
+Disallow: /kirish
+Disallow: /royxatdan-otish
+Disallow: /parolni-tiklash
+
+# Production domenida nginx /sitemap.xml ni backendga yo‘naltiradi
+Sitemap: https://sporton.uz/sitemap.xml

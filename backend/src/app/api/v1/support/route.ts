@@ -8,7 +8,7 @@ import { notifyAdmins } from '@/lib/telegram'
 import { supportSchema } from '@/lib/validation'
 
 export const POST = route(async (request) => {
-  rateLimit(`support:${clientIp(request)}`, 5, 60 * 60_000)
+  await rateLimit(`support:${clientIp(request)}`, 5, 60 * 60_000)
   const data = await readJson(request, supportSchema)
   const user = await getCurrentUser()
   const name = user ? `${user.firstName} ${user.lastName}`.trim() : data.name

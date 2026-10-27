@@ -5,6 +5,7 @@ import { categoryMenuById, categoryMenuItems } from '../../data/categoryMenu.js'
 import DropPanel from '../ui/DropPanel.jsx'
 import useMediaQuery from '../../hooks/useMediaQuery.js'
 import './CategoriesMenu.css'
+import { tr } from '../../i18n/index.js'
 
 const RECENT_KEY = 'sporton-recent-categories'
 const MAX_RECENT = 3
@@ -141,7 +142,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
         className="categories-menu__panel"
         origin="start"
         role="dialog"
-        aria-label="Sport turlari"
+        aria-label={tr('Sport turlari')}
       >
         <span className="categories-menu__caret" aria-hidden="true" />
         <span className="categories-menu__handle" aria-hidden="true" />
@@ -151,13 +152,13 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
             <span className="categories-menu__title-icon" aria-hidden="true">
               <LayoutGrid size={17} strokeWidth={2.4} />
             </span>
-            <h2>Sport turlari</h2>
+            <h2>{tr('Sport turlari')}</h2>
           </div>
           <button
             type="button"
             className="categories-menu__close"
             onClick={close}
-            aria-label="Yopish"
+            aria-label={tr('Yopish')}
             tabIndex={open ? 0 : -1}
           >
             <X size={18} strokeWidth={2.4} />
@@ -187,7 +188,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
                 </span>
                 <span className="cat-item__text">
                   <span className="cat-item__name">{item.title}</span>
-                  <span className="cat-item__count">{item.count} ta joy</span>
+                  <span className="cat-item__count">{item.count} {tr('ta joy')}</span>
                 </span>
                 <ChevronRight className="cat-item__chevron" size={15} strokeWidth={2.25} />
               </Link>
@@ -205,7 +206,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
                 <LayoutGrid size={18} strokeWidth={2.4} />
               </span>
               <span className="cat-all__text">
-                <span className="cat-all__title">Barcha sport turlari</span>
+                <span className="cat-all__title">{tr('Barcha sport turlari')}</span>
                 <span className="cat-all__sub">
                   Hammasini ko&apos;rish
                   <ChevronRight size={13} strokeWidth={2.5} />
@@ -226,7 +227,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
                     onClick={clearRecent}
                     tabIndex={open ? 0 : -1}
                   >
-                    Barchasini tozalash
+                    {tr('Barchasini tozalash')}
                   </button>
                 )}
               </div>

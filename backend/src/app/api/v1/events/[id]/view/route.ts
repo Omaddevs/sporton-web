@@ -8,7 +8,7 @@ import { clientIp, rateLimit } from '@/lib/rate-limit'
 export const POST = route<{ id: string }>(async (request, { params }) => {
   const { id } = await params
   try {
-    rateLimit(`event-view:${clientIp(request)}:${id}`, 1, 30 * 60_000)
+    await rateLimit(`event-view:${clientIp(request)}:${id}`, 1, 30 * 60_000)
   } catch {
     return json({ ok: true, counted: false })
   }

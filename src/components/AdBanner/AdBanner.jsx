@@ -2,6 +2,7 @@ import { FiArrowRight, FiX } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
 import { fetchAd } from '../../services/ads.js'
 import './AdBanner.css'
+import { tr } from '../../i18n/index.js'
 
 const isExternal = (href) => /^https?:\/\//.test(href)
 
@@ -29,7 +30,7 @@ export default function AdBanner({ slot = 'home' }) {
         className="ad-banner ad-banner--image"
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer sponsored' : undefined}
-        aria-label={ad.alt || ad.ctaLabel || 'Reklama'}
+        aria-label={ad.alt || ad.ctaLabel || tr('Reklama')}
       >
         <picture className="ad-banner__picture">
           {ad.mobileImage && <source media="(max-width: 639px)" srcSet={ad.mobileImage} />}
@@ -46,7 +47,7 @@ export default function AdBanner({ slot = 'home' }) {
         <button
           type="button"
           className="ad-banner__close"
-          aria-label="Reklamani yopish"
+          aria-label={tr('Reklamani yopish')}
           onClick={(event) => {
             event.preventDefault()
             event.stopPropagation()

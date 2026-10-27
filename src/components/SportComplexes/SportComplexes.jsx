@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ComplexCard from './ComplexCard.jsx'
 import { complexes } from '../../data/complexes.js'
 import './SportComplexes.css'
+import { tr } from '../../i18n/index.js'
 
 const PAGE_SIZE = 8
 
@@ -11,7 +12,7 @@ export default function SportComplexes({ id = 'majmualar' }) {
 
   return (
     <section className="sport-complexes container" id={id}>
-      <h2 className="sport-complexes__title">Sport majmualari</h2>
+      <h2 className="sport-complexes__title">{tr('Sport majmualari')}</h2>
 
       <ul className="sport-complexes__grid">
         {shown.map((complex) => (

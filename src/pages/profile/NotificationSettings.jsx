@@ -4,11 +4,12 @@ import { FiBell, FiCheckCircle } from 'react-icons/fi'
 import { api } from '../../services/apiClient.js'
 import { disablePush, enablePush, pushStatus } from '../../services/push.js'
 import { Toggle } from './ProfileModal.jsx'
+import { tr } from '../../i18n/index.js'
 
 const PREF_ITEMS = [
-  { key: 'bookingReminders', label: 'Bron eslatmalari', description: 'Tasdiqlangan mashg‘ulotdan 2 soat oldin eslatma' },
-  { key: 'promotions', label: 'Chegirma va aksiyalar', description: 'Majmualardagi maxsus takliflar' },
-  { key: 'news', label: 'Sport yangiliklari', description: 'Muhim yangiliklar e’lon qilinganda' },
+  { key: 'bookingReminders', label: tr('Bron eslatmalari'), description: tr('Tasdiqlangan mashg‘ulotdan 2 soat oldin eslatma') },
+  { key: 'promotions', label: tr('Chegirma va aksiyalar'), description: tr('Majmualardagi maxsus takliflar') },
+  { key: 'news', label: tr('Sport yangiliklari'), description: tr('Muhim yangiliklar e’lon qilinganda') },
 ]
 
 const PUSH_TEXT = {
@@ -77,7 +78,7 @@ export default function NotificationSettings({ notify }) {
     setBusy('tg')
     try {
       setData(await api('/notifications/prefs', { method: 'DELETE' }))
-      notify('Telegram uzildi')
+      notify(tr('Telegram uzildi'))
     } catch (err) {
       notify(err.message)
     } finally {
@@ -86,14 +87,14 @@ export default function NotificationSettings({ notify }) {
   }
 
   if (error) return <p className="pf-empty">{error}</p>
-  if (!data) return <p className="pf-empty">Yuklanmoqda…</p>
+  if (!data) return <p className="pf-empty">{tr('Yuklanmoqda…')}</p>
 
   const pushState = !data.push.available ? 'unavailable' : push
   const pushOn = pushState === 'on' && data.prefs.push
 
   return (
     <>
-      <p className="pf-note">Bron tasdiqlari va muhim tizim xabarlari saytda doim ko‘rinadi.</p>
+      <p className="pf-note">{tr('Bron tasdiqlari va muhim tizim xabarlari saytda doim ko‘rinadi.')}</p>
       {PREF_ITEMS.map((item) => (
         <Toggle
           key={item.key}
@@ -109,34 +110,34 @@ export default function NotificationSettings({ notify }) {
           <FaTelegram />
         </span>
         <div className="pf-channel__text">
-          <strong>Telegram</strong>
+          <strong>{tr('Telegram')}</strong>
           <span>
             {!data.telegram.available
               ? PUSH_TEXT.unavailable
               : data.telegram.linked
-                ? 'Ulangan — xabarlar botga ham keladi'
-                : 'Botga ulaning: bron holati va eslatmalar Telegram’ga keladi'}
+                ? tr('Ulangan — xabarlar botga ham keladi')
+                : tr('Botga ulaning: bron holati va eslatmalar Telegram’ga keladi')}
           </span>
         </div>
         {data.telegram.available &&
           (data.telegram.linked ? (
             <div className="pf-channel__actions">
-              <label className="pf-switch" title="Telegram xabarlari">
+              <label className="pf-switch" title={tr('Telegram xabarlari')}>
                 <input
                   type="checkbox"
                   checked={data.prefs.telegram}
                   onChange={(e) => setPref('telegram', e.target.checked)}
-                  aria-label="Telegram xabarlari"
+                  aria-label={tr('Telegram xabarlari')}
                 />
                 <span className="pf-toggle__track" aria-hidden />
               </label>
               <button type="button" className="pf-link is-danger" onClick={unlinkTelegram} disabled={busy === 'tg'}>
-                Uzish
+                {tr('Uzish')}
               </button>
             </div>
           ) : (
             <a className="pf-channel__btn" href={data.telegram.botUrl} target="_blank" rel="noreferrer">
-              Ulash
+              {tr('Ulash')}
             </a>
           ))}
       </div>
@@ -146,7 +147,7 @@ export default function NotificationSettings({ notify }) {
           {pushOn ? <FiCheckCircle /> : <FiBell />}
         </span>
         <div className="pf-channel__text">
-          <strong>Brauzer bildirishnomalari</strong>
+          <strong>{tr('Brauzer bildirishnomalari')}</strong>
           <span>{PUSH_TEXT[pushOn ? 'on' : pushState === 'on' ? 'off' : pushState]}</span>
         </div>
         {(pushState === 'on' || pushState === 'off') && (
@@ -156,7 +157,7 @@ export default function NotificationSettings({ notify }) {
               checked={pushOn}
               disabled={busy === 'push'}
               onChange={(e) => togglePush(e.target.checked)}
-              aria-label="Brauzer bildirishnomalari"
+              aria-label={tr('Brauzer bildirishnomalari')}
             />
             <span className="pf-toggle__track" aria-hidden />
           </label>

@@ -66,11 +66,11 @@ export const footerPages = {
       },
       {
         heading: 'Qanday bron qilaman?',
-        body: 'Majmua sahifasida kerakli xizmatni tanlang, «Bron qilish» tugmasini bosing va qulay vaqtni belgilang. Tasdiq SMS va Telegram orqali keladi.',
+        body: 'Majmua sahifasida kerakli xizmatni tanlang, «Bron qilish» tugmasini bosing va qulay vaqtni belgilang. Tasdiq saytdagi bildirishnomalar va Telegram bot orqali keladi.',
       },
       {
-        heading: 'Saqlanganlar va xabarlar',
-        body: 'Yoqqan majmualarni yurakcha orqali saqlang. Majmua administratori bilan «Xabarlar» bo‘limida to‘g‘ridan-to‘g‘ri yozishishingiz mumkin.',
+        heading: 'Saqlanganlar va aloqa',
+        body: 'Yoqqan majmualarni yurakcha orqali saqlang. Majmua bilan bog‘lanish uchun uning sahifasidagi telefon raqami yoki Telegram’dan foydalaning (raqam ro‘yxatdan o‘tganlarga ko‘rinadi).',
       },
     ],
   },
@@ -86,10 +86,6 @@ export const footerPages = {
       {
         heading: 'Bronni bekor qilsam bo‘ladimi?',
         body: 'Ha. Ko‘pchilik majmualarda bronni mashg‘ulotdan kamida 3 soat oldin bepul bekor qilish mumkin. Aniq shartlar xizmat sahifasida ko‘rsatilgan.',
-      },
-      {
-        heading: 'To‘lov qanday amalga oshiriladi?',
-        body: 'Majmuaga qarab joyida naqd, karta orqali yoki onlayn to‘lov tizimlari bilan to‘lash mumkin.',
       },
       {
         heading: 'Majmua egasiman — qanday qo‘shilaman?',
@@ -161,7 +157,7 @@ export const footerPages = {
       },
       {
         heading: 'Firibgarlikdan himoya',
-        body: 'Bron uchun to‘lovni faqat platforma yoki majmuaning rasmiy kassasi orqali amalga oshiring. Shubhali e’lon yoki xabar bo‘lsa — darhol bizga yozing.',
+        body: 'SportON hech qachon karta ma’lumotlari, SMS-kod yoki oldindan pul o‘tkazishni so‘ramaydi. Shunday so‘rov bo‘lsa yoki e’lon shubhali ko‘rinsa — darhol bizga yozing.',
       },
       {
         heading: 'Biz qanday himoya qilamiz?',

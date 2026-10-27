@@ -1,3 +1,4 @@
+import { tr } from '../../i18n/index.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
@@ -14,7 +15,7 @@ import {
   FiVolumeX,
   FiX,
 } from 'react-icons/fi'
-import { reelEmbedUrl, reels, reelVideoUrl } from '../../data/reels.js'
+import { reelEmbedUrl, reels } from '../../data/reels.js'
 import './Reels.css'
 
 // Lokal video fayli topilmagan reel’lar (har sahifa yuklanishida bir marta aniqlanadi)
@@ -27,7 +28,7 @@ function ReelPlayer({ index, onChange, onClose }) {
   const [playing, setPlaying] = useState(true)
   const [muted, setMuted] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [failed, setFailed] = useState(() => missingVideos.has(reel.code))
+  const [failed, setFailed] = useState(() => !reel.video || missingVideos.has(reel.code))
 
   const step = useCallback((dir) => onChange((index + dir + reels.length) % reels.length), [index, onChange])
 
@@ -80,14 +81,14 @@ function ReelPlayer({ index, onChange, onClose }) {
 
   return createPortal(
     <div className="reels-player" role="dialog" aria-modal="true" aria-label={reel.title} onClick={onClose}>
-      <button type="button" className="reels-player__close" aria-label="Yopish" onClick={onClose}>
+      <button type="button" className="reels-player__close" aria-label={tr('Yopish')} onClick={onClose}>
         <FiX />
       </button>
 
       <button
         type="button"
         className="reels-player__arrow reels-player__arrow--prev"
-        aria-label="Oldingi video"
+        aria-label={tr('Oldingi video')}
         onClick={(e) => {
           e.stopPropagation()
           step(-1)
@@ -113,7 +114,7 @@ function ReelPlayer({ index, onChange, onClose }) {
               key={reel.code}
               ref={videoRef}
               className="reels-player__video"
-              src={reelVideoUrl(reel.code)}
+              src={reel.video}
               poster={reel.image}
               autoPlay
               playsInline
@@ -145,21 +146,23 @@ function ReelPlayer({ index, onChange, onClose }) {
               <div className="reels-player__meta">
                 <span className="reels-card__company">
                   <img className="reels-card__logo" src="/images/logo-192.png" alt="" />
-                  sporton.uz
+                  {'sporton.uz'}
                 </span>
-                <span className="reels-card__stats">
-                  <span><FiHeart />{reel.likes}</span>
-                  <span><FiMessageCircle />{reel.comments}</span>
-                </span>
+                {reel.likes != null && (
+                  <span className="reels-card__stats">
+                    <span><FiHeart />{reel.likes}</span>
+                    <span><FiMessageCircle />{reel.comments}</span>
+                  </span>
+                )}
               </div>
               <div className="reels-player__controls">
-                <button type="button" onClick={toggle} aria-label={playing ? 'Pauza' : 'Davom ettirish'}>
+                <button type="button" onClick={toggle} aria-label={playing ? tr('Pauza') : tr('Davom ettirish')}>
                   {playing ? <FiPause /> : <FiPlay />}
                 </button>
                 <div
                   className="reels-player__progress"
                   role="slider"
-                  aria-label="Video vaqti"
+                  aria-label={tr('Video vaqti')}
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={Math.round(progress * 100)}
@@ -170,7 +173,7 @@ function ReelPlayer({ index, onChange, onClose }) {
                 <button
                   type="button"
                   onClick={() => setMuted((m) => !m)}
-                  aria-label={muted ? 'Ovozni yoqish' : 'Ovozni o‘chirish'}
+                  aria-label={muted ? tr('Ovozni yoqish') : tr('Ovozni o‘chirish')}
                 >
                   {muted ? <FiVolumeX /> : <FiVolume2 />}
                 </button>
@@ -183,7 +186,7 @@ function ReelPlayer({ index, onChange, onClose }) {
       <button
         type="button"
         className="reels-player__arrow reels-player__arrow--next"
-        aria-label="Keyingi video"
+        aria-label={tr('Keyingi video')}
         onClick={(e) => {
           e.stopPropagation()
           step(1)
@@ -200,7 +203,7 @@ function ReelPlayer({ index, onChange, onClose }) {
 function ReelCard({ reel, isClone, onOpen }) {
   const [hovered, setHovered] = useState(false)
   const [ready, setReady] = useState(false)
-  const canPreview = !missingVideos.has(reel.code)
+  const canPreview = Boolean(reel.video) && !missingVideos.has(reel.code)
 
   const stop = () => {
     setHovered(false)
@@ -228,7 +231,7 @@ function ReelCard({ reel, isClone, onOpen }) {
       {hovered && canPreview && (
         <video
           className="reels-card__video"
-          src={reelVideoUrl(reel.code)}
+          src={reel.video}
           muted
           autoPlay
           loop
@@ -254,18 +257,20 @@ function ReelCard({ reel, isClone, onOpen }) {
         <div className="reels-card__meta">
           <span className="reels-card__company">
             <img className="reels-card__logo" src="/images/logo-192.png" alt="" draggable={false} />
-            sporton.uz
+            {'sporton.uz'}
           </span>
-          <span className="reels-card__stats">
-            <span>
-              <FiHeart />
-              {reel.likes}
+          {reel.likes != null && (
+            <span className="reels-card__stats">
+              <span>
+                <FiHeart />
+                {reel.likes}
+              </span>
+              <span>
+                <FiMessageCircle />
+                {reel.comments}
+              </span>
             </span>
-            <span>
-              <FiMessageCircle />
-              {reel.comments}
-            </span>
-          </span>
+          )}
         </div>
       </div>
     </div>
@@ -285,7 +290,13 @@ const DRAG_THRESHOLD = 6
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+/** Admin paneldan Reels qo‘shilmagan bo‘lsa — bo‘lim ko‘rinmaydi */
 export default function Reels() {
+  if (!reels.length) return null
+  return <ReelsCarousel />
+}
+
+function ReelsCarousel() {
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
   const indexRef = useRef(COUNT * MID)
@@ -474,25 +485,24 @@ export default function Reels() {
           <div className="reels__intro">
             <span className="reels__badge">
               <FiVideo />
-              Reels
+              {tr('Reels')}
             </span>
             <h2 className="reels__title">Qisqa videolar bilan mashg&apos;ulotni boshlang</h2>
             <p className="reels__subtitle">
-              Mashq texnikasi, murabbiylardan maslahatlar va sport hayotidan lavhalar – barchasi bir
-              joyda!
+              {tr('Mashq texnikasi, murabbiylardan maslahatlar va sport hayotidan lavhalar – barchasi bir joyda!')}
             </p>
           </div>
 
           <div className="reels__actions">
             <Link to="/bolim/reels" className="reels__all">
-              Barcha Reels
+              {tr('Barcha Reels')}
               <FiArrowRight />
             </Link>
             <div className="reels__nav">
               <button
                 type="button"
                 className="reels__nav-btn"
-                aria-label="Oldingi"
+                aria-label={tr('Oldingi')}
                 onClick={() => move(-1)}
               >
                 <FiChevronLeft />
@@ -500,7 +510,7 @@ export default function Reels() {
               <button
                 type="button"
                 className="reels__nav-btn"
-                aria-label="Keyingi"
+                aria-label={tr('Keyingi')}
                 onClick={() => move(1)}
               >
                 <FiChevronRight />
@@ -537,7 +547,7 @@ export default function Reels() {
             </div>
           </div>
 
-          <div className="reels__dots" role="tablist" aria-label="Reels">
+          <div className="reels__dots" role="tablist" aria-label={tr('Reels')}>
             {reels.map((reel, i) => (
               <button
                 type="button"

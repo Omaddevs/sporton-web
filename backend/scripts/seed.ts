@@ -11,6 +11,7 @@
 import './_env'
 import { count, sql } from 'drizzle-orm'
 import { createDb } from '../src/db/client'
+import { inferBookingMode } from '../src/lib/booking-mode'
 import { complexes as complexesTable, events as eventsTable, news as newsTable, services as servicesTable, sports } from '../src/db/schema'
 import { readFileSync } from 'node:fs'
 
@@ -160,6 +161,7 @@ async function main() {
       requirements: j.requirements ?? [],
       offers: j.offers ?? [],
       views: listedIds.has(j.companyId) ? 0 : (j.views ?? 0),
+      bookingMode: inferBookingMode({ type: j.type, price: j.salary, hours: j.hours ?? null }),
     }))
     for (let i = 0; i < rows.length; i += 50) await db.insert(servicesTable).values(rows.slice(i, i + 50))
     // Aniq id’lar bilan yozilgani uchun ketma-ketlikni oxirgi id’ga suramiz

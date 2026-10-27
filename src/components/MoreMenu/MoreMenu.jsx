@@ -1,3 +1,4 @@
+import { tr } from '../../i18n/index.js'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowUpRight, ChevronRight, Compass, Map as MapIcon, Play } from 'lucide-react'
@@ -5,7 +6,6 @@ import { FiCalendar, FiMoreHorizontal, FiPlus, FiUser, FiX } from 'react-icons/f
 import { exploreSections, getSectionItems } from '../../data/explore.js'
 import { loadJobsMapPage } from '../../pages/jobsMapLoader.js'
 import HeartIcon from '../icons/HeartIcon.jsx'
-import MessageIcon from '../icons/MessageIcon.jsx'
 import DropPanel from '../ui/DropPanel.jsx'
 import './MoreMenu.css'
 
@@ -13,11 +13,10 @@ const PREVIEW_COUNT = 3
 
 // Kichik ekranlarda navbar'dan yashiriladigan havolalar
 const QUICK_LINKS = [
-  { to: '/xabarlar', label: 'Xabarlar', icon: <MessageIcon size={18} /> },
-  { to: '/saqlanganlar', label: 'Saqlanganlar', icon: <HeartIcon size={18} /> },
-  { to: '/xarita', label: 'Xarita', icon: <MapIcon size={18} strokeWidth={1.8} />, preload: true },
-  { to: '/bron', label: 'Bron qilish', icon: <FiCalendar /> },
-  { to: '/profil', label: 'Profil', icon: <FiUser /> },
+  { to: '/saqlanganlar', label: tr('Saqlanganlar'), icon: <HeartIcon size={18} /> },
+  { to: '/xarita', label: tr('Xarita'), icon: <MapIcon size={18} strokeWidth={1.8} />, preload: true },
+  { to: '/bron', label: tr('Bron qilish'), icon: <FiCalendar /> },
+  { to: '/profil', label: tr('Profil'), icon: <FiUser /> },
 ]
 
 export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
@@ -61,7 +60,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
       <button
         type="button"
         className={`navbar__more ${open ? 'is-active' : ''}`}
-        aria-label="Qo'shimcha menyu"
+        aria-label={tr('Qo\'shimcha menyu')}
         aria-expanded={open}
         aria-controls={panelId}
         aria-haspopup="dialog"
@@ -81,7 +80,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
         className="more-menu__panel"
         origin="end"
         role="dialog"
-        aria-label="Ko'proq"
+        aria-label={tr('Ko\'proq')}
       >
         <span className="more-menu__caret" aria-hidden="true" />
 
@@ -92,7 +91,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
             </span>
             <h2>Ko&apos;proq</h2>
           </div>
-          <p className="more-menu__tagline">Yangiliklar, musobaqalar va SportON hayoti</p>
+          <p className="more-menu__tagline">{tr('Yangiliklar, musobaqalar va SportON hayoti')}</p>
         </div>
 
         <div className="more-menu__quick" role="list">
@@ -129,7 +128,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
         </div>
 
         <div className="more-menu__body">
-          <nav className="more-menu__nav" aria-label="Bo'limlar">
+          <nav className="more-menu__nav" aria-label={tr('Bo\'limlar')}>
             {exploreSections.map((section) => (
               <Link
                 key={section.id}
@@ -168,7 +167,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
                 onClick={close}
                 tabIndex={tab}
               >
-                Barchasi
+                {tr('Barchasi')}
                 <ArrowUpRight size={14} strokeWidth={2.4} />
               </Link>
             </div>

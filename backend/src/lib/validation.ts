@@ -31,7 +31,11 @@ export const registerSchema = z.object({
   phone: phoneSchema,
   password: passwordSchema,
   consent: z.literal(true, { error: 'Rozilik berish majburiy' }),
+  /** Telegram bot bergan tasdiqlash kodi (botga aynan shu raqam yuborilgan bo‘lishi kerak) */
+  code: z.string({ error: 'Telegram botdan olingan kodni kiriting' }).regex(/^\d{6}$/, 'Kod 6 ta raqamdan iborat'),
 })
+
+export const registerStartSchema = z.object({ phone: phoneSchema })
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Joriy parolni kiriting'),
@@ -52,6 +56,11 @@ export const profileSchema = z.object({
   firstName: trimmed(2, 50, 'Ism').optional(),
   lastName: trimmed(2, 50, 'Familiya').optional(),
   email: z.union([z.literal(''), z.email('Email noto‘g‘ri')]).optional(),
+  bio: z.string().trim().max(300, 'Ko‘pi bilan 300 belgi').optional(),
+  city: z.string().trim().max(60).optional(),
+  sports: z.array(z.string().regex(/^[\w-]{1,40}$/)).max(20, 'Ko‘pi bilan 20 ta sport turi').optional(),
+  /** Yuklangan rasm (/api/v1/files/…) yoki bo‘sh — o‘chirish */
+  avatar: z.union([z.literal(''), z.string().regex(/^\/api\/v1\/files\/[\w./-]+$/, 'Rasm noto‘g‘ri')]).optional(),
 })
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana noto‘g‘ri')

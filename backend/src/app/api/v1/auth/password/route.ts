@@ -8,7 +8,7 @@ import { changePasswordSchema } from '@/lib/validation'
 
 export const POST = route(async (request) => {
   const user = await requireUser()
-  rateLimit(`password:${user.id}`, 10, 15 * 60_000)
+  await rateLimit(`password:${user.id}`, 10, 15 * 60_000)
   const data = await readJson(request, changePasswordSchema)
 
   if (!(await verifyPassword(data.currentPassword, user.passwordHash))) {

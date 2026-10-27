@@ -6,16 +6,14 @@ import {
   FiCalendar,
   FiCheck,
   FiChevronDown,
+  FiGlobe,
   FiClock,
   FiLock,
   FiLogOut,
   FiMail,
-  FiMapPin,
-  FiMonitor,
   FiMoon,
   FiPlus,
   FiSend,
-  FiSmartphone,
   FiSun,
   FiTrash2,
   FiX,
@@ -25,16 +23,17 @@ import Button from '../../components/ui/Button.jsx'
 import Select from '../../components/ui/Select.jsx'
 import { useAuth } from '../../context/auth.js'
 import { formatAgo, useNotifications } from '../../hooks/useNotifications.js'
-import { newId } from '../../hooks/useProfile.js'
 import { useTheme } from '../../hooks/useTheme.js'
 import * as authApi from '../../services/authApi.js'
 import { api } from '../../services/apiClient.js'
 import { maskPhone } from '../../utils/phone.js'
 import { BOOKING_STATUSES, helpFaq, SUPPORT_TOPICS } from '../../data/profile.js'
-import { ConfirmModal, Field, Toggle } from './ProfileModal.jsx'
+import { ConfirmModal, Field } from './ProfileModal.jsx'
 import { formatDate, isUpcoming, sortBookings } from './profileUtils.js'
 import { useBookingCancel } from './useBookingCancel.jsx'
 import NotificationSettings from './NotificationSettings.jsx'
+import { lang, setLang, tr } from '../../i18n/index.js'
+import { LANGUAGES } from '../../data/languages.js'
 
 function SectionCard({ title, subtitle, action, children }) {
   return (
@@ -76,11 +75,11 @@ export function BookingsList({ bookings, onCancel, limit, empty = 'Bronlar topil
                 <div className="pf-booking__actions">
                   {upcoming ? (
                     <button type="button" className="pf-link is-danger" onClick={() => onCancel(row)}>
-                      <FiX aria-hidden /> Bekor qilish
+                      <FiX aria-hidden /> {tr('Bekor qilish')}
                     </button>
                   ) : (
                     <Link className="pf-link" to={`/majmua/${row.companyId}`}>
-                      <FiPlus aria-hidden /> Qayta bron qilish
+                      <FiPlus aria-hidden /> {tr('Qayta bron qilish')}
                     </Link>
                   )}
                 </div>
@@ -98,10 +97,10 @@ export function BookingsList({ bookings, onCancel, limit, empty = 'Bronlar topil
 }
 
 const BOOKING_FILTERS = [
-  { id: 'all', label: 'Barchasi', test: () => true },
-  { id: 'active', label: 'Faol', test: isUpcoming },
-  { id: 'completed', label: 'Yakunlangan', test: (b) => b.status === 'completed' },
-  { id: 'cancelled', label: 'Bekor qilingan', test: (b) => b.status === 'cancelled' },
+  { id: 'all', label: tr('Barchasi'), test: () => true },
+  { id: 'active', label: tr('Faol'), test: isUpcoming },
+  { id: 'completed', label: tr('Yakunlangan'), test: (b) => b.status === 'completed' },
+  { id: 'cancelled', label: tr('Bekor qilingan'), test: (b) => b.status === 'cancelled' },
 ]
 
 export function BookingsSection({ profile, update, notify }) {
@@ -112,18 +111,18 @@ export function BookingsSection({ profile, update, notify }) {
 
   return (
     <SectionCard
-      title="Mening bronlarim"
+      title={tr('Mening bronlarim')}
       subtitle={`Jami ${profile.bookings.length} ta bron · ${profile.bookings.filter(isUpcoming).length} ta faol`}
       action={
         <Link to="/sport-turlari" className="btn btn--primary pf-head-btn">
           <span className="btn__icon">
             <FiPlus />
           </span>
-          <span className="btn__label">Yangi bron</span>
+          <span className="btn__label">{tr('Yangi bron')}</span>
         </Link>
       }
     >
-      <div className="pf-chips" role="tablist" aria-label="Bronlar filtri">
+      <div className="pf-chips" role="tablist" aria-label={tr('Bronlar filtri')}>
         {BOOKING_FILTERS.map((item) => {
           const count = profile.bookings.filter(item.test).length
           return (
@@ -173,17 +172,17 @@ export function NotificationsSection() {
 
   return (
     <SectionCard
-      title="Bildirishnomalar"
-      subtitle={unreadCount ? `${unreadCount} ta o‘qilmagan` : 'Hammasi o‘qilgan'}
+      title={tr('Bildirishnomalar')}
+      subtitle={unreadCount ? `${unreadCount} ta o‘qilmagan` : tr('Hammasi o‘qilgan')}
       action={
         <div className="pf-head-actions">
           <Button variant="outline" icon={<FiCheck />} onClick={markAllRead} disabled={!unreadCount}>
-            Hammasini o‘qilgan qilish
+            {tr('Hammasini o‘qilgan qilish')}
           </Button>
         </div>
       }
     >
-      <div className="pf-chips" role="tablist" aria-label="Filtr">
+      <div className="pf-chips" role="tablist" aria-label={tr('Filtr')}>
         <button
           type="button"
           role="tab"
@@ -191,7 +190,7 @@ export function NotificationsSection() {
           className={`pf-chip${filter === 'all' ? ' is-active' : ''}`}
           onClick={() => setFilter('all')}
         >
-          Barchasi <em>{items.length}{hasMore ? '+' : ''}</em>
+          {tr('Barchasi')} <em>{items.length}{hasMore ? '+' : ''}</em>
         </button>
         <button
           type="button"
@@ -200,12 +199,12 @@ export function NotificationsSection() {
           className={`pf-chip${filter === 'unread' ? ' is-active' : ''}`}
           onClick={() => setFilter('unread')}
         >
-          O‘qilmagan <em>{unreadCount}</em>
+          {tr('O‘qilmagan')} <em>{unreadCount}</em>
         </button>
       </div>
 
       {!loaded ? (
-        <p className="pf-empty">Yuklanmoqda…</p>
+        <p className="pf-empty">{tr('Yuklanmoqda…')}</p>
       ) : visible.length ? (
         <ul className="pf-notifs">
           {visible.map((item) => {
@@ -221,15 +220,15 @@ export function NotificationsSection() {
                     <span>{item.text}</span>
                     <time dateTime={item.createdAt}>{formatAgo(item.createdAt)}</time>
                   </span>
-                  {item.unread && <span className="pf-notifs__dot" aria-label="O‘qilmagan" />}
+                  {item.unread && <span className="pf-notifs__dot" aria-label={tr('O‘qilmagan')} />}
                 </button>
                 <div className="pf-notifs__tools">
                   {item.unread && (
-                    <button type="button" className="pf-icon-btn" title="O‘qilgan" aria-label="O‘qilgan deb belgilash" onClick={() => markRead(item.id)}>
+                    <button type="button" className="pf-icon-btn" title={tr('O‘qilgan')} aria-label={tr('O‘qilgan deb belgilash')} onClick={() => markRead(item.id)}>
                       <FiCheck />
                     </button>
                   )}
-                  <button type="button" className="pf-icon-btn is-danger" title="O‘chirish" aria-label="O‘chirish" onClick={() => remove(item.id)}>
+                  <button type="button" className="pf-icon-btn is-danger" title={tr('O‘chirish')} aria-label={tr('O‘chirish')} onClick={() => remove(item.id)}>
                     <FiTrash2 />
                   </button>
                 </div>
@@ -240,15 +239,15 @@ export function NotificationsSection() {
       ) : (
         <div className="pf-empty pf-empty--center">
           <BellOff size={28} strokeWidth={1.8} />
-          <strong>{filter === 'unread' ? 'Hammasi o‘qilgan' : 'Bildirishnomalar yo‘q'}</strong>
-          <span>Bron holati, eslatmalar va chegirmalar haqida shu yerda xabar beramiz.</span>
+          <strong>{filter === 'unread' ? tr('Hammasi o‘qilgan') : tr('Bildirishnomalar yo‘q')}</strong>
+          <span>{tr('Bron holati, eslatmalar va chegirmalar haqida shu yerda xabar beramiz.')}</span>
         </div>
       )}
 
       {hasMore && filter === 'all' && (
         <div className="pf-section__foot">
           <button type="button" className="pf-link" onClick={loadMore} disabled={loading}>
-            {loading ? 'Yuklanmoqda…' : 'Yana ko‘rsatish'}
+            {loading ? tr('Yuklanmoqda…') : tr('Yana ko‘rsatish')}
           </button>
         </div>
       )}
@@ -262,7 +261,7 @@ export function NotificationsSection() {
               if (window.confirm('Barcha bildirishnomalar o‘chirilsinmi?')) clearAll()
             }}
           >
-            <FiTrash2 aria-hidden /> Barchasini tozalash
+            <FiTrash2 aria-hidden /> {tr('Barchasini tozalash')}
           </button>
         </div>
       )}
@@ -271,51 +270,41 @@ export function NotificationsSection() {
 }
 
 /* —— Sozlamalar —— */
-const SETTINGS_GROUPS = [
-  {
-    title: 'Maxfiylik',
-    items: [
-      { key: 'publicProfile', label: 'Ommaviy profil', description: 'Boshqa sportchilar profilingizni ko‘ra oladi' },
-      { key: 'showPhone', label: 'Telefon raqamni ko‘rsatish', description: 'Majmualar raqamingizni ko‘radi' },
-    ],
-  },
-]
-
-export function SettingsSection({ profile, update, notify }) {
+export function SettingsSection({ notify }) {
   const { theme, setTheme } = useTheme()
 
-  function toggle(key, value) {
-    update({ settings: { ...profile.settings, [key]: value } })
-    notify(value ? 'Yoqildi' : 'O‘chirildi')
-  }
-
   return (
-    <SectionCard title="Sozlamalar" subtitle="O‘zgarishlar avtomatik saqlanadi">
+    <SectionCard title={tr('Sozlamalar')} subtitle={tr('O‘zgarishlar avtomatik saqlanadi')}>
       <div className="pf-group">
-        <h2>Bildirishnomalar</h2>
+        <h2>{tr('Bildirishnomalar')}</h2>
         <NotificationSettings notify={notify} />
       </div>
-      {SETTINGS_GROUPS.map((group) => (
-        <div key={group.title} className="pf-group">
-          <h2>{group.title}</h2>
-          {group.items.map((item) => (
-            <Toggle
-              key={item.key}
-              label={item.label}
-              description={item.description}
-              checked={Boolean(profile.settings[item.key])}
-              onChange={(value) => toggle(item.key, value)}
-            />
-          ))}
-        </div>
-      ))}
 
       <div className="pf-group">
-        <h2>Ko‘rinish</h2>
+        <h2>{tr('Til')}</h2>
+        <div className="pf-theme">
+          {LANGUAGES.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              aria-pressed={lang === item.id}
+              className={`pf-theme__opt${lang === item.id ? ' is-active' : ''}`}
+              onClick={() => setLang(item.id)}
+            >
+              <FiGlobe aria-hidden />
+              {item.label}
+              {lang === item.id && <FiCheck className="pf-theme__check" aria-hidden />}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="pf-group">
+        <h2>{tr('Ko‘rinish')}</h2>
         <div className="pf-theme">
           {[
-            { id: 'light', label: 'Yorug‘', icon: FiSun },
-            { id: 'dark', label: 'Qorong‘i', icon: FiMoon },
+            { id: 'light', label: tr('Yorug‘'), icon: FiSun },
+            { id: 'dark', label: tr('Qorong‘i'), icon: FiMoon },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -336,13 +325,6 @@ export function SettingsSection({ profile, update, notify }) {
 }
 
 /* —— Hisob xavfsizligi —— */
-function currentDevice() {
-  const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent
-  const os = /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'macOS' : /Win/.test(ua) ? 'Windows' : 'Linux'
-  const browser = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Brauzer'
-  return `${os} · ${browser}`
-}
-
 function PasswordForm({ user, notify }) {
   const [values, setValues] = useState({ currentPassword: '', newPassword: '', confirm: '' })
   const [errors, setErrors] = useState({})
@@ -351,14 +333,14 @@ function PasswordForm({ user, notify }) {
   if (!user) {
     return (
       <p className="pf-note">
-        <FiLock aria-hidden /> Parolni o‘zgartirish uchun <Link to="/kirish" state={{ from: '/profil?bolim=xavfsizlik' }}>hisobingizga kiring</Link>.
+        <FiLock aria-hidden /> {tr('Parolni o‘zgartirish uchun')} <Link to="/kirish" state={{ from: '/profil?bolim=xavfsizlik' }}>{tr('hisobingizga kiring')}</Link>.
       </p>
     )
   }
   if (user.provider && user.provider !== 'phone') {
     return (
       <p className="pf-note">
-        <FiLock aria-hidden /> Siz {user.provider === 'google' ? 'Google' : 'Telegram'} orqali kirgansiz — parol shu xizmat tomonidan boshqariladi.
+        <FiLock aria-hidden /> {tr('Siz')} {user.provider === 'google' ? tr('Google') : tr('Telegram')} {tr('orqali kirgansiz — parol shu xizmat tomonidan boshqariladi.')}
       </p>
     )
   }
@@ -374,17 +356,17 @@ function PasswordForm({ user, notify }) {
   async function submit(e) {
     e.preventDefault()
     const next = {}
-    if (!values.currentPassword) next.currentPassword = 'Joriy parolni kiriting'
+    if (!values.currentPassword) next.currentPassword = tr('Joriy parolni kiriting')
     if (values.newPassword.length < authApi.MIN_PASSWORD)
       next.newPassword = `Kamida ${authApi.MIN_PASSWORD} ta belgi`
-    if (values.confirm !== values.newPassword) next.confirm = 'Parollar mos kelmadi'
+    if (values.confirm !== values.newPassword) next.confirm = tr('Parollar mos kelmadi')
     if (Object.keys(next).length) return setErrors(next)
 
     setBusy(true)
     try {
       await authApi.changePassword({ phone: user.phone, currentPassword: values.currentPassword, newPassword: values.newPassword })
       setValues({ currentPassword: '', newPassword: '', confirm: '' })
-      notify('Parol muvaffaqiyatli o‘zgartirildi')
+      notify(tr('Parol muvaffaqiyatli o‘zgartirildi'))
     } catch (err) {
       setErrors({ [err.field ?? 'currentPassword']: err.message })
     } finally {
@@ -394,131 +376,96 @@ function PasswordForm({ user, notify }) {
 
   return (
     <form className="pf-grid" onSubmit={submit} noValidate>
-      <Field label="Joriy parol" error={errors.currentPassword} full>
+      <Field label={tr('Joriy parol')} error={errors.currentPassword} full>
         <input className="pf-input" type="password" autoComplete="current-password" {...bind('currentPassword')} />
       </Field>
-      <Field label="Yangi parol" error={errors.newPassword}>
+      <Field label={tr('Yangi parol')} error={errors.newPassword}>
         <input className="pf-input" type="password" autoComplete="new-password" {...bind('newPassword')} />
       </Field>
-      <Field label="Yangi parolni takrorlang" error={errors.confirm}>
+      <Field label={tr('Yangi parolni takrorlang')} error={errors.confirm}>
         <input className="pf-input" type="password" autoComplete="new-password" {...bind('confirm')} />
       </Field>
       <div className="pf-field--full">
         <Button type="submit" variant="primary" disabled={busy}>
-          {busy ? 'Saqlanmoqda…' : 'Parolni yangilash'}
+          {busy ? tr('Saqlanmoqda…') : tr('Parolni yangilash')}
         </Button>
       </div>
     </form>
   )
 }
 
-export function SecuritySection({ profile, update, notify, resetProfile }) {
+export function SecuritySection({ profile, notify }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const sessions = profile.security.sessions
-  const others = sessions.filter((s) => !s.current)
-
-  const setSecurity = (patch) => update({ security: { ...profile.security, ...patch } })
+  const [confirmLogoutAll, setConfirmLogoutAll] = useState(false)
 
   async function deleteAccount() {
     try {
-      if (user) await authApi.deleteAccount()
+      await authApi.deleteAccount()
     } catch (err) {
       notify(err.message)
       return
     }
-    resetProfile()
     setConfirmDelete(false)
     logout()
     navigate('/', { replace: true })
   }
 
+  async function logoutAll() {
+    setConfirmLogoutAll(false)
+    try {
+      await authApi.logoutAll()
+      notify(tr('Boshqa barcha qurilmalardan chiqildi'))
+    } catch (err) {
+      notify(err.message)
+    }
+  }
+
   return (
-    <SectionCard title="Hisob xavfsizligi" subtitle={`Kirish raqami: ${profile.phone ? maskPhone(profile.phone) : '—'}`}>
+    <SectionCard title={tr('Hisob xavfsizligi')} subtitle={`Kirish raqami: ${profile.phone ? maskPhone(profile.phone) : '—'}`}>
       <div className="pf-group">
-        <h2>Parolni o‘zgartirish</h2>
+        <h2>{tr('Parolni o‘zgartirish')}</h2>
         <PasswordForm user={user} notify={notify} />
       </div>
 
       <div className="pf-group">
-        <h2>Qo‘shimcha himoya</h2>
-        <Toggle
-          label="Ikki bosqichli tasdiqlash"
-          description="Yangi qurilmadan kirishda Telegram orqali kod so‘raladi"
-          checked={profile.security.twoFactor}
-          onChange={(value) => {
-            setSecurity({ twoFactor: value })
-            notify(value ? 'Ikki bosqichli tasdiqlash yoqildi' : 'Ikki bosqichli tasdiqlash o‘chirildi')
-          }}
-        />
-      </div>
-
-      <div className="pf-group">
         <div className="pf-group__head">
-          <h2>Faol seanslar</h2>
-          {others.length > 0 && (
-            <button
-              type="button"
-              className="pf-link is-danger"
-              onClick={() => {
-                setSecurity({ sessions: sessions.filter((s) => s.current) })
-                notify('Boshqa barcha qurilmalardan chiqildi')
-              }}
-            >
-              <FiLogOut aria-hidden /> Boshqa qurilmalardan chiqish
-            </button>
-          )}
+          <h2>{tr('Qurilmalar')}</h2>
         </div>
-        <ul className="pf-sessions">
-          {sessions.map((s) => (
-            <li key={s.id}>
-              <span className="pf-sessions__icon" aria-hidden>
-                {s.current ? <FiMonitor /> : <FiSmartphone />}
-              </span>
-              <div>
-                <strong>
-                  {s.current ? currentDevice() : `${s.device} · ${s.detail}`}
-                  {s.current && <em className="pf-badge">Joriy</em>}
-                </strong>
-                <span>
-                  <FiMapPin aria-hidden /> {s.location} · <FiClock aria-hidden /> {s.last}
-                </span>
-              </div>
-              {!s.current && (
-                <button
-                  type="button"
-                  className="pf-link is-danger"
-                  onClick={() => {
-                    setSecurity({ sessions: sessions.filter((item) => item.id !== s.id) })
-                    notify(`${s.device} seansi yakunlandi`)
-                  }}
-                >
-                  Chiqarish
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+        <p className="pf-note">
+          {tr('Telefon yoki boshqa kompyuterda hisobingiz ochiq qolgan bo‘lsa yoki parolingiz begona odamga ma’lum bo‘lgan deb hisoblasangiz — barcha qurilmalardagi sessiyalarni yoping. Shu qurilmada hisobingiz ochiq qoladi.')}
+        </p>
+        <Button variant="outline" icon={<FiLogOut />} onClick={() => setConfirmLogoutAll(true)}>
+          {tr('Boshqa barcha qurilmalardan chiqish')}
+        </Button>
       </div>
 
       <div className="pf-group pf-danger-zone">
         <div>
           <h2>
-            <FiAlertTriangle aria-hidden /> Hisobni o‘chirish
+            <FiAlertTriangle aria-hidden /> {tr('Hisobni o‘chirish')}
           </h2>
-          <p>Profil, bronlar tarixi va bonus ballar butunlay o‘chiriladi. Bu amalni qaytarib bo‘lmaydi.</p>
+          <p>{tr('Profil, saqlanganlar va sozlamalar butunlay o‘chiriladi. Bu amalni qaytarib bo‘lmaydi.')}</p>
         </div>
         <Button variant="outline" className="pf-btn-danger-outline" icon={<FiTrash2 />} onClick={() => setConfirmDelete(true)}>
-          Hisobni o‘chirish
+          {tr('Hisobni o‘chirish')}
         </Button>
       </div>
 
       <ConfirmModal
+        open={confirmLogoutAll}
+        title={tr('Boshqa qurilmalardan chiqasizmi?')}
+        text={tr('Boshqa barcha qurilma va brauzerlarda hisobingizdan chiqiladi. Shu qurilmada ochiq qoladi.')}
+        confirmLabel={tr('Ha, chiqish')}
+        onClose={() => setConfirmLogoutAll(false)}
+        onConfirm={logoutAll}
+      />
+      <ConfirmModal
         open={confirmDelete}
-        title="Hisobni o‘chirasizmi?"
-        text="Barcha ma’lumotlaringiz o‘chiriladi va siz tizimdan chiqasiz. Davom etasizmi?"
-        confirmLabel="Ha, o‘chirish"
+        title={tr('Hisobni o‘chirasizmi?')}
+        text={tr('Barcha ma’lumotlaringiz o‘chiriladi va siz tizimdan chiqasiz. Davom etasizmi?')}
+        confirmLabel={tr('Ha, o‘chirish')}
         onClose={() => setConfirmDelete(false)}
         onConfirm={deleteAccount}
       />
@@ -527,17 +474,16 @@ export function SecuritySection({ profile, update, notify, resetProfile }) {
 }
 
 /* —— Yordam —— */
-export function HelpSection({ profile, update, notify }) {
+export function HelpSection({ profile, notify }) {
   const [topic, setTopic] = useState(SUPPORT_TOPICS[0].id)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const requests = profile.supportRequests ?? []
 
   const [sending, setSending] = useState(false)
 
   async function submit(e) {
     e.preventDefault()
-    if (message.trim().length < 10) return setError('Murojaatni batafsilroq yozing (kamida 10 ta belgi)')
+    if (message.trim().length < 10) return setError(tr('Murojaatni batafsilroq yozing (kamida 10 ta belgi)'))
     setSending(true)
     try {
       await api('/support', {
@@ -554,23 +500,15 @@ export function HelpSection({ profile, update, notify }) {
       return setError(err.message)
     }
     setSending(false)
-    const request = {
-      id: newId('req'),
-      topic,
-      message: message.trim(),
-      date: new Date().toISOString().slice(0, 10),
-      status: 'Ko‘rib chiqilmoqda',
-    }
-    update({ supportRequests: [request, ...requests] })
     setMessage('')
     setError('')
-    notify('Murojaat yuborildi — 24 soat ichida javob beramiz')
+    notify(tr('Murojaat yuborildi — javob bildirishnomalarda va Telegram’da keladi'))
   }
 
   return (
-    <SectionCard title="Yordam" subtitle="Ko‘p beriladigan savollar va qo‘llab-quvvatlash xizmati">
+    <SectionCard title={tr('Yordam')} subtitle={tr('Ko‘p beriladigan savollar va qo‘llab-quvvatlash xizmati')}>
       <div className="pf-group">
-        <h2>Ko‘p beriladigan savollar</h2>
+        <h2>{tr('Ko‘p beriladigan savollar')}</h2>
         <div className="pf-faq">
           {helpFaq.map((item) => (
             <details key={item.q}>
@@ -585,44 +523,44 @@ export function HelpSection({ profile, update, notify }) {
       </div>
 
       <div className="pf-group">
-        <h2>Biz bilan bog‘laning</h2>
+        <h2>{tr('Biz bilan bog‘laning')}</h2>
         <div className="pf-contacts">
           <a href="https://t.me/sportonuz" target="_blank" rel="noreferrer">
             <FaTelegram aria-hidden />
             <span>
-              <strong>Telegram</strong>
-              @sportonuz
+              <strong>{tr('Telegram')}</strong>
+              {'@sportonuz'}
             </span>
           </a>
           <a href="mailto:info@sporton.uz">
             <FiMail aria-hidden />
             <span>
-              <strong>Email</strong>
-              info@sporton.uz
+              <strong>{tr('Email')}</strong>
+              {'info@sporton.uz'}
             </span>
           </a>
           <div>
             <FiClock aria-hidden />
             <span>
-              <strong>Ish vaqti</strong>
-              Du–Sha, 09:00–21:00
+              <strong>{tr('Ish vaqti')}</strong>
+              {tr('Du–Sha, 09:00–21:00')}
             </span>
           </div>
         </div>
       </div>
 
       <div className="pf-group">
-        <h2>Murojaat yuborish</h2>
+        <h2>{tr('Murojaat yuborish')}</h2>
         <form className="pf-grid" onSubmit={submit} noValidate>
-          <Field label="Mavzu" full>
-            <Select value={topic} onChange={setTopic} options={SUPPORT_TOPICS} ariaLabel="Mavzu" />
+          <Field label={tr('Mavzu')} full>
+            <Select value={topic} onChange={setTopic} options={SUPPORT_TOPICS} ariaLabel={tr('Mavzu')} />
           </Field>
-          <Field label="Xabar" error={error} full>
+          <Field label={tr('Xabar')} error={error} full>
             <textarea
               className="pf-input pf-textarea"
               rows={4}
               maxLength={1000}
-              placeholder="Muammoni batafsil yozing. Bron bo‘yicha bo‘lsa — majmua nomi va sanani ko‘rsating."
+              placeholder={tr('Muammoni batafsil yozing. Bron bo‘yicha bo‘lsa — majmua nomi va sanani ko‘rsating.')}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value)
@@ -632,27 +570,11 @@ export function HelpSection({ profile, update, notify }) {
           </Field>
           <div className="pf-field--full">
             <Button type="submit" variant="primary" icon={<FiSend />} disabled={sending}>
-              {sending ? 'Yuborilmoqda…' : 'Yuborish'}
+              {sending ? tr('Yuborilmoqda…') : tr('Yuborish')}
             </Button>
           </div>
         </form>
 
-        {requests.length > 0 && (
-          <ul className="pf-requests">
-            {requests.map((req) => (
-              <li key={req.id}>
-                <div>
-                  <strong>{SUPPORT_TOPICS.find((t) => t.id === req.topic)?.label}</strong>
-                  <span>{req.message}</span>
-                </div>
-                <div className="profile-activity__meta">
-                  <time>{formatDate(req.date)}</time>
-                  <em className="profile-activity__status is-pending">{req.status}</em>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </SectionCard>
   )

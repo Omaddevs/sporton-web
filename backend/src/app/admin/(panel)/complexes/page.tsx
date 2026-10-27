@@ -21,7 +21,7 @@ export default async function ComplexesPage({ searchParams }: { searchParams: Pr
   const db = await getDb()
 
   const filters: SQL[] = []
-  if (status === 'published' || status === 'hidden') filters.push(eq(complexes.status, status))
+  if (status === 'draft' || status === 'published' || status === 'hidden') filters.push(eq(complexes.status, status))
   if (demo === '1') filters.push(eq(complexes.isDemo, true))
   if (demo === '0') filters.push(eq(complexes.isDemo, false))
   if (q) filters.push(or(ilike(complexes.name, `%${q}%`), ilike(complexes.id, `%${q}%`), ilike(complexes.location, `%${q}%`))!)
@@ -76,6 +76,7 @@ export default async function ComplexesPage({ searchParams }: { searchParams: Pr
             current={status}
             items={[
               { id: '', label: 'Barchasi' },
+              { id: 'draft', label: 'Qoralama' },
               { id: 'published', label: 'E’lon qilingan' },
               { id: 'hidden', label: 'Yashirin' },
             ]}

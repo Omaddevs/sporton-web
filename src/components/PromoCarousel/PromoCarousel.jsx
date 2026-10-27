@@ -1,25 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { tr } from '../../i18n/index.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SOCIAL_LINKS } from '../../data/social.js'
+import { fetchPromoSlides } from '../../services/promo.js'
 import './PromoCarousel.css'
 
-const SLIDES = [
+// Backend javob bermasa ko'rsatiladigan standart slaydlar (admin panelda boshqariladi)
+const FALLBACK_SLIDES = [
   {
     id: 'telegram',
-    href: SOCIAL_LINKS.telegram.href,
-    image: '/images/promo/sporton-telegram.png',
+    link: SOCIAL_LINKS.telegram.href,
+    image: '/images/promo/sporton-telegram-wide.png',
+    mobileImage: '/images/promo/sporton-telegram-mobile.png',
     alt: 'SportON Telegram kanali',
   },
   {
     id: 'instagram',
-    href: SOCIAL_LINKS.instagram.href,
-    image: '/images/promo/sporton-instagram.png',
+    link: SOCIAL_LINKS.instagram.href,
+    image: '/images/promo/sporton-instagram-wide.png',
+    mobileImage: '/images/promo/sporton-instagram-mobile.png',
     alt: 'SportON — Instagramda ham kuzatib boring',
   },
 ]
 
-const COUNT = SLIDES.length
-// Cheksiz aylanish: boshiga oxirgi slayd, oxiriga birinchi slayd nusxasi qo'shiladi
-const TRACK = [SLIDES[COUNT - 1], ...SLIDES, SLIDES[0]]
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)'
 const DURATION = 750
 const AUTOPLAY_MS = 4500
@@ -28,9 +30,31 @@ const DRAG_THRESHOLD = 6
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-const realIndex = (pos) => (((pos - 1) % COUNT) + COUNT) % COUNT
+const isExternal = (url) => /^https?:\/\//.test(url)
 
 export default function PromoCarousel() {
+  // null — yuklanmoqda; [] — admin hamma slaydni o'chirgan, karusel ko'rinmaydi
+  const [slides, setSlides] = useState(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchPromoSlides({ signal: controller.signal })
+      .then(setSlides)
+      .catch((error) => {
+        if (error?.name !== 'AbortError') setSlides(FALLBACK_SLIDES)
+      })
+    return () => controller.abort()
+  }, [])
+
+  if (!slides?.length) return null
+  return <Carousel slides={slides} />
+}
+
+function Carousel({ slides }) {
+  const COUNT = slides.length
+  // Cheksiz aylanish: boshiga oxirgi slayd, oxiriga birinchi slayd nusxasi qo'shiladi
+  const TRACK = useMemo(() => [slides[COUNT - 1], ...slides, slides[0]], [slides, COUNT])
+  const realIndex = useCallback((pos) => (((pos - 1) % COUNT) + COUNT) % COUNT, [COUNT])
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
   const posRef = useRef(1)
@@ -62,7 +86,7 @@ export default function PromoCarousel() {
     posRef.current = pos + shift
     setX(currentX() - shift * widthRef.current, false)
     void trackRef.current?.offsetWidth
-  }, [currentX, setX])
+  }, [COUNT, currentX, setX])
 
   const goTo = useCallback(
     (pos) => {
@@ -70,7 +94,7 @@ export default function PromoCarousel() {
       setActive(realIndex(posRef.current))
       setX(-posRef.current * widthRef.current, true)
     },
-    [setX],
+    [COUNT, realIndex, setX],
   )
 
   const move = useCallback(
@@ -110,14 +134,15 @@ export default function PromoCarousel() {
   }, [normalize])
 
   useEffect(() => {
-    if (paused || prefersReducedMotion()) return
+    if (paused || COUNT < 2 || prefersReducedMotion()) return
     const id = setInterval(() => {
       if (!document.hidden && !dragRef.current) move(1)
     }, AUTOPLAY_MS)
     return () => clearInterval(id)
-  }, [paused, move])
+  }, [paused, move, COUNT])
 
   const onPointerDown = (e) => {
+    if (COUNT < 2) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
     normalize()
     const x = currentX()
@@ -191,25 +216,12 @@ export default function PromoCarousel() {
         className="promo-carousel"
         role="region"
         aria-roledescription="carousel"
-        aria-label="SportON ijtimoiy tarmoqlari"
+        aria-label={tr('SportON ijtimoiy tarmoqlari')}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onFocus={() => setPaused(true)}
         onBlur={() => setPaused(false)}
       >
-        <div className="promo-carousel__decor" aria-hidden="true">
-          <img
-            className="promo-carousel__watermark promo-carousel__watermark--left"
-            src="/images/logo-icon.svg"
-            alt=""
-          />
-          <img
-            className="promo-carousel__watermark promo-carousel__watermark--right"
-            src="/images/logo-icon.svg"
-            alt=""
-          />
-        </div>
-
         <div
           className="promo-carousel__viewport"
           ref={viewportRef}
@@ -223,6 +235,20 @@ export default function PromoCarousel() {
             {TRACK.map((slide, pos) => {
               const isClone = pos === 0 || pos === COUNT + 1
               const isActive = !isClone && realIndex(pos) === active
+              // Kompyuter rasmi 24:5, telefon rasmi 2:1 — ikkalasi ham bannerni to'liq egallaydi
+              const image = (
+                <picture>
+                  {slide.mobileImage && <source media="(max-width: 639px)" srcSet={slide.mobileImage} />}
+                  <img
+                    className="promo-carousel__image"
+                    src={slide.image}
+                    alt={slide.alt ?? ''}
+                    width={1920}
+                    height={400}
+                    draggable={false}
+                  />
+                </picture>
+              )
               return (
                 <div
                   key={`${pos}-${slide.id}`}
@@ -232,41 +258,39 @@ export default function PromoCarousel() {
                   aria-label={`${realIndex(pos) + 1} / ${COUNT}`}
                   aria-hidden={!isActive}
                 >
-                  <a
-                    href={slide.href}
-                    className="promo-carousel__link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    draggable={false}
-                    tabIndex={isActive ? undefined : -1}
-                  >
-                    <img
-                      className="promo-carousel__image"
-                      src={slide.image}
-                      alt={slide.alt}
-                      width={851}
-                      height={315}
+                  {slide.link ? (
+                    <a
+                      href={slide.link}
+                      className="promo-carousel__link"
+                      {...(isExternal(slide.link) && { target: '_blank', rel: 'noopener noreferrer' })}
                       draggable={false}
-                    />
-                  </a>
+                      tabIndex={isActive ? undefined : -1}
+                    >
+                      {image}
+                    </a>
+                  ) : (
+                    <div className="promo-carousel__link">{image}</div>
+                  )}
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="promo-carousel__dots">
-          {SLIDES.map((slide, i) => (
-            <button
-              key={slide.id}
-              type="button"
-              className={`promo-carousel__dot${i === active ? ' promo-carousel__dot--active' : ''}`}
-              aria-label={`${i + 1}-slayd`}
-              aria-current={i === active}
-              onClick={() => goToDot(i)}
-            />
-          ))}
-        </div>
+        {COUNT > 1 && (
+          <div className="promo-carousel__dots">
+            {slides.map((slide, i) => (
+              <button
+                key={slide.id}
+                type="button"
+                className={`promo-carousel__dot${i === active ? ' promo-carousel__dot--active' : ''}`}
+                aria-label={`${i + 1}-slayd`}
+                aria-current={i === active}
+                onClick={() => goToDot(i)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

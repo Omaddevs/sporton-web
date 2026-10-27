@@ -13,6 +13,7 @@ import {
 import { uploadMedia } from '../../services/uploads.js'
 import { MediaLinkError, mediaThumb, parseMediaLink } from '../../utils/media.js'
 import './MediaUploader.css'
+import { tr } from '../../i18n/index.js'
 
 const PROVIDER_LABEL = { youtube: 'YouTube', instagram: 'Instagram', link: 'Havola' }
 
@@ -143,11 +144,11 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
       >
         <FiUploadCloud className="mu-drop__icon" aria-hidden="true" />
         <div className="mu-drop__text">
-          <strong>Rasm yoki video yuklang</strong>
-          <span>Tortib tashlang yoki tanlang · JPG, PNG, WEBP, MP4, MOV · istalgancha</span>
+          <strong>{tr('Rasm yoki video yuklang')}</strong>
+          <span>{tr('Tortib tashlang yoki tanlang · JPG, PNG, WEBP, MP4, MOV · istalgancha')}</span>
         </div>
         <button type="button" className="mu-btn mu-btn--primary" onClick={() => fileRef.current?.click()}>
-          Fayl tanlash
+          {tr('Fayl tanlash')}
         </button>
         <input
           ref={fileRef}
@@ -178,12 +179,12 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
               addLink()
             }
           }}
-          placeholder="Yoki havola: YouTube, Instagram reels, rasm/video manzili"
-          aria-label="Rasm yoki video havolasi"
+          placeholder={tr('Yoki havola: YouTube, Instagram reels, rasm/video manzili')}
+          aria-label={tr('Rasm yoki video havolasi')}
           aria-invalid={Boolean(linkError)}
         />
         <button type="button" className="mu-btn" onClick={addLink} disabled={!link.trim()}>
-          Qo‘shish
+          {tr('Qo‘shish')}
         </button>
       </div>
       {linkError && (
@@ -195,8 +196,8 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
       {value.length > 0 && (
         <>
           <p className="mu-summary">
-            {value.filter((i) => i.type === 'image').length} rasm · {value.filter((i) => i.type === 'video').length} video
-            {uploadingCount > 0 && <span> · {uploadingCount} ta yuklanmoqda…</span>}
+            {value.filter((i) => i.type === 'image').length} {tr('rasm ·')} {value.filter((i) => i.type === 'video').length} video
+            {uploadingCount > 0 && <span> · {uploadingCount} {tr('ta yuklanmoqda…')}</span>}
           </p>
           <ul className="mu-grid">
             {value.map((item, index) => {
@@ -218,7 +219,7 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
                         <FiPlay />
                       </span>
                     )}
-                    {item.key === coverKey && <span className="mu-tile__cover">Muqova</span>}
+                    {item.key === coverKey && <span className="mu-tile__cover">{tr('Muqova')}</span>}
                     {item.progress != null && !item.error && (
                       <span className="mu-tile__progress" aria-label={`Yuklanmoqda ${item.progress}%`}>
                         <span style={{ width: `${item.progress}%` }} />
@@ -230,26 +231,26 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
                         {item.error}
                         {item.retryable && (
                           <button type="button" onClick={() => retry(item.key)}>
-                            <FiRefreshCw aria-hidden="true" /> Qayta
+                            <FiRefreshCw aria-hidden="true" /> {tr('Qayta')}
                           </button>
                         )}
                       </span>
                     )}
                   </div>
                   <div className="mu-tile__bar">
-                    <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Oldinga surish">
+                    <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={tr('Oldinga surish')}>
                       <FiChevronLeft />
                     </button>
                     <button
                       type="button"
                       onClick={() => move(index, 1)}
                       disabled={index === value.length - 1}
-                      aria-label="Orqaga surish"
+                      aria-label={tr('Orqaga surish')}
                     >
                       <FiChevronRight />
                     </button>
-                    <span>{PROVIDER_LABEL[item.provider] ?? (item.type === 'video' ? 'Video' : 'Rasm')}</span>
-                    <button type="button" className="is-danger" onClick={() => remove(item.key)} aria-label="O‘chirish">
+                    <span>{PROVIDER_LABEL[item.provider] ?? (item.type === 'video' ? tr('Video') : tr('Rasm'))}</span>
+                    <button type="button" className="is-danger" onClick={() => remove(item.key)} aria-label={tr('O‘chirish')}>
                       <FiTrash2 />
                     </button>
                   </div>

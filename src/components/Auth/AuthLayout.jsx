@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { FiArrowLeft, FiCheck } from 'react-icons/fi'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import './Auth.css'
+import { tr } from '../../i18n/index.js'
 
 /**
  * Auth sahifalari karkasi: chapda brend paneli va bosqichlar, o‘ngda forma.
@@ -19,10 +20,10 @@ export default function AuthLayout({
   return (
     <div className="auth">
       <div className="auth__frame">
-        <aside className="auth-panel" aria-label="SportON">
+        <aside className="auth-panel" aria-label={tr('SportON')}>
           <div className="auth-panel__glow" aria-hidden="true" />
           <div className="auth-panel__content">
-            <Link to="/" className="auth-panel__logo" aria-label="Bosh sahifa">
+            <Link to="/" className="auth-panel__logo" aria-label={tr('Bosh sahifa')}>
               <BrandLogo tone="onPrimary" />
             </Link>
             <h2 className="auth-panel__title">{panelTitle}</h2>
@@ -53,7 +54,7 @@ export default function AuthLayout({
         <div className="auth-main">
           <Link to="/" className="auth-main__back">
             <FiArrowLeft />
-            Bosh sahifa
+            {tr('Bosh sahifa')}
           </Link>
 
           <div className="auth-main__inner">

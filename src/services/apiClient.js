@@ -1,3 +1,5 @@
+import { tr } from '../i18n/index.js'
+
 /**
  * Backend (Next.js, /backend) bilan aloqa. Dev’da Vite /api ni localhost:3001 ga proksilaydi,
  * production’da VITE_API_URL (bo‘sh bo‘lsa — shu domen) ishlatiladi. Sessiya httpOnly cookie’da.
@@ -31,7 +33,7 @@ export async function api(path, { method = 'GET', body, form, signal, timeout = 
     })
   } catch (error) {
     if (signal?.aborted) throw error
-    throw new ApiError('NETWORK', NETWORK_ERROR, undefined, 0)
+    throw new ApiError('NETWORK', tr(NETWORK_ERROR), undefined, 0)
   } finally {
     clearTimeout(timer)
   }
@@ -39,7 +41,8 @@ export async function api(path, { method = 'GET', body, form, signal, timeout = 
   const data = await response.json().catch(() => null)
   if (!response.ok) {
     const err = data?.error
-    throw new ApiError(err?.code ?? 'HTTP_ERROR', err?.message ?? NETWORK_ERROR, err?.field, response.status)
+    // Backend xabarlari o‘zbekcha — rus tilida lug‘atdan tarjima qilinadi (topilmasa asl matn)
+    throw new ApiError(err?.code ?? 'HTTP_ERROR', tr(err?.message ?? NETWORK_ERROR), err?.field, response.status)
   }
   return data
 }

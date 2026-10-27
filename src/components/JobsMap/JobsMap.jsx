@@ -5,6 +5,7 @@ import { ATTRIBUTION, currentTheme, TILES } from '../../utils/mapTiles.js'
 import { categoryMenuById } from '../../data/categoryMenu.js'
 import { sportIcons } from '../icons/sportIcons.jsx'
 import './JobsMap.css'
+import { tr } from '../../i18n/index.js'
 
 const UZBEKISTAN_VIEW = { center: [41.2, 64.6], zoom: 6 }
 
@@ -343,7 +344,7 @@ export default function JobsMap({
         </div>
       )}
       {origin && interactive && (
-        <button type="button" className="jobs-map__locate" onClick={recenter} aria-label="Mening joylashuvim" title="Mening joylashuvim">
+        <button type="button" className="jobs-map__locate" onClick={recenter} aria-label={tr('Mening joylashuvim')} title={tr('Mening joylashuvim')}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3.5" fill="currentColor" />
             <circle cx="12" cy="12" r="8" />

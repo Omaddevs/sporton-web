@@ -13,7 +13,7 @@ export const GET = route<{ id: string }>(async (request, { params }) => {
   const [row] = await db.select().from(news).where(and(eq(news.id, id), eq(news.status, 'published'))).limit(1)
   if (!row) throw notFound('Yangilik')
   try {
-    rateLimit(`news-view:${clientIp(request)}:${id}`, 1, 30 * 60_000)
+    await rateLimit(`news-view:${clientIp(request)}:${id}`, 1, 30 * 60_000)
     await db.update(news).set({ views: sql`${news.views} + 1` }).where(eq(news.id, id))
   } catch {
     /* takroriy ko‘rish hisoblanmaydi */

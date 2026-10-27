@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { footerPageBySlug } from '../data/footerPages.js'
 import './InfoPage.css'
+import { tr } from '../i18n/index.js'
 
 export default function InfoPage() {
   const { slug } = useParams()
@@ -13,8 +14,8 @@ export default function InfoPage() {
   return (
     <section className="info-page">
       <div className="container info-page__inner">
-        <nav className="info-page__crumbs" aria-label="Navigatsiya">
-          <Link to="/">Bosh sahifa</Link>
+        <nav className="info-page__crumbs" aria-label={tr('Navigatsiya')}>
+          <Link to="/">{tr('Bosh sahifa')}</Link>
           <span aria-hidden="true">/</span>
           <span>{page.title}</span>
         </nav>

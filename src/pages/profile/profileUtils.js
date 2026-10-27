@@ -8,7 +8,7 @@ export function formatDate(iso) {
 const todayIso = () => new Date().toISOString().slice(0, 10)
 
 export const isUpcoming = (booking) =>
-  (booking.status === 'pending' || booking.status === 'confirmed') && booking.date >= todayIso()
+  (booking.status === 'pending' || booking.status === 'confirmed') && (booking.flexible || booking.date >= todayIso())
 
 /** Bronlar: eng yaqin kelajakdagilar tepada, keyin o‘tganlar (yangidan eskiga) */
 export function sortBookings(list) {

@@ -1,6 +1,5 @@
+// Sayt tillari: o‘zbek (asosiy) va rus. Tarjimalar — src/i18n/ru.js
 export const LANGUAGES = [
-  { id: 'uz', code: "O'zb", label: "O'zbekcha", short: 'UZ' },
-  { id: 'uz-cyrl', code: 'Ўзб', label: 'Ўзбекча', short: 'ЎЗ' },
-  { id: 'ru', code: 'Рус', label: 'Русский', short: 'RU' },
-  { id: 'en', code: 'Eng', label: 'English', short: 'EN' },
+  { id: 'uz', code: "O'zbekcha", label: "O'zbekcha", short: 'UZ' },
+  { id: 'ru', code: 'Русский', label: 'Русский', short: 'RU' },
 ]

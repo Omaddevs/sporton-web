@@ -123,7 +123,7 @@ export const blogPosts = [
     content: [
       { heading: 'Sun’iy qoplama', body: 'Ochiq havoda o‘ynash, katta maydon va arzonroq narx. Ammo ob-havoga bog‘liq va kechqurun yoritish sifatini tekshirish kerak.' },
       { heading: 'Yopiq zal', body: 'Yil davomida barqaror sharoit, kiyinish xonalari va dush. Narx odatda 20–30% yuqori.' },
-      { heading: 'Bron qilishdan oldin', body: 'SportON’da majmua sharhlari va rasmlarini ko‘ring, bo‘sh vaqtlarni solishtiring va oldindan to‘lov bilan joyingizni kafolatlang.' },
+      { heading: 'Bron qilishdan oldin', body: 'SportON’da majmua sharhlari va rasmlarini ko‘ring, bo‘sh vaqtlarni solishtiring va onlayn bron qiling — majmua tasdiqlagach joyingiz kafolatlanadi.' },
     ],
   },
   {

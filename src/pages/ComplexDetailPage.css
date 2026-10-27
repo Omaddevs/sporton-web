@@ -1730,3 +1730,52 @@ button.cx-book__cta:disabled {
 .cx-gallery__item:has(.cx-gallery__more) .cx-media-play {
   display: none;
 }
+
+/* Bron usuli (admin panelda belgilanadi): soatlik bron / ariza / faqat qo‘ng‘iroq */
+.cx-service__mode {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.cx-service__mode--call {
+  color: #b45309;
+}
+
+.cx-book__info {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgb(30 111 245 / 0.08);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cx-book__cta svg {
+  margin-right: 8px;
+}
+
+/* Telefon: mehmonga yashirin (PhoneReveal) — havola kabi ko‘rinadi */
+.cx-phone-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.cx-phone-link {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* Qoralamani oldindan ko‘rish (admin / majmua egasi havolasi) */
+.cx-preview-banner {
+  padding: 10px 16px;
+  background: rgb(245 158 11 / 0.14);
+  color: #b45309;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+}

@@ -1,3 +1,4 @@
+import { tr } from '../i18n/index.js'
 import { companies, DEFAULT_COMPANY_ID } from './companies.js'
 import { jobs } from './jobs.js'
 import { SOCIAL_LINKS } from './social.js'
@@ -29,14 +30,14 @@ const GALLERY = ['g1', 'g2', 'g3', 'g4', 'g5']
 export const FALLBACK_IMAGE = '/images/sport/cat/boshqa.jpg'
 
 export const AMENITIES = [
-  { id: 'shower', label: 'Dush va kiyinish xonasi' },
-  { id: 'parking', label: 'Bepul avtoturargoh' },
-  { id: 'wifi', label: 'Bepul Wi-Fi' },
-  { id: 'locker', label: 'Shaxsiy shkaflar' },
-  { id: 'cafe', label: 'Kafe va dam olish zonasi' },
-  { id: 'inventory', label: 'Inventar ijarasi' },
-  { id: 'coach', label: 'Malakali murabbiylar' },
-  { id: 'ac', label: 'Konditsioner' },
+  { id: 'shower', label: tr('Dush va kiyinish xonasi') },
+  { id: 'parking', label: tr('Bepul avtoturargoh') },
+  { id: 'wifi', label: tr('Bepul Wi-Fi') },
+  { id: 'locker', label: tr('Shaxsiy shkaflar') },
+  { id: 'cafe', label: tr('Kafe va dam olish zonasi') },
+  { id: 'inventory', label: tr('Inventar ijarasi') },
+  { id: 'coach', label: tr('Malakali murabbiylar') },
+  { id: 'ac', label: tr('Konditsioner') },
 ]
 
 /** “250 000 so‘m / soat” → 250000 (so‘mda bo‘lmagan narxlar uchun null) */
@@ -97,7 +98,8 @@ function buildComplex(company, index) {
     reviews: company.reviews ?? 0,
     views: company.views ?? 0,
     hours: company.hours ?? physical?.hours ?? '07:00 - 23:00',
-    phone: company.phone ?? null,
+    // Raqamning o‘zi backenddan faqat kirgan foydalanuvchiga keladi (PhoneReveal)
+    hasPhone: company.hasPhone ?? Boolean(company.phone),
     // Majmuaning o‘z Telegram’i bo‘lmasa — SportON kanali
     telegram: company.telegram ?? SOCIAL_LINKS.telegram.handle,
     amenities: AMENITIES.filter((a) => amenityIds.includes(a.id)),

@@ -2,46 +2,42 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/auth.js'
 import {
+  FiAlertCircle,
   FiBell,
   FiCamera,
   FiCheck,
   FiCheckCircle,
-  FiCopy,
   FiEdit2,
+  FiExternalLink,
   FiHeart,
   FiHelpCircle,
   FiImage,
   FiLogOut,
   FiMail,
   FiMapPin,
-  FiMessageSquare,
   FiPhone,
   FiPlus,
+  FiRefreshCw,
   FiSend,
   FiSettings,
-  FiShare2,
   FiShield,
   FiTrash2,
   FiUser,
-  FiX,
 } from 'react-icons/fi'
-import { FaFacebookF, FaLinkedinIn, FaTelegram, FaXTwitter } from 'react-icons/fa6'
-import { HiOutlineSparkles } from 'react-icons/hi2'
+import { FaTelegram } from 'react-icons/fa6'
+import { HiOutlineBuildingOffice2 } from 'react-icons/hi2'
 import Button from '../components/ui/Button.jsx'
 import LogoIcon from '../components/icons/LogoIcon.jsx'
+import { categories } from '../data/categories.js'
+import { REGIONS } from '../data/regions.js'
+import { PROFILE_SECTIONS, profileNavItems } from '../data/profile.js'
 import { useNotifications } from '../hooks/useNotifications.js'
 import { useProfile } from '../hooks/useProfile.js'
-import { formatPhone, isValidPhone } from '../utils/phone.js'
-import {
-  LANGUAGE_FLAGS,
-  premiumBenefits,
-  premiumPlans,
-  PROFILE_SECTIONS,
-  profileNavItems,
-  profileTabs,
-} from '../data/profile.js'
+import * as authApi from '../services/authApi.js'
+import { uploadMedia } from '../services/uploads.js'
+import { formatPhone } from '../utils/phone.js'
 import ProfileEditor from './profile/ProfileEditors.jsx'
-import { ConfirmModal, ProfileModal } from './profile/ProfileModal.jsx'
+import { ConfirmModal } from './profile/ProfileModal.jsx'
 import {
   BookingsList,
   BookingsSection,
@@ -50,28 +46,34 @@ import {
   SecuritySection,
   SettingsSection,
 } from './profile/ProfileSections.jsx'
-import { formatDate, sortBookings } from './profile/profileUtils.js'
-import { useBookingCancel } from './profile/useBookingCancel.jsx'
+import { sortBookings } from './profile/profileUtils.js'
 import './ProfilePage.css'
 import './profile/ProfileSections.css'
+import { tr } from '../i18n/index.js'
 
 const navIcons = {
   user: FiUser,
   send: FiSend,
   heart: FiHeart,
   bell: FiBell,
-  message: FiMessageSquare,
   settings: FiSettings,
   shield: FiShield,
   help: FiHelpCircle,
   logout: FiLogOut,
 }
 
-const AVATAR_SIZE = 320
-const AVATAR_MAX_BYTES = 5 * 1024 * 1024
+const AVATAR_SIZE = 400
+const AVATAR_MAX_BYTES = 8 * 1024 * 1024
+const SPORT_TITLES = Object.fromEntries(categories.map((c) => [c.id, c.title]))
+// Profilda hudud id’si saqlanadi; eski yozuvlarda — matn
+const cityLabel = (city) => REGIONS.find((r) => r.id === city)?.label ?? city
+// Admin panel va majmua kabineti (lokalda alohida port: VITE_PANEL_URL=http://localhost:3002)
+const PANEL_URL = (import.meta.env.VITE_PANEL_URL || '').replace(/\/$/, '')
+// Botga o‘z kontaktini yuborgan foydalanuvchining raqami tasdiqlanadi (va Telegram ulanadi)
+const VERIFY_URL = `https://t.me/${authApi.TELEGRAM_BOT}?start=link`
 
-/** Rasmni kvadrat qilib kesib, 320px JPEG’ga kichraytiradi — localStorage’ga sig‘ishi uchun */
-function readAvatar(file) {
+/** Rasmni kvadrat qilib kesib, 400px JPEG’ga kichraytiradi — serverga yuklash uchun */
+function squareAvatar(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file)
     const img = new Image()
@@ -84,11 +86,11 @@ function readAvatar(file) {
         .getContext('2d')
         .drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, AVATAR_SIZE, AVATAR_SIZE)
       URL.revokeObjectURL(url)
-      resolve(canvas.toDataURL('image/jpeg', 0.86))
+      canvas.toBlob((blob) => (blob ? resolve(new File([blob], 'avatar.jpg', { type: 'image/jpeg' })) : reject(new Error(tr('Rasmni tayyorlab bo‘lmadi')))), 'image/jpeg', 0.88)
     }
     img.onerror = () => {
       URL.revokeObjectURL(url)
-      reject(new Error('Rasmni o‘qib bo‘lmadi'))
+      reject(new Error(tr('Rasmni o‘qib bo‘lmadi')))
     }
     img.src = url
   })
@@ -102,18 +104,18 @@ const initials = (name) =>
     .map((part) => part[0].toUpperCase())
     .join('') || '?'
 
+const memberSince = (iso) =>
+  iso ? new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''
+
+/** Profil to‘ldirilishi — faqat haqiqiy maydonlar */
 function getCompleteness(profile) {
   const items = [
-    {
-      label: 'Shaxsiy ma’lumot',
-      done: Boolean(profile.name && isValidPhone(profile.phone) && profile.email && profile.birthDate && profile.address),
-      action: { type: 'personal' },
-    },
-    { label: 'Profil rasmi', done: Boolean(profile.avatar), action: 'avatar' },
-    { label: 'Sport tajribasi', done: profile.experience.length > 0, action: { type: 'experience' } },
-    { label: 'Yutuqlar', done: profile.education.length > 0, action: { type: 'education' } },
-    { label: 'Sport turlari', done: profile.skills.length > 0, action: { type: 'skills' } },
-    { label: 'Favqulodda aloqa raqami', done: isValidPhone(profile.emergencyPhone), action: { type: 'personal' } },
+    { label: tr('Raqam Telegram orqali tasdiqlangan'), done: profile.phoneVerified, action: 'verify' },
+    { label: tr('Profil rasmi'), done: Boolean(profile.avatar), action: 'avatar' },
+    { label: tr('Shahar'), done: Boolean(profile.city), action: 'edit' },
+    { label: tr('Qiziqadigan sport turlari'), done: profile.sports.length > 0, action: 'edit' },
+    { label: tr('O‘zim haqimda'), done: Boolean(profile.bio), action: 'edit' },
+    { label: tr('Email'), done: Boolean(profile.email), action: 'edit' },
   ]
   const percent = Math.round((items.filter((item) => item.done).length / items.length) * 100)
   return { items, percent }
@@ -129,25 +131,20 @@ function Toast({ toast }) {
   )
 }
 
-function ProfileSidebar({ section, profile, onPremium }) {
+function ProfileSidebar({ section, profile }) {
   const { logout } = useAuth()
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
 
   return (
     <aside className="profile-side">
-      <nav className="profile-nav" aria-label="Profil menyusi">
+      <nav className="profile-nav" aria-label={tr('Profil menyusi')}>
         {profileNavItems.map((item) => {
           const Icon = navIcons[item.icon] || FiUser
-          const badge = item.badge === 'notifications' ? unreadCount : item.badgeValue
-          const className = [
-            'profile-nav__item',
-            item.id === section ? 'is-active' : '',
-            item.danger ? 'is-danger' : '',
-          ]
+          const badge = item.badge === 'notifications' ? unreadCount : 0
+          const className = ['profile-nav__item', item.id === section ? 'is-active' : '', item.danger ? 'is-danger' : '']
             .filter(Boolean)
             .join(' ')
-
           const content = (
             <>
               <Icon aria-hidden />
@@ -155,7 +152,6 @@ function ProfileSidebar({ section, profile, onPremium }) {
               {badge > 0 && <em className="profile-nav__badge">{badge > 9 ? '9+' : badge}</em>}
             </>
           )
-
           if (item.id === 'logout') {
             return (
               <button
@@ -171,51 +167,43 @@ function ProfileSidebar({ section, profile, onPremium }) {
               </button>
             )
           }
-
           const to = item.to ?? (item.id === 'profil' ? '/profil' : `/profil?bolim=${item.id}`)
           return (
-            <Link
-              key={item.id}
-              to={to}
-              className={className}
-              aria-current={item.id === section ? 'page' : undefined}
-            >
+            <Link key={item.id} to={to} className={className} aria-current={item.id === section ? 'page' : undefined}>
               {content}
             </Link>
           )
         })}
       </nav>
 
-      <div className={`profile-premium-card${profile.premium ? ' is-active' : ''}`}>
-        <div className="profile-premium-card__icon" aria-hidden>
-          <HiOutlineSparkles />
+      {profile.ownsComplexes ? (
+        <div className="profile-premium-card is-active">
+          <div className="profile-premium-card__icon" aria-hidden>
+            <HiOutlineBuildingOffice2 />
+          </div>
+          <h3>{tr('Majmua kabineti')}</h3>
+          <p>{tr('Bronlarni tasdiqlang, xizmatlar va majmua ma’lumotlarini boshqaring.')}</p>
+          <a className="btn btn--outline profile-premium-card__btn" href={`${PANEL_URL}/kabinet`}>
+            {tr('Kabinetga o‘tish')} <FiExternalLink aria-hidden />
+          </a>
         </div>
-        {profile.premium ? (
-          <>
-            <h3>Premium faol</h3>
-            <p>
-              {premiumPlans.find((plan) => plan.id === profile.premium.plan)?.label} obuna ·{' '}
-              {formatDate(profile.premium.since)} dan beri. Barcha bronlarda 10% chegirma qo‘llanadi.
-            </p>
-            <Button variant="outline" className="profile-premium-card__btn" onClick={onPremium}>
-              Obunani boshqarish
-            </Button>
-          </>
-        ) : (
-          <>
-            <h3>Premium bo‘ling</h3>
-            <p>Bronlarda chegirma, ustuvor joy va shaxsiy murabbiy maslahatlari.</p>
-            <Button variant="primary" className="profile-premium-card__btn" onClick={onPremium}>
-              Premiumga o‘tish
-            </Button>
-          </>
-        )}
-      </div>
+      ) : (
+        <div className="profile-premium-card">
+          <div className="profile-premium-card__icon" aria-hidden>
+            <HiOutlineBuildingOffice2 />
+          </div>
+          <h3>{tr('Majmuangiz bormi?')}</h3>
+          <p>{tr('Sport majmuangizni SportON’ga qo‘shing — bronlarni onlayn qabul qiling.')}</p>
+          <Link className="btn btn--primary profile-premium-card__btn" to="/majmua-qoshish">
+            {tr('Majmua qo‘shish')}
+          </Link>
+        </div>
+      )}
     </aside>
   )
 }
 
-function AvatarControl({ profile, onPick, onRemove }) {
+function AvatarControl({ profile, busy, onPick, onRemove }) {
   const [menu, setMenu] = useState(false)
   const ref = useRef(null)
 
@@ -233,18 +221,19 @@ function AvatarControl({ profile, onPick, onRemove }) {
       {profile.avatar ? (
         <img src={profile.avatar} alt={profile.name} className="profile-hero__avatar" />
       ) : (
-        <button type="button" className="profile-hero__avatar profile-hero__avatar--empty" onClick={onPick} aria-label="Profil rasmini yuklash">
+        <button type="button" className="profile-hero__avatar profile-hero__avatar--empty" onClick={onPick} aria-label={tr('Profil rasmini yuklash')}>
           {initials(profile.name)}
         </button>
       )}
       <button
         type="button"
         className="profile-hero__camera"
-        aria-label="Rasmni o‘zgartirish"
+        aria-label={tr('Rasmni o‘zgartirish')}
         aria-expanded={profile.avatar ? menu : undefined}
+        disabled={busy}
         onClick={() => (profile.avatar ? setMenu((v) => !v) : onPick())}
       >
-        <FiCamera />
+        {busy ? <FiRefreshCw className="pf-spin" /> : <FiCamera />}
       </button>
       {menu && (
         <div className="pf-popover" role="menu">
@@ -256,7 +245,7 @@ function AvatarControl({ profile, onPick, onRemove }) {
               onPick()
             }}
           >
-            <FiImage aria-hidden /> Yangi rasm yuklash
+            <FiImage aria-hidden /> {tr('Yangi rasm yuklash')}
           </button>
           <button
             type="button"
@@ -267,7 +256,7 @@ function AvatarControl({ profile, onPick, onRemove }) {
               onRemove()
             }}
           >
-            <FiTrash2 aria-hidden /> Rasmni o‘chirish
+            <FiTrash2 aria-hidden /> {tr('Rasmni o‘chirish')}
           </button>
         </div>
       )}
@@ -275,12 +264,12 @@ function AvatarControl({ profile, onPick, onRemove }) {
   )
 }
 
-function ProfileHero({ profile, openEditor, onPickAvatar, onRemoveAvatar }) {
+function ProfileHero({ profile, avatarBusy, onEdit, onPickAvatar, onRemoveAvatar }) {
   const stats = [
-    { label: 'Bronlar', value: profile.bookings.length, to: '/profil?bolim=bronlar' },
-    { label: 'Saqlangan joylar', value: profile.savedCount, to: '/saqlanganlar' },
-    { label: 'Mashg‘ulot soatlari', value: profile.trainingHours },
-    { label: 'Bonus ballar', value: profile.bonusPoints },
+    { label: tr('Bronlar'), value: profile.stats.bookings, to: '/profil?bolim=bronlar' },
+    { label: tr('Yakunlangan mashg‘ulotlar'), value: profile.stats.completed, to: '/profil?bolim=bronlar' },
+    { label: tr('Saqlanganlar'), value: profile.stats.favorites, to: '/saqlanganlar' },
+    { label: tr('Sharhlarim'), value: profile.stats.reviews },
   ]
 
   return (
@@ -289,40 +278,27 @@ function ProfileHero({ profile, openEditor, onPickAvatar, onRemoveAvatar }) {
         <LogoIcon className="profile-hero__watermark profile-hero__watermark--main" size={280} />
         <LogoIcon className="profile-hero__watermark profile-hero__watermark--soft" size={180} />
       </div>
-      <Button variant="outline" className="profile-hero__edit" icon={<FiEdit2 />} onClick={() => openEditor({ type: 'hero' })}>
-        Profilni tahrirlash
+      <Button variant="outline" className="profile-hero__edit" icon={<FiEdit2 />} onClick={onEdit}>
+        {tr('Profilni tahrirlash')}
       </Button>
 
       <div className="profile-hero__top">
-        <AvatarControl profile={profile} onPick={onPickAvatar} onRemove={onRemoveAvatar} />
+        <AvatarControl profile={profile} busy={avatarBusy} onPick={onPickAvatar} onRemove={onRemoveAvatar} />
 
         <div className="profile-hero__info">
           <div className="profile-hero__name-row">
             <h1>{profile.name}</h1>
-            {profile.verified && (
-              <span className="profile-hero__verified" title="Tasdiqlangan">
+            {profile.phoneVerified && (
+              <span className="profile-hero__verified" title={tr('Raqam Telegram orqali tasdiqlangan')}>
                 <FiCheckCircle />
               </span>
             )}
-            {profile.status && <span className="profile-hero__status">{profile.status}</span>}
-            {profile.premium && (
-              <span className="profile-hero__status profile-hero__status--premium">
-                <HiOutlineSparkles aria-hidden /> Premium
-              </span>
-            )}
           </div>
-          {profile.title && <p className="profile-hero__title">{profile.title}</p>}
           <ul className="profile-hero__meta">
-            {profile.location && (
+            {profile.city && (
               <li>
                 <FiMapPin aria-hidden />
-                {profile.location}
-              </li>
-            )}
-            {profile.email && (
-              <li>
-                <FiMail aria-hidden />
-                {profile.email}
+                {cityLabel(profile.city)}
               </li>
             )}
             {profile.phone && (
@@ -331,12 +307,18 @@ function ProfileHero({ profile, openEditor, onPickAvatar, onRemoveAvatar }) {
                 {formatPhone(profile.phone)}
               </li>
             )}
+            {profile.email && (
+              <li>
+                <FiMail aria-hidden />
+                {profile.email}
+              </li>
+            )}
           </ul>
           {profile.bio ? (
             <p className="profile-hero__bio">{profile.bio}</p>
           ) : (
-            <button type="button" className="pf-link" onClick={() => openEditor({ type: 'hero' })}>
-              <FiPlus aria-hidden /> O‘zingiz haqingizda qisqacha yozing
+            <button type="button" className="pf-link" onClick={onEdit}>
+              <FiPlus aria-hidden /> {tr('O‘zingiz haqingizda qisqacha yozing')}
             </button>
           )}
         </div>
@@ -361,13 +343,13 @@ function ProfileHero({ profile, openEditor, onPickAvatar, onRemoveAvatar }) {
   )
 }
 
-function SectionHead({ title, action = 'Tahrirlash', onAction, icon = <FiEdit2 aria-hidden /> }) {
+function SectionHead({ title, action = 'Tahrirlash', onAction }) {
   return (
     <div className="profile-section__head">
       <h2>{title}</h2>
       {onAction && (
         <button type="button" className="profile-section__edit" onClick={onAction}>
-          {icon}
+          <FiEdit2 aria-hidden />
           {action}
         </button>
       )}
@@ -375,274 +357,113 @@ function SectionHead({ title, action = 'Tahrirlash', onAction, icon = <FiEdit2 a
   )
 }
 
-function EmptyLine({ children, onClick }) {
-  return (
-    <button type="button" className="pf-empty-line" onClick={onClick}>
-      <FiPlus aria-hidden /> {children}
-    </button>
-  )
-}
+/** Raqam tasdiqlanmagan (eski hisob) — Telegram bot orqali tasdiqlash */
+function VerifyPhoneCard({ onChecked }) {
+  const { refresh } = useAuth()
+  const [checking, setChecking] = useState(false)
 
-function ItemTools({ label, onEdit, onDelete }) {
-  return (
-    <div className="pf-item-tools">
-      <button type="button" className="pf-icon-btn" aria-label={`${label} — tahrirlash`} title="Tahrirlash" onClick={onEdit}>
-        <FiEdit2 />
-      </button>
-      <button type="button" className="pf-icon-btn is-danger" aria-label={`${label} — o‘chirish`} title="O‘chirish" onClick={onDelete}>
-        <FiTrash2 />
-      </button>
-    </div>
-  )
-}
+  async function check() {
+    setChecking(true)
+    try {
+      const me = await authApi.fetchMe()
+      if (me) refresh(me)
+      onChecked(me?.phoneVerified ? 'Raqamingiz tasdiqlandi ✅' : 'Hali tasdiqlanmagan — botga raqamingizni yuboring')
+    } finally {
+      setChecking(false)
+    }
+  }
 
-function SkillTags({ profile, update, openEditor }) {
   return (
-    <div className="profile-tags">
-      {profile.skills.map((skill) => (
-        <span key={skill} className="profile-tag">
-          {skill}
-          <button
-            type="button"
-            className="profile-tag__remove"
-            aria-label={`${skill} — o‘chirish`}
-            onClick={() => update({ skills: profile.skills.filter((item) => item !== skill) })}
-          >
-            <FiX />
+    <article className="profile-card pf-verify">
+      <div className="pf-verify__icon" aria-hidden>
+        <FiAlertCircle />
+      </div>
+      <div className="pf-verify__body">
+        <h2>{tr('Raqamingizni tasdiqlang')}</h2>
+        <p>
+          {tr('Sharh va izoh yozish uchun raqamingiz Telegram orqali tasdiqlangan bo‘lishi kerak. Botni oching va «Raqamni yuborish» tugmasini bosing — bron xabarlari ham shu botga keladi.')}
+        </p>
+        <div className="pf-verify__actions">
+          <a className="btn btn--primary" href={VERIFY_URL} target="_blank" rel="noreferrer">
+            <FaTelegram aria-hidden /> {tr('Telegram’da tasdiqlash')}
+          </a>
+          <button type="button" className="pf-link" onClick={check} disabled={checking}>
+            <FiRefreshCw aria-hidden /> {checking ? tr('Tekshirilmoqda…') : tr('Tasdiqladim — tekshirish')}
           </button>
-        </span>
-      ))}
-      <button type="button" className="profile-tag profile-tag--add" onClick={() => openEditor({ type: 'skills' })}>
-        <FiPlus aria-hidden />
-        Sport turi
-      </button>
-    </div>
+        </div>
+      </div>
+    </article>
   )
 }
 
-function ProfileMain({ profile, update, notify, openEditor, askConfirm, tab, setTab }) {
-  const [askCancel, cancelModal] = useBookingCancel(profile, update, notify)
+function ProfileMain({ profile, onEdit, notify }) {
   const bookings = sortBookings(profile.bookings)
-
   const personal = [
-    { label: 'To‘liq ism', value: profile.name },
-    { label: 'Telefon', value: profile.phone && formatPhone(profile.phone) },
-    { label: 'Email', value: profile.email },
-    { label: 'Tug‘ilgan sana', value: formatDate(profile.birthDate) },
-    { label: 'Manzil', value: profile.address },
-    { label: 'Sport darajasi', value: profile.level },
+    { label: tr('To‘liq ism'), value: profile.name },
     {
-      label: 'Favqulodda aloqa raqami',
-      value: profile.emergencyPhone && formatPhone(profile.emergencyPhone),
-      wide: true,
+      label: tr('Telefon'),
+      value: profile.phone && (
+        <>
+          {formatPhone(profile.phone)}{' '}
+          <em className={`pf-badge${profile.phoneVerified ? '' : ' is-warning'}`}>{profile.phoneVerified ? 'tasdiqlangan' : 'tasdiqlanmagan'}</em>
+        </>
+      ),
     },
+    { label: tr('Email'), value: profile.email },
+    { label: tr('Shahar / hudud'), value: profile.city && cityLabel(profile.city) },
+    { label: tr('SportON’da'), value: profile.createdAt && `${memberSince(profile.createdAt)} dan beri` },
   ]
-
-  const removeItem = (field, item, label) =>
-    askConfirm({
-      title: `${label}ni o‘chirasizmi?`,
-      text: `«${item.role ?? item.degree}» profilingizdan o‘chiriladi.`,
-      confirmLabel: 'O‘chirish',
-      onConfirm: () => {
-        update({ [field]: profile[field].filter((row) => row.id !== item.id) })
-        notify(`${label} o‘chirildi`)
-      },
-    })
 
   return (
     <section className="profile-main">
-      <div className="profile-tabs" role="tablist" aria-label="Profil bo‘limlari">
-        {profileTabs.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === item.id}
-            className={`profile-tabs__btn${tab === item.id ? ' is-active' : ''}`}
-            onClick={() => setTab(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+      <div className="profile-panels">
+        {!profile.phoneVerified && <VerifyPhoneCard onChecked={notify} />}
 
-      {tab === 'basic' && (
-        <div className="profile-panels">
-          <article className="profile-card">
-            <SectionHead title="Shaxsiy ma’lumot" onAction={() => openEditor({ type: 'personal' })} />
-            <div className="profile-fields">
-              {personal.map((field) => (
-                <div key={field.label} className={`profile-field${field.wide ? ' profile-field--wide' : ''}`}>
-                  <span>{field.label}</span>
-                  {field.value ? (
-                    <strong>{field.value}</strong>
-                  ) : (
-                    <button type="button" className="pf-link" onClick={() => openEditor({ type: 'personal' })}>
-                      <FiPlus aria-hidden /> Kiritish
-                    </button>
-                  )}
-                </div>
+        <article className="profile-card">
+          <SectionHead title={tr('Shaxsiy ma’lumot')} onAction={onEdit} />
+          <div className="profile-fields">
+            {personal.map((field) => (
+              <div key={field.label} className="profile-field">
+                <span>{field.label}</span>
+                {field.value ? (
+                  <strong>{field.value}</strong>
+                ) : (
+                  <button type="button" className="pf-link" onClick={onEdit}>
+                    <FiPlus aria-hidden /> {tr('Kiritish')}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="profile-card">
+          <SectionHead title={tr('Qiziqadigan sport turlari')} onAction={onEdit} />
+          {profile.sports.length ? (
+            <div className="profile-tags">
+              {profile.sports.map((id) => (
+                <Link key={id} to={`/sport/${id}`} className="profile-tag">
+                  {SPORT_TITLES[id] ?? id}
+                </Link>
               ))}
             </div>
-          </article>
+          ) : (
+            <button type="button" className="pf-empty-line" onClick={onEdit}>
+              <FiPlus aria-hidden /> {tr('Sport turlarini tanlang — sizga mos majmualarni tezroq topasiz')}
+            </button>
+          )}
+        </article>
 
-          <article className="profile-card">
-            <SectionHead title="Men haqimda" onAction={() => openEditor({ type: 'about' })} />
-            {profile.about ? (
-              <p className="profile-about">{profile.about}</p>
-            ) : (
-              <EmptyLine onClick={() => openEditor({ type: 'about' })}>Sport tarixingiz va maqsadlaringiz haqida yozing</EmptyLine>
-            )}
-          </article>
-
-          <article className="profile-card">
-            <SectionHead title="Sport turlari" onAction={() => openEditor({ type: 'skills' })} />
-            <SkillTags profile={profile} update={update} openEditor={openEditor} />
-          </article>
-
-          <article className="profile-card">
-            <SectionHead title="Tillar" onAction={() => openEditor({ type: 'languages' })} />
-            {profile.languages.length ? (
-              <ul className="profile-langs">
-                {profile.languages.map((lang) => (
-                  <li key={lang.id}>
-                    <span className="profile-langs__flag" aria-hidden>
-                      {LANGUAGE_FLAGS[lang.name] ?? '🌐'}
-                    </span>
-                    <div>
-                      <strong>{lang.name}</strong>
-                      <span>{lang.level}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyLine onClick={() => openEditor({ type: 'languages' })}>Til qo‘shish</EmptyLine>
-            )}
-          </article>
-
-          <article className="profile-card">
-            <SectionHead title="Qiziqishlar" onAction={() => openEditor({ type: 'interests' })} />
-            {profile.interests.length ? (
-              <div className="profile-tags profile-tags--outline">
-                {profile.interests.map((item) => (
-                  <span key={item} className="profile-tag profile-tag--outline">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <EmptyLine onClick={() => openEditor({ type: 'interests' })}>Qiziqish qo‘shish</EmptyLine>
-            )}
-          </article>
-
-          <article className="profile-card">
-            <SectionHead title="So‘nggi bronlar" action="Barchasi" icon={null} onAction={() => setTab('activity')} />
-            <BookingsList bookings={bookings} limit={3} empty="Hali bron qilmagansiz" />
-          </article>
-        </div>
-      )}
-
-      {tab === 'experience' && (
-        <div className="profile-panels">
-          <article className="profile-card">
-            <SectionHead
-              title="Sport tajribasi"
-              action="Qo‘shish"
-              icon={<FiPlus aria-hidden />}
-              onAction={() => openEditor({ type: 'experience' })}
-            />
-            {profile.experience.length ? (
-              <ul className="profile-timeline">
-                {profile.experience.map((item) => (
-                  <li key={item.id}>
-                    <div className="profile-timeline__dot" aria-hidden />
-                    <div>
-                      <strong>{item.role}</strong>
-                      <span className="profile-timeline__sub">
-                        {[item.company, item.years].filter(Boolean).join(' · ')}
-                      </span>
-                      {item.points.length > 0 && (
-                        <ul>
-                          {item.points.map((point) => (
-                            <li key={point}>{point}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <ItemTools
-                      label={item.role}
-                      onEdit={() => openEditor({ type: 'experience', item })}
-                      onDelete={() => removeItem('experience', item, 'Tajriba')}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyLine onClick={() => openEditor({ type: 'experience' })}>Birinchi sport tajribangizni qo‘shing</EmptyLine>
-            )}
-          </article>
-        </div>
-      )}
-
-      {tab === 'education' && (
-        <div className="profile-panels">
-          <article className="profile-card">
-            <SectionHead
-              title="Yutuqlar va sertifikatlar"
-              action="Qo‘shish"
-              icon={<FiPlus aria-hidden />}
-              onAction={() => openEditor({ type: 'education' })}
-            />
-            {profile.education.length ? (
-              <ul className="profile-timeline">
-                {profile.education.map((item) => (
-                  <li key={item.id}>
-                    <div className="profile-timeline__dot" aria-hidden />
-                    <div>
-                      <strong>{item.degree}</strong>
-                      <span className="profile-timeline__sub">
-                        {[item.school, item.years].filter(Boolean).join(' · ')}
-                      </span>
-                    </div>
-                    <ItemTools
-                      label={item.degree}
-                      onEdit={() => openEditor({ type: 'education', item })}
-                      onDelete={() => removeItem('education', item, 'Yutuq')}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyLine onClick={() => openEditor({ type: 'education' })}>Medal, sertifikat yoki natija qo‘shing</EmptyLine>
-            )}
-          </article>
-        </div>
-      )}
-
-      {tab === 'skills' && (
-        <div className="profile-panels">
-          <article className="profile-card">
-            <SectionHead title="Sport turlari" onAction={() => openEditor({ type: 'skills' })} />
-            <SkillTags profile={profile} update={update} openEditor={openEditor} />
-          </article>
-        </div>
-      )}
-
-      {tab === 'activity' && (
-        <div className="profile-panels">
-          <article className="profile-card">
-            <div className="profile-section__head">
-              <h2>Bronlar tarixi</h2>
-              <Link to="/profil?bolim=bronlar" className="profile-section__edit">
-                Barchasini boshqarish
-              </Link>
-            </div>
-            <BookingsList bookings={bookings} onCancel={askCancel} empty="Hali bron qilmagansiz" />
-          </article>
-        </div>
-      )}
-      {cancelModal}
+        <article className="profile-card">
+          <div className="profile-section__head">
+            <h2>{tr('So‘nggi bronlar')}</h2>
+            <Link to="/profil?bolim=bronlar" className="profile-section__edit">
+              {tr('Barchasi')}
+            </Link>
+          </div>
+          <BookingsList bookings={bookings} limit={3} empty={tr('Hali bron qilmagansiz')} />
+        </article>
+      </div>
     </section>
   )
 }
@@ -657,14 +478,7 @@ function CompletenessRing({ percent }) {
   return (
     <div className="profile-ring" aria-label={`Profil to‘ldirilishi ${percent}%`}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle
-          className="profile-ring__track"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          strokeWidth={stroke}
-          fill="none"
-        />
+        <circle className="profile-ring__track" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} fill="none" />
         <circle
           className="profile-ring__progress"
           cx={size / 2}
@@ -680,51 +494,18 @@ function CompletenessRing({ percent }) {
       </svg>
       <div className="profile-ring__label">
         <strong>{percent}%</strong>
-        <span>to‘ldirilgan</span>
+        <span>{tr('to‘ldirilgan')}</span>
       </div>
     </div>
   )
 }
 
-function ProfileWidgets({ profile, completeness, runAction, onPremium, notify }) {
+function ProfileWidgets({ completeness, runAction }) {
   const nextMissing = completeness.items.find((item) => !item.done)
-  const shareUrl = `${window.location.origin}/profil`
-  const shareText = `${profile.name} — SportOn profili`
-
-  async function copyLink() {
-    try {
-      await navigator.clipboard.writeText(shareUrl)
-      notify('Havola nusxalandi')
-    } catch {
-      notify('Havolani nusxalab bo‘lmadi')
-    }
-  }
-
-  async function nativeShare() {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: shareText, url: shareUrl })
-      } catch {
-        /* foydalanuvchi bekor qildi */
-      }
-    } else {
-      copyLink()
-    }
-  }
-
-  const url = encodeURIComponent(shareUrl)
-  const text = encodeURIComponent(shareText)
-  const networks = [
-    { label: 'LinkedIn', icon: FaLinkedinIn, href: `https://www.linkedin.com/sharing/share-offsite/?url=${url}` },
-    { label: 'Telegram', icon: FaTelegram, href: `https://t.me/share/url?url=${url}&text=${text}` },
-    { label: 'Facebook', icon: FaFacebookF, href: `https://www.facebook.com/sharer/sharer.php?u=${url}` },
-    { label: 'X', icon: FaXTwitter, href: `https://twitter.com/intent/tweet?url=${url}&text=${text}` },
-  ]
-
   return (
     <aside className="profile-widgets">
       <article className="profile-card profile-complete">
-        <h2>Profil to‘ldirilishi</h2>
+        <h2>{tr('Profil to‘ldirilishi')}</h2>
         <CompletenessRing percent={completeness.percent} />
         <ul className="profile-complete__list">
           {completeness.items.map((item) => (
@@ -748,135 +529,22 @@ function ProfileWidgets({ profile, completeness, runAction, onPremium, notify })
           disabled={!nextMissing}
           onClick={() => nextMissing && runAction(nextMissing.action)}
         >
-          {nextMissing ? 'Profilni to‘ldirish' : 'Profil to‘liq to‘ldirilgan'}
+          {nextMissing ? tr('Profilni to‘ldirish') : tr('Profil to‘liq to‘ldirilgan')}
         </Button>
-      </article>
-
-      <article className="profile-card profile-upsell">
-        <h2>{profile.premium ? 'Premium imkoniyatlaringiz' : 'Premium imkoniyatlar'}</h2>
-        <ul>
-          {premiumBenefits.map((benefit) => (
-            <li key={benefit}>
-              <FiCheckCircle aria-hidden />
-              <span>{benefit}</span>
-            </li>
-          ))}
-        </ul>
-        <Button variant={profile.premium ? 'outline' : 'primary'} className="profile-upsell__btn" onClick={onPremium}>
-          {profile.premium ? 'Obunani boshqarish' : 'Premiumga o‘tish'}
-        </Button>
-      </article>
-
-      <article className="profile-card profile-share">
-        <h2>Profilni ulashish</h2>
-        <div className="profile-share__row">
-          <button type="button" aria-label="Havolani nusxalash" title="Havolani nusxalash" onClick={copyLink}>
-            <FiCopy />
-          </button>
-          {networks.map(({ label, icon: Icon, href }) => (
-            <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} title={label}>
-              <Icon />
-            </a>
-          ))}
-          <button type="button" aria-label="Ulashish" title="Ulashish" onClick={nativeShare}>
-            <FiShare2 />
-          </button>
-        </div>
       </article>
     </aside>
   )
 }
 
-function PremiumModal({ open, profile, update, notify, onClose }) {
-  const [plan, setPlan] = useState('year')
-  const [confirmCancel, setConfirmCancel] = useState(false)
-
-  if (profile.premium) {
-    return (
-      <>
-        <ProfileModal open={open && !confirmCancel} title="Premium obuna" onClose={onClose}>
-          <div className="pf-premium-active">
-            <HiOutlineSparkles aria-hidden />
-            <strong>{premiumPlans.find((p) => p.id === profile.premium.plan)?.label} obuna faol</strong>
-            <span>{formatDate(profile.premium.since)} dan beri</span>
-          </div>
-          <ul className="pf-premium-list">
-            {premiumBenefits.map((benefit) => (
-              <li key={benefit}>
-                <FiCheckCircle aria-hidden /> {benefit}
-              </li>
-            ))}
-          </ul>
-          <div className="pf-modal__foot pf-modal__foot--inline">
-            <Button type="button" variant="outline" className="pf-btn-danger-outline" onClick={() => setConfirmCancel(true)}>
-              Obunani bekor qilish
-            </Button>
-            <Button type="button" variant="primary" onClick={onClose}>
-              Yopish
-            </Button>
-          </div>
-        </ProfileModal>
-        <ConfirmModal
-          open={open && confirmCancel}
-          title="Obunani bekor qilasizmi?"
-          text="Premium chegirmalar va ustuvor bron imkoniyati o‘chiriladi."
-          confirmLabel="Ha, bekor qilish"
-          onClose={() => setConfirmCancel(false)}
-          onConfirm={() => {
-            update({ premium: false })
-            notify('Premium obuna bekor qilindi')
-            setConfirmCancel(false)
-            onClose()
-          }}
-        />
-      </>
-    )
-  }
-
-  return (
-    <ProfileModal
-      open={open}
-      title="Premiumga o‘tish"
-      submitLabel="Faollashtirish"
-      onClose={onClose}
-      onSubmit={() => {
-        update({ premium: { plan, since: new Date().toISOString().slice(0, 10) } })
-        notify('Premium faollashtirildi 🎉')
-        onClose()
-      }}
-    >
-      <div className="pf-plans" role="radiogroup" aria-label="Tarif">
-        {premiumPlans.map((item) => (
-          <label key={item.id} className={`pf-plan${plan === item.id ? ' is-active' : ''}`}>
-            <input type="radio" name="plan" value={item.id} checked={plan === item.id} onChange={() => setPlan(item.id)} />
-            <span>{item.label}</span>
-            <strong>{item.price}</strong>
-            <em>{item.note}</em>
-          </label>
-        ))}
-      </div>
-      <ul className="pf-premium-list">
-        {premiumBenefits.map((benefit) => (
-          <li key={benefit}>
-            <FiCheckCircle aria-hidden /> {benefit}
-          </li>
-        ))}
-      </ul>
-    </ProfileModal>
-  )
-}
-
 export default function ProfilePage() {
-  const { profile, update, reset } = useProfile()
+  const { profile, update } = useProfile()
   const [params] = useSearchParams()
   const section = PROFILE_SECTIONS[params.get('bolim')] ? params.get('bolim') : 'profil'
-  const [tab, setTab] = useState('basic')
-  const [editor, setEditor] = useState(null)
-  const [confirm, setConfirm] = useState(null)
-  const [premiumOpen, setPremiumOpen] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [confirmRemove, setConfirmRemove] = useState(false)
+  const [avatarBusy, setAvatarBusy] = useState(false)
   const [toast, setToast] = useState(null)
   const fileRef = useRef(null)
-  const completeness = getCompleteness(profile)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -890,24 +558,41 @@ export default function ProfilePage() {
 
   const notify = (message) => setToast({ id: Date.now(), message })
 
+  if (!profile) {
+    return (
+      <div className="profile-page">
+        <div className="container profile-page__inner">
+          <p className="pf-empty">
+            {tr('Profilni ko‘rish uchun')} <Link to="/kirish" state={{ from: '/profil' }}>{tr('hisobingizga kiring')}</Link>.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const completeness = getCompleteness(profile)
+
   function runAction(action) {
-    if (action === 'avatar') return fileRef.current?.click()
-    if (action.type === 'experience') setTab('experience')
-    if (action.type === 'education') setTab('education')
-    setEditor(action)
+    if (action === 'avatar') fileRef.current?.click()
+    else if (action === 'verify') window.open(VERIFY_URL, '_blank', 'noopener')
+    else setEditing(true)
   }
 
   async function onAvatarFile(e) {
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
-    if (!file.type.startsWith('image/')) return notify('Faqat rasm faylini yuklang')
-    if (file.size > AVATAR_MAX_BYTES) return notify('Rasm hajmi 5 MB dan oshmasin')
+    if (!file.type.startsWith('image/')) return notify(tr('Faqat rasm faylini yuklang'))
+    if (file.size > AVATAR_MAX_BYTES) return notify(tr('Rasm hajmi 8 MB dan oshmasin'))
+    setAvatarBusy(true)
     try {
-      update({ avatar: await readAvatar(file) })
-      notify('Profil rasmi yangilandi')
+      const { url } = await uploadMedia(await squareAvatar(file)).promise
+      await update({ avatar: url })
+      notify(tr('Profil rasmi yangilandi'))
     } catch (err) {
       notify(err.message)
+    } finally {
+      setAvatarBusy(false)
     }
   }
 
@@ -917,13 +602,13 @@ export default function ProfilePage() {
     <div className="profile-page">
       <div className="container profile-page__inner">
         <div className="profile-page__crumb">
-          <Link to="/">Bosh sahifa</Link>
+          <Link to="/">{tr('Bosh sahifa')}</Link>
           <span>/</span>
           {section === 'profil' ? (
-            <span>Mening profilim</span>
+            <span>{tr('Mening profilim')}</span>
           ) : (
             <>
-              <Link to="/profil">Mening profilim</Link>
+              <Link to="/profil">{tr('Mening profilim')}</Link>
               <span>/</span>
               <span>{PROFILE_SECTIONS[section]}</span>
             </>
@@ -931,78 +616,48 @@ export default function ProfilePage() {
         </div>
 
         <div className="profile-page__grid">
-          <ProfileSidebar section={section} profile={profile} onPremium={() => setPremiumOpen(true)} />
+          <ProfileSidebar section={section} profile={profile} />
           <div className="profile-page__center">
             {section === 'profil' && (
               <>
                 <ProfileHero
                   profile={profile}
-                  openEditor={setEditor}
+                  avatarBusy={avatarBusy}
+                  onEdit={() => setEditing(true)}
                   onPickAvatar={() => fileRef.current?.click()}
-                  onRemoveAvatar={() =>
-                    setConfirm({
-                      title: 'Profil rasmini o‘chirasizmi?',
-                      text: 'Rasm o‘rniga ismingiz bosh harflari ko‘rsatiladi.',
-                      confirmLabel: 'O‘chirish',
-                      onConfirm: () => {
-                        update({ avatar: '' })
-                        notify('Profil rasmi o‘chirildi')
-                      },
-                    })
-                  }
+                  onRemoveAvatar={() => setConfirmRemove(true)}
                 />
-                <ProfileMain
-                  {...sectionProps}
-                  openEditor={setEditor}
-                  askConfirm={setConfirm}
-                  tab={tab}
-                  setTab={setTab}
-                />
+                <ProfileMain profile={profile} onEdit={() => setEditing(true)} notify={notify} />
               </>
             )}
             {section === 'bronlar' && <BookingsSection {...sectionProps} />}
             {section === 'bildirishnomalar' && <NotificationsSection />}
             {section === 'sozlamalar' && <SettingsSection {...sectionProps} />}
-            {section === 'xavfsizlik' && <SecuritySection {...sectionProps} resetProfile={reset} />}
+            {section === 'xavfsizlik' && <SecuritySection {...sectionProps} />}
             {section === 'yordam' && <HelpSection {...sectionProps} />}
           </div>
-          <ProfileWidgets
-            profile={profile}
-            completeness={completeness}
-            runAction={runAction}
-            onPremium={() => setPremiumOpen(true)}
-            notify={notify}
-          />
+          <ProfileWidgets completeness={completeness} runAction={runAction} />
         </div>
       </div>
 
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={onAvatarFile} />
 
-      <ProfileEditor
-        key={editor ? `${editor.type}-${editor.item?.id ?? 'new'}` : 'none'}
-        editor={editor}
-        profile={profile}
-        update={update}
-        notify={notify}
-        onClose={() => setEditor(null)}
-      />
+      {editing && <ProfileEditor open profile={profile} update={update} notify={notify} onClose={() => setEditing(false)} />}
       <ConfirmModal
-        open={Boolean(confirm)}
-        title={confirm?.title}
-        text={confirm?.text}
-        confirmLabel={confirm?.confirmLabel}
-        onClose={() => setConfirm(null)}
-        onConfirm={() => {
-          confirm.onConfirm()
-          setConfirm(null)
+        open={confirmRemove}
+        title={tr('Profil rasmini o‘chirasizmi?')}
+        text={tr('Rasm o‘rniga ismingiz bosh harflari ko‘rsatiladi.')}
+        confirmLabel={tr('O‘chirish')}
+        onClose={() => setConfirmRemove(false)}
+        onConfirm={async () => {
+          setConfirmRemove(false)
+          try {
+            await update({ avatar: '' })
+            notify(tr('Profil rasmi o‘chirildi'))
+          } catch (err) {
+            notify(err.message)
+          }
         }}
-      />
-      <PremiumModal
-        open={premiumOpen}
-        profile={profile}
-        update={update}
-        notify={notify}
-        onClose={() => setPremiumOpen(false)}
       />
       <Toast toast={toast} />
     </div>

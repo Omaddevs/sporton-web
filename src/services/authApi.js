@@ -4,6 +4,11 @@ import { toLocalDigits } from '../utils/phone.js'
 /**
  * Autentifikatsiya API (backend: /api/v1/auth/*). Sahifalar va AuthContext shu interfeys orqali ishlaydi.
  *
+ * Ro‘yxatdan o‘tish oqimi:
+ *   1. startRegistration(phone) → server raqam bo‘shligini tekshiradi
+ *   2. Foydalanuvchi Telegram botga aynan shu raqamni kontakt sifatida yuboradi → bot 6 xonali kod beradi
+ *   3. register({ ...form, code }) → kod tekshiriladi, hisob yaratiladi va sessiya ochiladi
+ *
  * Parolni tiklash oqimi:
  *   1. requestResetCode(phone)  → server raqam bazada borligini tekshiradi
  *   2. Foydalanuvchi Telegram botga raqamini yuboradi → bot 6 xonali kod beradi
@@ -11,8 +16,9 @@ import { toLocalDigits } from '../utils/phone.js'
  *   4. resetPassword(resetToken, password)
  */
 
-export const TELEGRAM_BOT = import.meta.env.VITE_TELEGRAM_BOT || 'SportOnUzBot'
+export const TELEGRAM_BOT = import.meta.env.VITE_TELEGRAM_BOT || 'sporton_kirish_bot'
 export const TELEGRAM_BOT_URL = `https://t.me/${TELEGRAM_BOT}?start=reset`
+export const TELEGRAM_REGISTER_URL = `https://t.me/${TELEGRAM_BOT}?start=reg`
 export const CODE_LENGTH = 6
 export const RESEND_SECONDS = 60
 export const MIN_PASSWORD = 8
@@ -21,6 +27,9 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 const TELEGRAM_BOT_ID = import.meta.env.VITE_TELEGRAM_BOT_ID || ''
 
 export { ApiError as AuthError }
+
+// Dev rejimda (bot ulanmagan) server kodni javobda qaytaradi — sinash uchun ko‘rsatamiz
+const devCodes = new Map()
 
 export async function fetchMe() {
   const { user } = await api('/auth/me')
@@ -32,10 +41,17 @@ export async function login({ phone, password }) {
   return user
 }
 
-export async function register({ firstName, lastName, phone, password, consent }) {
+export async function startRegistration(phone) {
+  const digits = toLocalDigits(phone)
+  const result = await api('/auth/register/start', { method: 'POST', body: { phone: digits } })
+  if (result.devCode) devCodes.set(digits, result.devCode)
+  return result
+}
+
+export async function register({ firstName, lastName, phone, password, consent, code }) {
   const { user } = await api('/auth/register', {
     method: 'POST',
-    body: { firstName, lastName, phone: toLocalDigits(phone), password, consent: Boolean(consent) },
+    body: { firstName, lastName, phone: toLocalDigits(phone), password, consent: Boolean(consent), code },
   })
   return user
 }
@@ -105,9 +121,6 @@ export async function loginWithProvider(provider) {
   throw new ApiError('PROVIDER_UNSUPPORTED', 'Bu usul qo‘llab-quvvatlanmaydi')
 }
 
-// Dev rejimda (bot ulanmagan) server kodni javobda qaytaradi — sinash uchun ko‘rsatamiz
-const devCodes = new Map()
-
 export async function requestResetCode(phone) {
   const digits = toLocalDigits(phone)
   const result = await api('/auth/reset/request', { method: 'POST', body: { phone: digits } })
@@ -125,6 +138,11 @@ export async function resetPassword(resetToken, password) {
 
 export async function changePassword({ currentPassword, newPassword }) {
   await api('/auth/password', { method: 'POST', body: { currentPassword, newPassword } })
+}
+
+/** Boshqa barcha qurilmalardagi sessiyalarni bekor qiladi (joriy qurilma ochiq qoladi) */
+export async function logoutAll() {
+  await api('/auth/logout-all', { method: 'POST' })
 }
 
 export async function deleteAccount() {

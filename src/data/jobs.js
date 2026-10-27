@@ -265,13 +265,13 @@ function buildDetail(job, offer) {
     hours: isOnline ? 'Istalgan vaqtda' : hours[job.id % hours.length],
     workMode: isOnline ? 'Onlayn' : formats[job.id % formats.length],
     level: isOnline ? 'Video darslar' : amenities[job.id % amenities.length],
-    description: `${job.company} majmuasida «${job.title}» xizmati. Qulay vaqtni tanlang, onlayn bron qiling va to‘lovni joyida yoki karta orqali amalga oshiring. Mashg‘ulotlar malakali murabbiylar nazoratida o‘tadi.`,
+    description: `${job.company} majmuasida «${job.title}» xizmati. Qulay vaqtni tanlang va onlayn bron qiling — majmua tasdiqlagach xabar olasiz. Mashg‘ulotlar malakali murabbiylar nazoratida o‘tadi.`,
     tasks: [
       'Tanlangan vaqt uchun maydon / zaldan to‘liq foydalanish',
       'Kiyinish xonasi va dush',
       'Sport inventari (to‘p, setka, gantel va h.k.)',
       'Murabbiy maslahati (kelishuv asosida)',
-      'Bron tasdig‘i SMS va Telegram orqali',
+      'Bron tasdig‘i sayt va Telegram orqali',
     ],
     requirements: [
       'Mashg‘ulotdan 10 daqiqa oldin yetib keling',
@@ -283,7 +283,6 @@ function buildDetail(job, offer) {
     offers: [
       'Onlayn bron — 1 daqiqada',
       'Birinchi mashg‘ulotga 20% chegirma',
-      'Abonement uchun bonus ballar',
       'Bepul Wi-Fi va dam olish zonasi',
       'Xavfsiz va toza muhit',
     ],
@@ -559,6 +558,7 @@ export function hydrateJobs(list) {
       tasks: s.tasks?.length ? s.tasks : detail.tasks,
       requirements: s.requirements?.length ? s.requirements : detail.requirements,
       offers: s.offers?.length ? s.offers : detail.offers,
+      bookingMode: s.bookingMode,
     }
   })
   jobs.splice(0, jobs.length, ...next)

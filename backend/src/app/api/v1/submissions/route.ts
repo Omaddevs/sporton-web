@@ -35,7 +35,7 @@ export const GET = route(async () => {
  */
 export const POST = route(async (request) => {
   const user = await requireUser()
-  rateLimit(`submission:${user.id}`, 5, 24 * 60 * 60_000)
+  await rateLimit(`submission:${user.id}`, 5, 24 * 60 * 60_000)
   const data = await readJson(request, submissionSchema)
 
   let media

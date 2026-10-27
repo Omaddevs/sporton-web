@@ -260,6 +260,19 @@
   cursor: progress;
 }
 
+.auth-social__btn:has(.auth-social__soon) {
+  cursor: not-allowed;
+}
+
+.auth-social__soon {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--color-overlay);
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .auth-divider {
   display: flex;
   align-items: center;

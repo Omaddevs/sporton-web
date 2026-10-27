@@ -126,9 +126,9 @@ export default function EventForm({
             <input className="input" type="number" name="capacity" min={1} defaultValue={e?.capacity || 100} required />
           </label>
           <label className="fld">
-            <span>Ro‘yxatdan o‘tganlar</span>
+            <span>Oflayn ro‘yxatdan o‘tganlar</span>
             <input className="input" type="number" name="registered" min={0} defaultValue={e?.registered ?? 0} />
-            <small>Joylarning 90% to‘lsa, saytda «Joylar tugayapti» belgisi chiqadi.</small>
+            <small>Saytdan tashqari (telefon, joyida) yozilganlar. Saytdan ro‘yxatdan o‘tganlar avtomatik qo‘shiladi.</small>
           </label>
           <label className="fld">
             <span>Tashkilotchi</span>

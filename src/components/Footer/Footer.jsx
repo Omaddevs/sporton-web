@@ -19,39 +19,40 @@ import { SOCIAL_LINKS } from '../../data/social.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import { api } from '../../services/apiClient.js'
 import './Footer.css'
+import { tr } from '../../i18n/index.js'
 
 const SOCIALS = [
-  { id: 'telegram', label: 'Telegram', Icon: FaTelegram, href: SOCIAL_LINKS.telegram.href },
-  { id: 'instagram', label: 'Instagram', Icon: FaInstagram, href: SOCIAL_LINKS.instagram.href },
+  { id: 'telegram', label: tr('Telegram'), Icon: FaTelegram, href: SOCIAL_LINKS.telegram.href },
+  { id: 'instagram', label: tr('Instagram'), Icon: FaInstagram, href: SOCIAL_LINKS.instagram.href },
 ]
 
 const PLATFORM_LINKS = [
-  { label: 'Bosh sahifa', to: '/' },
-  { label: 'Loyiha haqida', to: '/sahifa/loyiha-haqida' },
-  { label: 'Majmua qo‘shish', to: '/sahifa/elon-joylash' },
-  { label: 'Sport majmualari', href: '/#majmualar' },
-  { label: 'Sport yangiliklari', href: '/#yangiliklar' },
-  { label: 'Sport tadbirlari', href: '/#tadbirlar' },
-  { label: 'Aloqa', to: '/sahifa/aloqa' },
+  { label: tr('Bosh sahifa'), to: '/' },
+  { label: tr('Loyiha haqida'), to: '/sahifa/loyiha-haqida' },
+  { label: tr('Majmua qo‘shish'), to: '/sahifa/elon-joylash' },
+  { label: tr('Sport majmualari'), href: '/#majmualar' },
+  { label: tr('Sport yangiliklari'), href: '/#yangiliklar' },
+  { label: tr('Sport tadbirlari'), href: '/#tadbirlar' },
+  { label: tr('Aloqa'), to: '/sahifa/aloqa' },
 ]
 
 const CATEGORY_LINKS = [
-  { label: 'Barcha sport turlari', to: '/sport-turlari' },
-  { label: 'Futbol', to: '/sport/futbol' },
-  { label: 'Fitnes va trenajyor zal', to: '/sport/fitnes' },
-  { label: 'Suzish', to: '/sport/suzish' },
-  { label: 'Tennis', to: '/sport/tennis' },
-  { label: 'Boks va MMA', to: '/sport/boks' },
-  { label: 'Boshqa sport turlari', to: '/sport/boshqa', accent: true },
+  { label: tr('Barcha sport turlari'), to: '/sport-turlari' },
+  { label: tr('Futbol'), to: '/sport/futbol' },
+  { label: tr('Fitnes va trenajyor zal'), to: '/sport/fitnes' },
+  { label: tr('Suzish'), to: '/sport/suzish' },
+  { label: tr('Tennis'), to: '/sport/tennis' },
+  { label: tr('Boks va MMA'), to: '/sport/boks' },
+  { label: tr('Boshqa sport turlari'), to: '/sport/boshqa', accent: true },
 ]
 
 const SUPPORT_LINKS = [
-  { label: 'Yordam markazi', to: '/sahifa/yordam-markazi' },
-  { label: 'Savol-javob', to: '/sahifa/savol-javob' },
-  { label: 'Bizga yozing', to: '/sahifa/bizga-yozing' },
-  { label: 'Foydalanish shartlari', to: '/sahifa/foydalanish-shartlari' },
-  { label: 'Maxfiylik siyosati', to: '/sahifa/maxfiylik-siyosati' },
-  { label: 'Xavfsizlik', to: '/sahifa/xavfsizlik' },
+  { label: tr('Yordam markazi'), to: '/sahifa/yordam-markazi' },
+  { label: tr('Savol-javob'), to: '/sahifa/savol-javob' },
+  { label: tr('Bizga yozing'), to: '/sahifa/bizga-yozing' },
+  { label: tr('Foydalanish shartlari'), to: '/sahifa/foydalanish-shartlari' },
+  { label: tr('Maxfiylik siyosati'), to: '/sahifa/maxfiylik-siyosati' },
+  { label: tr('Xavfsizlik'), to: '/sahifa/xavfsizlik' },
 ]
 
 export default function Footer() {
@@ -120,7 +121,7 @@ export default function Footer() {
                 Chegirmalar va yangi majmualardan birinchi bo&apos;lib xabardor bo&apos;ling!
               </h3>
               <p className="footer-cta__subtitle">
-                Sport yangiliklari, tadbirlar va maxsus takliflar endilikda email orqali.
+                {tr('Sport yangiliklari, tadbirlar va maxsus takliflar endilikda email orqali.')}
               </p>
             </div>
 
@@ -133,10 +134,10 @@ export default function Footer() {
                 <input
                   type="email"
                   required
-                  placeholder="Email manzilingizni kiriting..."
+                  placeholder={tr('Email manzilingizni kiriting...')}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  aria-label="Email manzilingizni kiriting"
+                  aria-label={tr('Email manzilingizni kiriting')}
                 />
                 <button type="submit" className="footer-cta__submit" disabled={subscribe.status === 'loading'}>
                   Obuna bo&apos;lish
@@ -173,7 +174,7 @@ export default function Footer() {
                 <p className="footer-cta__handwrite">
                   Sog&apos;lom hayot
                   <br />
-                  shu yerdan boshlanadi!
+                  {tr('shu yerdan boshlanadi!')}
                 </p>
                 <svg className="footer-cta__arrow" viewBox="0 0 80 90" fill="none">
                   <path
@@ -198,10 +199,10 @@ export default function Footer() {
 
         <div className="footer-main">
           <div className="footer-brand">
-            <Link to="/" className="footer-brand__logo" aria-label="SportON — bosh sahifa">
+            <Link to="/" className="footer-brand__logo" aria-label={tr('SportON — bosh sahifa')}>
               <BrandLogo size="lg" />
             </Link>
-            <p className="footer-brand__tagline">Sport — bir platformada</p>
+            <p className="footer-brand__tagline">{tr('Sport — bir platformada')}</p>
             <p className="footer-brand__text">
               SportON – O&apos;zbekistondagi sport majmualarini topish va bron qilish, mashg&apos;ulotlar,
               sport yangiliklari va tadbirlarni bir joyga jamlagan zamonaviy platforma. Biz sog&apos;lom
@@ -223,9 +224,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <FooterNav title="Platforma" links={PLATFORM_LINKS} />
-          <FooterNav title="Sport turlari" links={CATEGORY_LINKS} />
-          <FooterNav title="Qo'llab-quvvatlash" links={SUPPORT_LINKS} />
+          <FooterNav title={tr('Platforma')} links={PLATFORM_LINKS} />
+          <FooterNav title={tr('Sport turlari')} links={CATEGORY_LINKS} />
+          <FooterNav title={tr('Qo\'llab-quvvatlash')} links={SUPPORT_LINKS} />
 
 
           <p className="footer-main__quote" aria-hidden="true">
@@ -235,8 +236,8 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <div className="footer-bottom__copy">
-            <p>&copy; {new Date().getFullYear()} SportON.</p>
-            <span>Barcha huquqlar himoyalangan.</span>
+            <p>&copy; {new Date().getFullYear()} {tr('SportON.')}</p>
+            <span>{tr('Barcha huquqlar himoyalangan.')}</span>
           </div>
 
           <p className="footer-bottom__motto">
@@ -249,7 +250,7 @@ export default function Footer() {
               <button
                 type="button"
                 className="footer-lang__btn"
-                aria-label="Tilni tanlash"
+                aria-label={tr('Tilni tanlash')}
                 aria-expanded={langOpen}
                 onClick={() => setLangOpen((open) => !open)}
               >
@@ -281,7 +282,7 @@ export default function Footer() {
             <button
               type="button"
               className="footer-top"
-              aria-label="Yuqoriga qaytish"
+              aria-label={tr('Yuqoriga qaytish')}
               onClick={scrollToTop}
             >
               <FiChevronUp />

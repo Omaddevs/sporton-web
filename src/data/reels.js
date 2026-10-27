@@ -1,7 +1,5 @@
-// @sporton.uz Instagram sahifasidagi Reels videolar
-// Yangi video qo'shish: Instagram'dagi reel havolasidagi kodni (instagram.com/reel/<code>/)
-// `code` ga yozing, muqovani public/images/sport/reels/ig/<code>.jpg ga,
-// videoning o‘zini esa public/videos/reels/<code>.mp4 ga joylang (hover autoplay va sayt ichidagi player uchun).
+// @sporton.uz Instagram sahifasidagi Reels videolar — admin paneldan boshqariladi (Admin → Reels).
+// Pastdagi ro‘yxat faqat lokal ishlab chiqishda (API ishlamasa) ko‘rsatiladi.
 export const INSTAGRAM_PROFILE = 'https://www.instagram.com/sporton.uz/'
 export const INSTAGRAM_REELS = `${INSTAGRAM_PROFILE}reels/`
 
@@ -9,8 +7,6 @@ const cover = (code) => `/images/sport/reels/ig/${code}.jpg`
 
 export const reelUrl = (code) => `https://www.instagram.com/reel/${code}/`
 export const reelEmbedUrl = (code) => `https://www.instagram.com/reel/${code}/embed/`
-// Sayt ichida o‘ynatiladigan video: public/videos/reels/<code>.mp4 (bo‘lmasa Instagram embed ko‘rsatiladi)
-export const reelVideoUrl = (code) => `/videos/reels/${code}.mp4`
 
 export const reels = [
   {
@@ -64,3 +60,27 @@ export const reels = [
     image: cover('DPOznbxCEeA'),
   },
 ]
+
+const MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr']
+const formatDay = (iso) => {
+  const [y, m, d] = (iso ?? '').split('-').map(Number)
+  return y && m && d ? `${d}-${MONTHS[m - 1]}, ${y}` : ''
+}
+
+/** Admin paneldagi Reels bilan ro‘yxatni joyida almashtiradi (bo‘sh — bo‘lim ko‘rinmaydi) */
+export function hydrateReels(list) {
+  reels.splice(
+    0,
+    reels.length,
+    ...list.map((r) => ({
+      code: r.code,
+      title: r.title,
+      tag: r.tag,
+      tagTone: r.tagTone,
+      date: formatDay(r.publishedOn),
+      image: r.cover,
+      // Saytda o‘ynatiladigan mp4; bo‘lmasa Instagram embed
+      video: r.video || null,
+    })),
+  )
+}

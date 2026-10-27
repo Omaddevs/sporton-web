@@ -1,18 +1,23 @@
 import type { Complex } from '@/db/schema'
-import { AMENITIES, REGIONS } from '@/lib/constants'
+import { AMENITIES, LISTING_STATUS_LABELS, REGIONS } from '@/lib/constants'
 import ConfirmButton from './ConfirmButton'
+import CoverImageField from './CoverImageField'
 import MediaManager from './MediaManager'
 
 export default function ComplexForm({
   complex,
   action,
   submitLabel,
+  variant = 'admin',
 }: {
   complex?: Complex
   action: (form: FormData) => Promise<void>
   submitLabel: string
+  /** owner — majmua egasi kabineti: holat, tasdiq belgilari va tartib maydonlari ko‘rinmaydi */
+  variant?: 'admin' | 'owner'
 }) {
   const c = complex
+  const admin = variant === 'admin'
   return (
     <form action={action} className="form">
       {c && <input type="hidden" name="originalId" value={c.id} />}
@@ -24,20 +29,24 @@ export default function ComplexForm({
             <span>Nomi *</span>
             <input className="input" name="name" defaultValue={c?.name} required minLength={2} maxLength={120} />
           </label>
-          {!c && (
+          {admin && !c && (
             <label className="fld">
               <span>ID (URL)</span>
               <input className="input" name="id" placeholder="avtomatik: nomidan" pattern="[a-z0-9-]*" />
               <small>Saytda: /sport-majmua/&lt;id&gt;. Keyin o‘zgartirilmaydi.</small>
             </label>
           )}
+          {admin && (
           <label className="fld">
             <span>Holat</span>
-            <select className="select" name="status" defaultValue={c?.status ?? 'published'}>
-              <option value="published">E’lon qilingan</option>
-              <option value="hidden">Yashirin</option>
+            <select className="select" name="status" defaultValue={c?.status ?? 'draft'}>
+              {Object.entries(LISTING_STATUS_LABELS).map(([id, label]) => (
+                <option key={id} value={id}>{label}</option>
+              ))}
             </select>
+            <small>Qoralamani to‘ldirib bo‘lgach «E’lon qilingan» ni tanlang — shundan keyin saytda chiqadi.</small>
           </label>
+          )}
           <label className="fld">
             <span>Faoliyat turi</span>
             <input className="input" name="industry" defaultValue={c?.industry ?? ''} placeholder="Sport majmuasi, Dzyudo klubi…" />
@@ -50,11 +59,13 @@ export default function ComplexForm({
             <span>Batafsil ma’lumot</span>
             <textarea className="textarea" name="about" defaultValue={c?.about ?? ''} rows={5} />
           </label>
-          <div className="checks span-2">
-            <label className="check"><input type="checkbox" name="verified" defaultChecked={c?.verified} /> Tasdiqlangan</label>
-            <label className="check"><input type="checkbox" name="listed" defaultChecked={c?.listed ?? true} /> Ro‘yxat boshida</label>
-            <label className="check"><input type="checkbox" name="isDemo" defaultChecked={c?.isDemo} /> Namuna (demo)</label>
-          </div>
+          {admin && (
+            <div className="checks span-2">
+              <label className="check"><input type="checkbox" name="verified" defaultChecked={c?.verified} /> Tasdiqlangan</label>
+              <label className="check"><input type="checkbox" name="listed" defaultChecked={c?.listed ?? true} /> Ro‘yxat boshida</label>
+              <label className="check"><input type="checkbox" name="isDemo" defaultChecked={c?.isDemo} /> Namuna (demo)</label>
+            </div>
+          )}
         </div>
       </section>
 
@@ -124,10 +135,16 @@ export default function ComplexForm({
             <span>Banner shiori</span>
             <input className="input" name="bannerSlogan" defaultValue={c?.bannerSlogan ?? ''} />
           </label>
-          <label className="fld span-2">
-            <span>Banner rasmi (URL)</span>
-            <input className="input" name="bannerImage" defaultValue={c?.bannerImage ?? ''} placeholder="/images/sport/banner.jpg" />
-          </label>
+          <div className="fld">
+            <span>Logotip (kvadrat)</span>
+            <CoverImageField name="logo" initial={c?.logo} aspect="1:1" />
+            <small>Bo‘lmasa brend rangi va nomning bosh harfi ko‘rsatiladi.</small>
+          </div>
+          <div className="fld">
+            <span>Muqova rasmi (16:9)</span>
+            <CoverImageField name="bannerImage" initial={c?.bannerImage} aspect="16:9" />
+            <small>Galereyada birinchi chiqadi.</small>
+          </div>
           <div className="fld span-2">
             <span>Rasm va videolar</span>
             <MediaManager
@@ -146,10 +163,12 @@ export default function ComplexForm({
             <span>Murabbiylar soni</span>
             <input className="input" name="employees" defaultValue={c?.employees ?? ''} placeholder="10+" />
           </label>
-          <label className="fld span-2">
-            <span>O‘xshash majmualar (ID, vergul bilan)</span>
-            <input className="input" name="similarIds" defaultValue={(c?.similarIds ?? []).join(', ')} />
-          </label>
+          {admin && (
+            <label className="fld span-2">
+              <span>O‘xshash majmualar (ID, vergul bilan)</span>
+              <input className="input" name="similarIds" defaultValue={(c?.similarIds ?? []).join(', ')} />
+            </label>
+          )}
           <fieldset className="fld span-2" style={{ border: 0, padding: 0, margin: 0 }}>
             <span style={{ fontWeight: 700, fontSize: 13 }}>Qulayliklar</span>
             <div className="checks">

@@ -4,19 +4,20 @@ import { Building2, Check, Gift, MonitorPlay, RotateCcw, ShieldCheck, Star } fro
 import ComplexCard from '../SportComplexes/ComplexCard.jsx'
 import Select from '../ui/Select.jsx'
 import './CategoryContent.css'
+import { tr } from '../../i18n/index.js'
 
 const QUICK_FILTERS = [
-  { id: 'verified', label: 'Tasdiqlangan', Icon: ShieldCheck, test: (c) => c.verified },
-  { id: 'trial', label: 'Bepul sinov darsi', Icon: Gift, test: (c) => c.hasTrial },
-  { id: 'online', label: 'Onlayn mashg‘ulot', Icon: MonitorPlay, test: (c) => c.hasOnline },
-  { id: 'top', label: 'Reyting 4.7+', Icon: Star, test: (c) => c.rating >= 4.7 },
+  { id: 'verified', label: tr('Tasdiqlangan'), Icon: ShieldCheck, test: (c) => c.verified },
+  { id: 'trial', label: tr('Bepul sinov darsi'), Icon: Gift, test: (c) => c.hasTrial },
+  { id: 'online', label: tr('Onlayn mashg‘ulot'), Icon: MonitorPlay, test: (c) => c.hasOnline },
+  { id: 'top', label: tr('Reyting 4.7+'), Icon: Star, test: (c) => c.rating >= 4.7 },
 ]
 
 const SORT_OPTIONS = [
-  { id: 'rating', label: 'Reyting bo‘yicha' },
-  { id: 'price-asc', label: 'Avval arzonlari' },
-  { id: 'price-desc', label: 'Avval qimmatlari' },
-  { id: 'popular', label: 'Ommabop' },
+  { id: 'rating', label: tr('Reyting bo‘yicha') },
+  { id: 'price-asc', label: tr('Avval arzonlari') },
+  { id: 'price-desc', label: tr('Avval qimmatlari') },
+  { id: 'popular', label: tr('Ommabop') },
 ]
 
 const SORTERS = {
@@ -47,26 +48,26 @@ export default function CategoryComplexes({ category, items }) {
   if (items.length === 0) {
     return (
       <EmptyState
-        title="Hozircha majmualar yo‘q"
+        title={tr('Hozircha majmualar yo‘q')}
         text={`«${category.title}» bo‘yicha sport majmualari tez orada qo‘shiladi. Boshqa sport turlarini ko‘rib chiqing.`}
-        action={<Link to="/sport-turlari" className="cc-btn cc-btn--primary">Sport turlari</Link>}
+        action={<Link to="/sport-turlari" className="cc-btn cc-btn--primary">{tr('Sport turlari')}</Link>}
       />
     )
   }
 
   return (
-    <section className="cc-panel" aria-label="Sport majmualari">
+    <section className="cc-panel" aria-label={tr('Sport majmualari')}>
       <div className="cc-toolbar">
         <div className="cc-toolbar__info">
-          <h2>«{category.title}» bo‘yicha sport majmualari</h2>
+          <h2>«{category.title}{tr('» bo‘yicha sport majmualari')}</h2>
           <p>
-            <strong>{visible.length}</strong> ta majmua topildi
+            <strong>{visible.length}</strong> {tr('ta majmua topildi')}
           </p>
         </div>
-        <Select value={sortBy} onChange={setSortBy} options={SORT_OPTIONS} ariaLabel="Saralash" size="sm" />
+        <Select value={sortBy} onChange={setSortBy} options={SORT_OPTIONS} ariaLabel={tr('Saralash')} size="sm" />
       </div>
 
-      <div className="cc-chips" role="group" aria-label="Tezkor filtrlar">
+      <div className="cc-chips" role="group" aria-label={tr('Tezkor filtrlar')}>
         {QUICK_FILTERS.map(({ id, label, Icon }) => {
           const on = active.has(id)
           return (
@@ -85,7 +86,7 @@ export default function CategoryComplexes({ category, items }) {
         {active.size > 0 && (
           <button type="button" className="cc-chip cc-chip--ghost" onClick={() => setActive(new Set())}>
             <RotateCcw size={13} />
-            Tozalash
+            {tr('Tozalash')}
           </button>
         )}
       </div>
@@ -98,11 +99,11 @@ export default function CategoryComplexes({ category, items }) {
         </div>
       ) : (
         <EmptyState
-          title="Mos majmua topilmadi"
-          text="Tanlangan filtrlarga mos keladigan majmua yo‘q. Filtrlarni o‘zgartirib ko‘ring."
+          title={tr('Mos majmua topilmadi')}
+          text={tr('Tanlangan filtrlarga mos keladigan majmua yo‘q. Filtrlarni o‘zgartirib ko‘ring.')}
           action={
             <button type="button" className="cc-btn cc-btn--primary" onClick={() => setActive(new Set())}>
-              Filtrlarni tozalash
+              {tr('Filtrlarni tozalash')}
             </button>
           }
         />

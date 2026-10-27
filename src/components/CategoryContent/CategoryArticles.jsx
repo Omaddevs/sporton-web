@@ -4,6 +4,7 @@ import { FeaturedCard, NewsRow, NewsTicker } from '../SportNews/SportNews.jsx'
 import { EmptyState } from './CategoryComplexes.jsx'
 import '../SportNews/SportNews.css'
 import './CategoryContent.css'
+import { tr } from '../../i18n/index.js'
 
 const SIDE_COUNT = 3
 
@@ -31,22 +32,22 @@ export default function CategoryArticles({ category, items }) {
   const more = others.slice(SIDE_COUNT)
 
   const segments = [
-    { id: 'all', label: 'Barchasi' },
-    { id: 'news', label: 'Yangiliklar' },
-    { id: 'blog', label: 'Blog' },
+    { id: 'all', label: tr('Barchasi') },
+    { id: 'news', label: tr('Yangiliklar') },
+    { id: 'blog', label: tr('Blog') },
   ]
 
   return (
-    <section className="cc-panel sport-news cc-news" aria-label="Yangiliklar va blog">
+    <section className="cc-panel sport-news cc-news" aria-label={tr('Yangiliklar va blog')}>
       <div className="cc-toolbar">
         <div className="cc-toolbar__info">
-          <h2>«{category.title}» bo‘yicha yangiliklar va blog</h2>
+          <h2>«{category.title}{tr('» bo‘yicha yangiliklar va blog')}</h2>
           <p>
-            <strong>{visible.length}</strong> ta maqola
+            <strong>{visible.length}</strong> {tr('ta maqola')}
           </p>
         </div>
 
-        <div className="cc-segment" role="radiogroup" aria-label="Maqola turi">
+        <div className="cc-segment" role="radiogroup" aria-label={tr('Maqola turi')}>
           {segments.map((s) => (
             <button
               key={s.id}
@@ -81,7 +82,7 @@ export default function CategoryArticles({ category, items }) {
 
           {more.length > 0 && (
             <div className="cc-news__more">
-              <h3 className="latest-news__title">Boshqa maqolalar</h3>
+              <h3 className="latest-news__title">{tr('Boshqa maqolalar')}</h3>
               <div className="cc-news__grid">
                 {more.map((article) => (
                   <NewsRow key={article.id} news={article} />
@@ -93,7 +94,7 @@ export default function CategoryArticles({ category, items }) {
       ) : (
         <EmptyState
           Icon={Newspaper}
-          title="Hozircha maqolalar yo‘q"
+          title={tr('Hozircha maqolalar yo‘q')}
           text={`«${category.title}» bo‘yicha yangiliklar tez orada paydo bo‘ladi.`}
         />
       )}

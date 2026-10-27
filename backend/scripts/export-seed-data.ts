@@ -3,7 +3,7 @@
  * Backend shu JSON bilan mustaqil seed qilinadi (Docker ichida frontend fayllari yo‘q).
  *   npm run seed:export
  */
-import { writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { complexes } from '../../src/data/complexes.js'
 import { companies } from '../../src/data/companies.js'
 import { jobs } from '../../src/data/jobs.js'
@@ -14,12 +14,20 @@ import { sportEvents } from '../../src/data/campaigns.js'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Any = any
 
+// Telefonlar frontend bundle’ida saqlanmaydi (mehmonlarga yashirin) — mavjud seed-data.json’dan olinadi
+const seedFile = new URL('./seed-data.json', import.meta.url)
+const previousPhones = new Map<string, string>(
+  existsSync(seedFile)
+    ? JSON.parse(readFileSync(seedFile, 'utf8')).companies?.filter((c: Any) => c.phone).map((c: Any) => [c.id, c.phone]) ?? []
+    : [],
+)
+
 const pick = (o: Any, keys: string[]) => Object.fromEntries(keys.filter((k) => o[k] !== undefined).map((k) => [k, o[k]]))
 
 const data = {
   categories: categories.map((c: Any) => pick(c, ['id', 'title', 'accent', 'image'])),
   companies: companies.map((c: Any) =>
-    pick(c, ['id', 'listed', 'website', 'phone', 'telegram', 'hours', 'priceNote', 'logo', 'bannerImage']),
+    pick({ ...c, phone: c.phone ?? previousPhones.get(c.id) }, ['id', 'listed', 'website', 'phone', 'telegram', 'hours', 'priceNote', 'logo', 'bannerImage']),
   ),
   complexes: complexes.map((c: Any) =>
     pick(c, ['id', 'name', 'color', 'verified', 'tagline', 'location', 'city', 'website', 'industry', 'years', 'employees', 'hours', 'bannerSlogan', 'about', 'similarIds', 'images', 'coords', 'views']),

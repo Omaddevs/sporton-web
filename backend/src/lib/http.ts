@@ -1,6 +1,7 @@
 import 'server-only'
 import { NextResponse } from 'next/server'
 import { ZodError, type ZodType } from 'zod'
+import { recordError } from './errors'
 
 export class ApiError extends Error {
   constructor(
@@ -19,7 +20,7 @@ export function json<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(data, init)
 }
 
-function errorResponse(error: unknown) {
+function errorResponse(error: unknown, request?: Request) {
   if (error instanceof ApiError) {
     return NextResponse.json(
       { error: { code: error.code, message: error.message, field: error.field } },
@@ -40,6 +41,13 @@ function errorResponse(error: unknown) {
     )
   }
   console.error('[api]', error)
+  void recordError({
+    source: 'api',
+    message: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : null,
+    url: request ? `${request.method} ${new URL(request.url).pathname}` : null,
+    userAgent: request?.headers.get('user-agent'),
+  })
   return NextResponse.json(
     { error: { code: 'INTERNAL', message: 'Serverda xatolik. Birozdan so‘ng qayta urinib ko‘ring' } },
     { status: 500 },
@@ -56,7 +64,7 @@ export function route<P = Record<string, string>>(
     try {
       return await fn(request, ctx)
     } catch (error) {
-      return errorResponse(error)
+      return errorResponse(error, request)
     }
   }
 }

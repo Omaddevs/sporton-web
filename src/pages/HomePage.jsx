@@ -9,9 +9,11 @@ import Reels from '../components/Reels/Reels.jsx'
 import Campaigns from '../components/Campaigns/Campaigns.jsx'
 import SportNews from '../components/SportNews/SportNews.jsx'
 import Partners from '../components/Partners/Partners.jsx'
+import { useSeo } from '../hooks/useSeo.js'
 import { sportEvents } from '../data/campaigns.js'
 
 export default function HomePage() {
+  useSeo()
   const [activeTab, setActiveTab] = useState('jobs')
 
   return (

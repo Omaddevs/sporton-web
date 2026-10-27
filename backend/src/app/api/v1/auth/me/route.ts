@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm'
+import { count, eq } from 'drizzle-orm'
 import { getDb } from '@/db'
-import { users } from '@/db/schema'
+import { complexes, users } from '@/db/schema'
 import { clearSessionCookie, getCurrentUser, publicUser, requireUser } from '@/lib/auth'
 import { ApiError, json, readJson, route } from '@/lib/http'
 import { profileSchema } from '@/lib/validation'
@@ -9,7 +9,11 @@ export const dynamic = 'force-dynamic'
 
 export const GET = route(async () => {
   const user = await getCurrentUser()
-  return json({ user: user ? publicUser(user) : null })
+  if (!user) return json({ user: null })
+  // Majmua egasi — sayt profilida «Majmua kabineti» havolasi ko‘rinadi
+  const db = await getDb()
+  const [{ n }] = await db.select({ n: count() }).from(complexes).where(eq(complexes.ownerId, user.id))
+  return json({ user: { ...publicUser(user), ownsComplexes: n > 0 } })
 })
 
 export const PATCH = route(async (request) => {
@@ -23,7 +27,15 @@ export const PATCH = route(async (request) => {
   }
   const [updated] = await db
     .update(users)
-    .set({ firstName: data.firstName, lastName: data.lastName, email })
+    .set({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email,
+      bio: data.bio === undefined ? undefined : data.bio || null,
+      city: data.city === undefined ? undefined : data.city || null,
+      sports: data.sports,
+      avatar: data.avatar === undefined ? undefined : data.avatar || null,
+    })
     .where(eq(users.id, user.id))
     .returning()
   return json({ user: publicUser(updated) })

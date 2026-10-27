@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { FiArrowRight, FiPlus } from 'react-icons/fi'
 import { fetchPartners } from '../../services/partners.js'
 import './Partners.css'
+import { tr } from '../../i18n/index.js'
 
 const COLUMNS = 5
 // Har bir ustun o‘z tezligida va yo‘nalishida aylanadi — devor «tirik» ko‘rinadi
@@ -78,28 +79,27 @@ export default function Partners({ id = 'hamkorlar' }) {
     <section ref={sectionRef} id={id} className={`partners container ${visible ? 'is-visible' : ''}`}>
       <div className="partners__panel">
         <div className="partners__copy">
-          <span className="partners__eyebrow">Hamkorlar</span>
+          <span className="partners__eyebrow">{tr('Hamkorlar')}</span>
           <h2 className="partners__title">
-            Bizga ishonch bildirgan <span>sport klublari</span>
+            {tr('Bizga ishonch bildirgan')} <span>{tr('sport klublari')}</span>
           </h2>
           <p className="partners__text">
-            Toshkent va viloyatlardagi sport majmualari, bolalar klublari va murabbiylar SportON orqali yangi
-            shogirdlar topmoqda. Klubingizni platformaga qo‘shing — e’loningizni minglab ota-onalar ko‘radi.
+            {tr('Toshkent va viloyatlardagi sport majmualari, bolalar klublari va murabbiylar SportON orqali yangi shogirdlar topmoqda. Klubingizni platformaga qo‘shing — e’loningizni minglab ota-onalar ko‘radi.')}
           </p>
 
           <dl className="partners__stats">
             <div>
               <dt>{partners.length}</dt>
-              <dd>Hamkor</dd>
+              <dd>{tr('Hamkor')}</dd>
             </div>
           </dl>
 
           <div className="partners__actions">
             <Link to="/majmua-qoshish" className="partners__btn partners__btn--primary">
-              <FiPlus /> Hamkor bo‘lish
+              <FiPlus /> {tr('Hamkor bo‘lish')}
             </Link>
             <Link to="/#majmualar" className="partners__btn partners__btn--ghost">
-              Barcha klublar <FiArrowRight />
+              {tr('Barcha klublar')} <FiArrowRight />
             </Link>
           </div>
         </div>

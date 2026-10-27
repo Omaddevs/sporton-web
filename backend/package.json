@@ -13,7 +13,8 @@
     "db:seed": "tsx scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "admin:create": "tsx scripts/create-admin.ts",
-    "seed:export": "tsx scripts/export-seed-data.ts"
+    "seed:export": "tsx scripts/export-seed-data.ts",
+    "test": "node --conditions=react-server --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

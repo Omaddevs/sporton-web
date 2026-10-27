@@ -19,6 +19,8 @@ import {
   CalendarDays,
   Megaphone,
   Handshake,
+  Clapperboard,
+  Bug,
   Users,
   X,
   LogOut,
@@ -52,6 +54,7 @@ const GROUPS = [
       { href: '/admin/news', label: 'Yangiliklar', Icon: FileText },
       { href: '/admin/events', label: 'Sport tadbirlari', Icon: CalendarDays },
       { href: '/admin/reviews', label: 'Sharh va izohlar', Icon: MessageSquare },
+      { href: '/admin/reels', label: 'Reels', Icon: Clapperboard },
     ],
   },
   {
@@ -62,6 +65,7 @@ const GROUPS = [
       { href: '/admin/tickets', label: 'Murojaatlar', Icon: LifeBuoy, count: 'tickets' as const },
       { href: '/admin/subscribers', label: 'Obunachilar', Icon: Mail },
       { href: '/admin/audit', label: 'Amallar jurnali', Icon: History, adminOnly: true },
+      { href: '/admin/errors', label: 'Xatolar', Icon: Bug, adminOnly: true },
     ],
   },
 ]

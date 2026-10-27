@@ -8,8 +8,8 @@ import { loginSchema } from '@/lib/validation'
 
 export const POST = route(async (request) => {
   const data = await readJson(request, loginSchema)
-  rateLimit(`login:ip:${clientIp(request)}`, 30, 15 * 60_000)
-  rateLimit(`login:phone:${data.phone}`, 8, 15 * 60_000)
+  await rateLimit(`login:ip:${clientIp(request)}`, 30, 15 * 60_000)
+  await rateLimit(`login:phone:${data.phone}`, 8, 15 * 60_000)
 
   const db = await getDb()
   const [user] = await db.select().from(users).where(eq(users.phone, data.phone)).limit(1)

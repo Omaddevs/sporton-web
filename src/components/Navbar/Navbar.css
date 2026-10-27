@@ -111,18 +111,6 @@
     opacity 0.3s ease 0.08s;
 }
 
-.navbar__msg-dot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  border: 1.5px solid var(--color-control);
-  pointer-events: none;
-}
-
 .navbar__profile {
   --profile-border-angle: 0deg;
   position: relative;

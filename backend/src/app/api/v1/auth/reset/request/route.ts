@@ -15,8 +15,8 @@ import { resetRequestSchema } from '@/lib/validation'
  */
 export const POST = route(async (request) => {
   const { phone } = await readJson(request, resetRequestSchema)
-  rateLimit(`reset:ip:${clientIp(request)}`, 15, 60 * 60_000)
-  rateLimit(`reset:phone:${phone}`, 5, 15 * 60_000)
+  await rateLimit(`reset:ip:${clientIp(request)}`, 15, 60 * 60_000)
+  await rateLimit(`reset:phone:${phone}`, 5, 15 * 60_000)
 
   const db = await getDb()
   const [user] = await db.select().from(users).where(eq(users.phone, phone)).limit(1)

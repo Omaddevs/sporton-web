@@ -141,14 +141,39 @@ export async function resolveAudience(audience: BroadcastAudience, type: Notific
     .filter((r) => audience.kind === 'users' || allowedByPrefs(type, r.prefs))
 }
 
-/** Admin formasi uchun taxminiy qabul qiluvchilar soni */
+export type AudienceStats = {
+  /** Faol foydalanuvchilar */
+  total: number
+  /** Telegram ulangan va Telegram xabarlarini o‘chirmaganlar */
+  telegram: number
+  /** «Aksiyalar» / «Yangiliklar» ni o‘chirib qo‘yganlar — bu turlar ularga yuborilmaydi */
+  noPromo: number
+  noNews: number
+}
+
+const prefOff = (key: keyof NotifyPrefs) => sql<number>`count(*) filter (where ${users.notifyPrefs}->>${key} = 'false')`
+
+/** Admin formasi uchun: har bir auditoriya bo‘yicha qabul qiluvchilar va kanallar soni */
 export async function audienceCounts() {
   const db = await getDb()
-  const kinds: BroadcastAudience[] = [{ kind: 'all' }, { kind: 'bookers' }, { kind: 'active30' }]
-  const result: Record<string, number> = {}
-  for (const a of kinds) {
-    const [row] = await db.select({ n: count() }).from(users).where(audienceWhere(a))
-    result[a.kind] = row.n
+  const kinds = ['all', 'bookers', 'active30'] as const
+  const result = {} as Record<(typeof kinds)[number], AudienceStats>
+  for (const kind of kinds) {
+    const [row] = await db
+      .select({
+        total: count(),
+        telegram: sql<number>`count(*) filter (where ${users.telegramChatId} is not null and coalesce(${users.notifyPrefs}->>'telegram', 'true') <> 'false')`,
+        noPromo: prefOff('promotions'),
+        noNews: prefOff('news'),
+      })
+      .from(users)
+      .where(audienceWhere({ kind }))
+    result[kind] = {
+      total: Number(row.total),
+      telegram: Number(row.telegram),
+      noPromo: Number(row.noPromo),
+      noNews: Number(row.noNews),
+    }
   }
   return result
 }

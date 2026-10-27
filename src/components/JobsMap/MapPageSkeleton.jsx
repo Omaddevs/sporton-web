@@ -1,9 +1,10 @@
 import './MapPageSkeleton.css'
+import { tr } from '../../i18n/index.js'
 
 // Xarita chunk'i yuklanayotganda sahifa tuzilishini oldindan ko'rsatadi (bo'sh ekran o'rniga)
 export default function MapPageSkeleton() {
   return (
-    <div className="map-skeleton" aria-busy="true" aria-label="Xarita yuklanmoqda">
+    <div className="map-skeleton" aria-busy="true" aria-label={tr('Xarita yuklanmoqda')}>
       <div className="map-skeleton__panel">
         <span className="map-skeleton__line map-skeleton__line--title" />
         <span className="map-skeleton__line map-skeleton__line--short" />

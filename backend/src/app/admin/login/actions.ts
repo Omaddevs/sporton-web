@@ -17,7 +17,7 @@ export async function adminLogin(_prev: LoginState, form: FormData): Promise<Log
   const password = String(form.get('password') ?? '')
   const ip = (await headers()).get('x-forwarded-for')?.split(',')[0] ?? 'local'
   try {
-    rateLimit(`admin-login:${ip}`, 10, 15 * 60_000)
+    await rateLimit(`admin-login:${ip}`, 10, 15 * 60_000)
   } catch (error) {
     return { error: (error as Error).message }
   }

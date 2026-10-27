@@ -50,6 +50,48 @@
       "when": 1791197376118,
       "tag": "0006_events",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793076570663,
+      "tag": "0007_promo_slides",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793076890990,
+      "tag": "0008_promo_mobile_image",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793077514840,
+      "tag": "0009_service_booking_mode",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793078414830,
+      "tag": "0010_phone_verifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793082750056,
+      "tag": "0011_launch_ready",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793083669218,
+      "tag": "0012_event_registrations",
+      "breakpoints": true
     }
   ]
 }

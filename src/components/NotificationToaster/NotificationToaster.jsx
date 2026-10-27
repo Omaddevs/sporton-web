@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FiBell, FiX } from 'react-icons/fi'
 import { markRead, onArrival } from '../../services/notifications.js'
 import './NotificationToaster.css'
+import { tr } from '../../i18n/index.js'
 
 const VISIBLE_MS = 7000
 
@@ -25,7 +26,7 @@ export default function NotificationToaster() {
   if (!toasts.length) return null
 
   return (
-    <div className="ntoast-stack" role="region" aria-live="polite" aria-label="Yangi bildirishnomalar">
+    <div className="ntoast-stack" role="region" aria-live="polite" aria-label={tr('Yangi bildirishnomalar')}>
       {toasts.map((t) => (
         <div key={t.id} className="ntoast">
           <button
@@ -47,7 +48,7 @@ export default function NotificationToaster() {
               <span>{t.body}</span>
             </span>
           </button>
-          <button type="button" className="ntoast__close" aria-label="Yopish" onClick={() => close(t.id)}>
+          <button type="button" className="ntoast__close" aria-label={tr('Yopish')} onClick={() => close(t.id)}>
             <FiX />
           </button>
         </div>

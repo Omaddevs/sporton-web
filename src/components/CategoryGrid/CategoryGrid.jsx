@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { categories } from '../../data/categories.js'
 import { getTopCompanies } from '../../data/companies.js'
 import './CategoryGrid.css'
+import { tr } from '../../i18n/index.js'
 
 const ROW_ONE_SIZE = 6
 const COMPANY_LIMIT = 10
@@ -117,7 +118,7 @@ function JobCategories() {
         {rowTwo.map((category) => (
           <CategoryCard key={category.id} category={category} />
         ))}
-        <CtaCard to="/sport-turlari" label="Barcha sport turlari" className="category-card--cta-end" />
+        <CtaCard to="/sport-turlari" label={tr('Barcha sport turlari')} className="category-card--cta-end" />
       </div>
     </>
   )
@@ -170,7 +171,7 @@ function CompanyCategories() {
       ))}
       <CtaCard
         to="/majmualar"
-        label="Barcha majmualar"
+        label={tr('Barcha majmualar')}
         className="category-card--cta-wide category-card--cta-end"
       />
     </div>
@@ -198,14 +199,14 @@ function CompanyCard({ company }) {
         <span className="company-card__name-line">
           <span className="company-card__name">{company.name}</span>
           {company.verified && (
-            <span className="company-card__verified" title="Tasdiqlangan" aria-label="Tasdiqlangan">
+            <span className="company-card__verified" title={tr('Tasdiqlangan')} aria-label={tr('Tasdiqlangan')}>
               <Check size={9} strokeWidth={3.5} />
             </span>
           )}
         </span>
         <span className="company-card__meta">
           <FiCalendar aria-hidden="true" />
-          {company.adsCount} ta xizmat
+          {company.adsCount} {tr('ta xizmat')}
         </span>
       </span>
     </Link>

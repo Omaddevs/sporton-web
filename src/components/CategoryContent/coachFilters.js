@@ -1,44 +1,45 @@
 // Murabbiylar filtri: variantlar, URL bilan sinxronlash, filtrlash va saralash
 import { REGIONS } from '../../data/regions.js'
+import { tr } from '../../i18n/index.js'
 
 export const TRAINING_TYPES = [
-  { id: 'full', label: 'Yakka mashg‘ulot' },
-  { id: 'part', label: 'Guruh mashg‘uloti' },
-  { id: 'remote', label: 'Onlayn' },
-  { id: 'intern', label: 'Bolalar uchun' },
+  { id: 'full', label: tr('Yakka mashg‘ulot') },
+  { id: 'part', label: tr('Guruh mashg‘uloti') },
+  { id: 'remote', label: tr('Onlayn') },
+  { id: 'intern', label: tr('Bolalar uchun') },
 ]
 
 export const SPECIALTIES = [
-  { id: 'beginner', label: 'Boshlang‘ichlar uchun' },
-  { id: 'competition', label: 'Musobaqaga tayyorlov' },
-  { id: 'weight', label: 'Ozish va forma' },
-  { id: 'rehab', label: 'Reabilitatsiya' },
-  { id: 'kids', label: 'Bolalar bilan ishlash' },
+  { id: 'beginner', label: tr('Boshlang‘ichlar uchun') },
+  { id: 'competition', label: tr('Musobaqaga tayyorlov') },
+  { id: 'weight', label: tr('Ozish va forma') },
+  { id: 'rehab', label: tr('Reabilitatsiya') },
+  { id: 'kids', label: tr('Bolalar bilan ishlash') },
 ]
 
 // Narx oraliqlari kesishmaydi: har bir murabbiy faqat bitta oraliqqa tushadi
 export const PRICE_OPTIONS = [
-  { id: 'all', label: 'Barchasi' },
-  { id: '100', label: '100 ming gacha', test: (p) => p <= 100_000 },
-  { id: '100-150', label: '100–150 ming', test: (p) => p > 100_000 && p <= 150_000 },
-  { id: '150-200', label: '150–200 ming', test: (p) => p > 150_000 && p < 200_000 },
-  { id: '200', label: '200 ming+', test: (p) => p >= 200_000 },
+  { id: 'all', label: tr('Barchasi') },
+  { id: '100', label: tr('100 ming gacha'), test: (p) => p <= 100_000 },
+  { id: '100-150', label: tr('100–150 ming'), test: (p) => p > 100_000 && p <= 150_000 },
+  { id: '150-200', label: tr('150–200 ming'), test: (p) => p > 150_000 && p < 200_000 },
+  { id: '200', label: tr('200 ming+'), test: (p) => p >= 200_000 },
 ]
 
 export const EXPERIENCE_OPTIONS = [
-  { id: 'all', label: 'Barchasi' },
-  { id: '0', label: 'Tajribasiz', test: (y) => y < 1 },
-  { id: '1', label: '1–2 yil', test: (y) => y >= 1 && y <= 2 },
-  { id: '3', label: '3–5 yil', test: (y) => y >= 3 && y <= 5 },
-  { id: '5', label: '5 yildan ko‘p', test: (y) => y > 5 },
+  { id: 'all', label: tr('Barchasi') },
+  { id: '0', label: tr('Tajribasiz'), test: (y) => y < 1 },
+  { id: '1', label: tr('1–2 yil'), test: (y) => y >= 1 && y <= 2 },
+  { id: '3', label: tr('3–5 yil'), test: (y) => y >= 3 && y <= 5 },
+  { id: '5', label: tr('5 yildan ko‘p'), test: (y) => y > 5 },
 ]
 
 export const SORT_OPTIONS = [
-  { id: 'recommended', label: 'Tavsiya etilgan' },
-  { id: 'newest', label: 'Eng yangi' },
-  { id: 'price-asc', label: 'Avval arzonlari' },
-  { id: 'price-desc', label: 'Avval qimmatlari' },
-  { id: 'experience', label: 'Tajriba bo‘yicha' },
+  { id: 'recommended', label: tr('Tavsiya etilgan') },
+  { id: 'newest', label: tr('Eng yangi') },
+  { id: 'price-asc', label: tr('Avval arzonlari') },
+  { id: 'price-desc', label: tr('Avval qimmatlari') },
+  { id: 'experience', label: tr('Tajriba bo‘yicha') },
 ]
 
 const recommendScore = (c) => (c.premium ? 2 : 0) + (c.online ? 1 : 0)

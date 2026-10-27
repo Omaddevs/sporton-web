@@ -12,6 +12,7 @@ import {
 } from '../../components/Auth/fields.jsx'
 import { isValidPhone } from '../../utils/phone.js'
 import { useAuthFlow } from './useAuthFlow.js'
+import { tr } from '../../i18n/index.js'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -25,8 +26,8 @@ export default function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault()
     const next = {}
-    if (!isValidPhone(phone)) next.phone = 'Telefon raqamni to‘liq kiriting'
-    if (!password) next.password = 'Parolni kiriting'
+    if (!isValidPhone(phone)) next.phone = tr('Telefon raqamni to‘liq kiriting')
+    if (!password) next.password = tr('Parolni kiriting')
     setErrors(next)
     setFormError('')
     if (Object.keys(next).length) return
@@ -43,12 +44,12 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      panelTitle="Qaytganingizdan xursandmiz"
-      panelText="Hisobingizga kiring va sport majmuangizni minglab mijozlarga ko‘rsating."
+      panelTitle={tr('Qaytganingizdan xursandmiz')}
+      panelText={tr('Hisobingizga kiring va sport majmuangizni minglab mijozlarga ko‘rsating.')}
       steps={['Hisobingizga kiring', 'Majmuangizni joylang', 'Bronlarni qabul qiling']}
       activeStep={0}
-      title="Hisobga kirish"
-      subtitle="Telefon raqamingiz va parolingizni kiriting."
+      title={tr('Hisobga kirish')}
+      subtitle={tr('Telefon raqamingiz va parolingizni kiriting.')}
     >
       <SocialButtons onSelect={signInWith} loading={providerLoading} />
       <Divider />
@@ -67,25 +68,25 @@ export default function LoginPage() {
           <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Parolingizni kiriting"
+            placeholder={tr('Parolingizni kiriting')}
             autoComplete="current-password"
             error={errors.password}
           />
           <div className="auth-field__aside">
             <span />
             <Link to="/parolni-tiklash" state={linkState} className="auth-link">
-              Parolni unutdingizmi?
+              {tr('Parolni unutdingizmi?')}
             </Link>
           </div>
         </div>
 
-        <SubmitButton loading={loading}>Kirish</SubmitButton>
+        <SubmitButton loading={loading}>{tr('Kirish')}</SubmitButton>
       </form>
 
       <p className="auth-footer">
-        Hisobingiz yo‘qmi?
+        {tr('Hisobingiz yo‘qmi?')}
         <Link to="/royxatdan-otish" state={linkState}>
-          Ro‘yxatdan o‘tish
+          {tr('Ro‘yxatdan o‘tish')}
         </Link>
       </p>
     </AuthLayout>

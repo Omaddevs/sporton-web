@@ -356,13 +356,26 @@ table.tbl { width: 100%; border-collapse: collapse; }
 .radio-row input { accent-color: var(--primary); width: 16px; height: 16px; }
 .radio-row span { flex: 1; }
 .radio-row em { font-style: normal; color: var(--muted); font-size: 13px; }
-.radio-row.is-active { border-color: var(--primary); background: var(--primary-soft); }
+.radio-row.is-active,
+.radio-row:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
 .chip--btn { border: 0; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600; color: var(--text); }
 .chip--btn:hover { background: var(--primary-soft); color: var(--primary); }
 .chip--user { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; background: var(--primary-soft); color: var(--primary); }
 .chip--user small { color: var(--muted); }
 .chip--user button { display: grid; place-items: center; width: 20px; height: 20px; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
 .chip--user button:hover { background: rgb(0 0 0 / .08); }
+.recipient-search { position: relative; }
+.recipient-search__box { position: relative; }
+.recipient-search__box svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.recipient-search__box .input { padding-left: 34px; }
+.recipient-search__list { list-style: none; margin: 4px 0 0; padding: 4px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); box-shadow: 0 8px 24px rgb(0 0 0 / .08); }
+.recipient-search__list > li.muted { padding: 8px 10px; font-size: 13px; }
+.recipient-search__list button { display: grid; grid-template-columns: 1fr auto; gap: 0 10px; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.recipient-search__list button:hover:not(:disabled) { background: var(--primary-soft); }
+.recipient-search__list button:disabled { opacity: .55; cursor: default; }
+.recipient-search__list b { font-size: 13.5px; }
+.recipient-search__list small { grid-column: 1; color: var(--muted); font-size: 12px; }
+.recipient-search__list em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; font-size: 12px; color: var(--muted); }
 .sticky-aside { position: sticky; top: 20px; }
 .notif-preview { display: flex; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); }
 .notif-preview b { display: block; font-size: 14px; }

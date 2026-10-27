@@ -1,13 +1,13 @@
 'use server'
 
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, desc, eq, ilike, inArray, or } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
 import { broadcasts, NOTIFICATION_TYPES, users, type BroadcastAudience, type NotificationType } from '@/db/schema'
 import { field, requireStaff } from '@/lib/admin'
 import { audit } from '@/lib/audit'
 import { notifyUser } from '@/lib/notify'
-import { toLocalDigits } from '@/lib/phone'
+import { formatPhone, toLocalDigits } from '@/lib/phone'
 import { kickScheduler } from '@/lib/scheduler'
 
 const BASE = '/admin/notifications'
@@ -165,4 +165,36 @@ export async function deleteBroadcast(form: FormData) {
     .where(and(eq(broadcasts.id, id), inArray(broadcasts.status, ['draft', 'cancelled', 'failed'])))
   await audit(actor.id, 'broadcast.delete', 'broadcast', id)
   go(BASE, 'ok', 'O‘chirildi')
+}
+
+export type Recipient = { id: string; name: string; phone: string; telegram: boolean }
+
+/** Formadagi «Foydalanuvchini qidirish»: ism, familiya yoki telefon bo‘yicha (8 tagacha) */
+export async function searchRecipients(query: string): Promise<Recipient[]> {
+  await requireStaff()
+  const q = query.trim().slice(0, 60)
+  if (q.length < 2) return []
+  const digits = toLocalDigits(q)
+  const db = await getDb()
+  const rows = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.status, 'active'),
+        or(
+          ilike(users.firstName, `%${q}%`),
+          ilike(users.lastName, `%${q}%`),
+          ...(digits.length >= 3 ? [ilike(users.phone, `%${digits}%`)] : []),
+        ),
+      ),
+    )
+    .orderBy(desc(users.lastLoginAt))
+    .limit(8)
+  return rows.map((u) => ({
+    id: u.id,
+    name: `${u.firstName} ${u.lastName}`.trim(),
+    phone: u.phone ? formatPhone(u.phone) : '',
+    telegram: Boolean(u.telegramChatId),
+  }))
 }

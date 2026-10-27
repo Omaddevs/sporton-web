@@ -144,7 +144,7 @@ p {
   }
 
   /* Logo qatori skroll bilan ketadi, qidiruv qatori tepada qotib qoladi */
-  .app:not(.app--chat):not(.app--home) .app-header {
+  .app:not(.app--fullscreen):not(.app--home) .app-header {
     top: calc(-1 * var(--header-topbar-h));
   }
 
@@ -164,4 +164,28 @@ p {
     --color-border: #e4e9f2;
     --shadow-card: 0 6px 20px rgba(30, 64, 140, 0.08);
   }
+}
+
+/* Production’da API ishlamasa (src/services/catalog.js → catalogSource = 'offline') */
+.app-offline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgb(239 68 68 / 0.12);
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-offline button {
+  padding: 4px 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }

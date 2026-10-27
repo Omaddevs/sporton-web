@@ -3,6 +3,7 @@ import { Check, RotateCcw, X } from 'lucide-react'
 import { REGIONS } from '../../data/regions.js'
 import Select from '../ui/Select.jsx'
 import { EXPERIENCE_OPTIONS, PRICE_OPTIONS, SPECIALTIES, TRAINING_TYPES } from './coachFilters.js'
+import { tr } from '../../i18n/index.js'
 
 const toggle = (list, id) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
 
@@ -28,26 +29,26 @@ export default function CoachFilterPanel({ filters, onChange, onClear, activeCou
   return (
     <>
       <div className={`cat-filters-backdrop ${open ? 'is-open' : ''}`} onClick={onClose} aria-hidden="true" />
-      <aside className={`cat-filters ${open ? 'is-open' : ''}`} aria-label="Filtrlar" id="cat-filters">
+      <aside className={`cat-filters ${open ? 'is-open' : ''}`} aria-label={tr('Filtrlar')} id="cat-filters">
         <div className="cat-filters__sheet-head">
           <span className="cat-filters__handle" aria-hidden="true" />
-          <h2>Filtrlar</h2>
-          <button type="button" className="cat-filters__close" onClick={onClose} aria-label="Yopish">
+          <h2>{tr('Filtrlar')}</h2>
+          <button type="button" className="cat-filters__close" onClick={onClose} aria-label={tr('Yopish')}>
             <X size={18} strokeWidth={2.4} />
           </button>
         </div>
 
         <div className="cat-filters__body">
-          <FilterGroup title="Viloyat / Shahar">
+          <FilterGroup title={tr('Viloyat / Shahar')}>
             <Select
               value={filters.region}
               onChange={(region) => onChange({ region })}
               options={REGIONS}
-              ariaLabel="Viloyat / Shahar"
+              ariaLabel={tr('Viloyat / Shahar')}
             />
           </FilterGroup>
 
-          <FilterGroup title="Mashg‘ulot turi">
+          <FilterGroup title={tr('Mashg‘ulot turi')}>
             <CheckList
               options={TRAINING_TYPES}
               values={filters.types}
@@ -55,25 +56,25 @@ export default function CoachFilterPanel({ filters, onChange, onClear, activeCou
             />
           </FilterGroup>
 
-          <FilterGroup title="Narx (bir dars)">
+          <FilterGroup title={tr('Narx (bir dars)')}>
             <PillGroup
-              label="Narx"
+              label={tr('Narx')}
               options={PRICE_OPTIONS}
               value={filters.price}
               onSelect={(price) => onChange({ price })}
             />
           </FilterGroup>
 
-          <FilterGroup title="Tajriba">
+          <FilterGroup title={tr('Tajriba')}>
             <PillGroup
-              label="Tajriba"
+              label={tr('Tajriba')}
               options={EXPERIENCE_OPTIONS}
               value={filters.experience}
               onSelect={(experience) => onChange({ experience })}
             />
           </FilterGroup>
 
-          <FilterGroup title="Mutaxassislik">
+          <FilterGroup title={tr('Mutaxassislik')}>
             <CheckList
               options={SPECIALTIES}
               values={filters.specialties}
@@ -85,10 +86,10 @@ export default function CoachFilterPanel({ filters, onChange, onClear, activeCou
         <div className="cat-filters__footer">
           <button type="button" className="cat-filters__clear" onClick={onClear} disabled={activeCount === 0}>
             <RotateCcw size={14} />
-            Tozalash
+            {tr('Tozalash')}
           </button>
           <button type="button" className="cat-filters__apply" onClick={onClose}>
-            {resultCount > 0 ? `${resultCount} ta murabbiyni ko‘rsatish` : 'Natija topilmadi'}
+            {resultCount > 0 ? `${resultCount} ta murabbiyni ko‘rsatish` : tr('Natija topilmadi')}
           </button>
         </div>
       </aside>

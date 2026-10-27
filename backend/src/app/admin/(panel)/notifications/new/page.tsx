@@ -22,6 +22,7 @@ export default async function NewBroadcastPage({ searchParams }: { searchParams:
         id: u.id,
         name: `${u.firstName} ${u.lastName}`.trim(),
         phone: u.phone ? formatPhone(u.phone) : '',
+        telegram: Boolean(u.telegramChatId),
       }))
     : []
   const counts = await audienceCounts()
@@ -35,7 +36,7 @@ export default async function NewBroadcastPage({ searchParams }: { searchParams:
       />
       <Flash params={params as Record<string, string>} />
       <BroadcastForm
-        counts={{ all: counts.all ?? 0, bookers: counts.bookers ?? 0, active30: counts.active30 ?? 0 }}
+        counts={counts}
         picked={picked}
         telegramAvailable={telegramEnabled()}
         pushAvailable={pushEnabled()}

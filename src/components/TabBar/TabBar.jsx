@@ -1,8 +1,8 @@
+import { tr } from '../../i18n/index.js'
 import { NavLink, useLocation } from 'react-router-dom'
 import { FiHome, FiUser } from 'react-icons/fi'
 import { Map as MapIcon } from 'lucide-react'
 import HeartIcon from '../icons/HeartIcon.jsx'
-import MessageIcon from '../icons/MessageIcon.jsx'
 import { loadJobsMapPage } from '../../pages/jobsMapLoader.js'
 import { useAuth } from '../../context/auth.js'
 import './TabBar.css'
@@ -21,30 +21,29 @@ export default function TabBar() {
   const { pathname } = useLocation()
 
   const tabs = [
-    { to: '/', label: 'Bosh sahifa', short: 'Asosiy', icon: <FiHome size={21} />, end: true },
+    { to: '/', label: tr('Bosh sahifa'), short: tr('Asosiy'), icon: <FiHome size={21} />, end: true },
     {
       to: '/saqlanganlar',
-      label: 'Saqlanganlar',
-      short: 'Saqlangan',
+      label: tr('Saqlanganlar'),
+      short: tr('Saqlangan'),
       icon: <HeartIcon size={22} strokeWidth={1.8} />,
     },
     {
       to: '/xarita',
-      label: 'Xarita',
+      label: tr('Xarita'),
       icon: <MapIcon size={21} strokeWidth={1.8} />,
       prefetch: loadJobsMapPage,
     },
-    { to: '/xabarlar', label: 'Xabarlar', icon: <MessageIcon size={22} />, dot: true },
     user
-      ? { to: '/profil', label: 'Profil', icon: <FiUser size={21} /> }
-      : { to: '/kirish', label: 'Kirish', icon: <FiUser size={21} /> },
+      ? { to: '/profil', label: tr('Profil'), icon: <FiUser size={21} /> }
+      : { to: '/kirish', label: tr('Kirish'), icon: <FiUser size={21} /> },
   ]
 
   const activeIndex = tabs.findIndex((tab) => isTabActive(pathname, tab))
   const active = tabs[activeIndex]
 
   return (
-    <nav className="tabbar" aria-label="Asosiy navigatsiya">
+    <nav className="tabbar" aria-label={tr('Asosiy navigatsiya')}>
       <div
         className={`tabbar__inner${active ? ' has-active' : ''}`}
         style={{ '--tab-n': tabs.length, ...(active ? { '--tab-i': activeIndex } : null) }}
@@ -58,7 +57,7 @@ export default function TabBar() {
           </span>
         ) : null}
 
-        {tabs.map(({ to, label, short, icon, end, dot, prefetch }) => (
+        {tabs.map(({ to, label, short, icon, end, prefetch }) => (
           <NavLink
             key={to}
             to={to}
@@ -70,7 +69,6 @@ export default function TabBar() {
           >
             <span className="tabbar__icon">
               {icon}
-              {dot ? <span className="tabbar__dot" aria-hidden="true" /> : null}
             </span>
             <span className="tabbar__label" aria-hidden="true">
               {short ?? label}

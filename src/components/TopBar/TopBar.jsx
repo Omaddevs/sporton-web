@@ -14,6 +14,7 @@ import DropPanel from '../ui/DropPanel.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import MobileMenu from './MobileMenu.jsx'
 import './TopBar.css'
+import { lang, setLang, tr } from '../../i18n/index.js'
 
 export default function TopBar() {
   const { theme, setTheme } = useTheme()
@@ -24,7 +25,9 @@ export default function TopBar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const closeDrawer = useCallback(() => setDrawerOpen(false), [])
   const [regionId, setRegionId] = useLocalStorageState('sporton-region', 'all')
-  const [langId, setLangId] = useLocalStorageState('sporton-lang', 'uz')
+  // Til almashganda sahifa qayta yuklanadi (src/i18n)
+  const langId = lang
+  const setLangId = setLang
   const [openMenu, setOpenMenu] = useState(null)
   const regionRef = useRef(null)
   const langRef = useRef(null)
@@ -61,11 +64,6 @@ export default function TopBar() {
     }
   }, [openMenu, closeMenus])
 
-  useEffect(() => {
-    document.documentElement.lang =
-      language.id === 'en' ? 'en' : language.id === 'ru' ? 'ru' : 'uz'
-  }, [language.id])
-
   const regionDropdown = (
     <Dropdown
       ref={regionRef}
@@ -80,7 +78,7 @@ export default function TopBar() {
           />
         </>
       }
-      ariaLabel="Hududni tanlash"
+      ariaLabel={tr('Hududni tanlash')}
       menuClassName="topbar-menu--regions"
       origin="start"
     >
@@ -108,7 +106,7 @@ export default function TopBar() {
               type="button"
               className="topbar__burger"
               onClick={() => setDrawerOpen(true)}
-              aria-label={unreadCount ? `Menyu, ${unreadCount} ta o‘qilmagan bildirishnoma` : 'Menyu'}
+              aria-label={unreadCount ? `Menyu, ${unreadCount} ta o‘qilmagan bildirishnoma` : tr('Menyu')}
               aria-expanded={drawerOpen}
             >
               <Menu size={26} strokeWidth={2.2} />
@@ -119,9 +117,9 @@ export default function TopBar() {
               )}
             </button>
 
-            <Link to="/" className="topbar__brand" aria-label="SportON — bosh sahifa">
+            <Link to="/" className="topbar__brand" aria-label={tr('SportON — bosh sahifa')}>
               <BrandLogo />
-              <span className="topbar__tagline">Sport bilan yaqinroq!</span>
+              <span className="topbar__tagline">{tr('Sport bilan yaqinroq!')}</span>
             </Link>
 
             <MobileMenu
@@ -142,7 +140,7 @@ export default function TopBar() {
             />
           </>
         ) : (
-          <Link to="/" className="topbar__logo" aria-label="SportON — bosh sahifa">
+          <Link to="/" className="topbar__logo" aria-label={tr('SportON — bosh sahifa')}>
             <BrandLogo tone="onPrimary" />
           </Link>
         )}
@@ -157,14 +155,14 @@ export default function TopBar() {
 
           {isMobile ? null : regionDropdown}
 
-          <div className="topbar__theme" role="group" aria-label="Mavzu">
+          <div className="topbar__theme" role="group" aria-label={tr('Mavzu')}>
             <button
               type="button"
               className={`topbar__theme-btn ${theme === 'light' ? 'topbar__theme-btn--active' : ''}`}
               onClick={() => setTheme('light')}
-              aria-label="Light mode"
+              aria-label={tr('Light mode')}
               aria-pressed={theme === 'light'}
-              title="Light mode"
+              title={tr('Light mode')}
             >
               <Sun size={16} strokeWidth={2.25} />
             </button>
@@ -172,9 +170,9 @@ export default function TopBar() {
               type="button"
               className={`topbar__theme-btn ${theme === 'dark' ? 'topbar__theme-btn--active' : ''}`}
               onClick={() => setTheme('dark')}
-              aria-label="Dark mode"
+              aria-label={tr('Dark mode')}
               aria-pressed={theme === 'dark'}
-              title="Dark mode"
+              title={tr('Dark mode')}
             >
               <Moon size={16} strokeWidth={2.25} />
             </button>
@@ -193,7 +191,7 @@ export default function TopBar() {
                 />
               </>
             }
-            ariaLabel="Tilni tanlash"
+            ariaLabel={tr('Tilni tanlash')}
             menuClassName="topbar-menu--lang"
             align="end"
             origin="end"

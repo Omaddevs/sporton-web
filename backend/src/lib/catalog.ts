@@ -29,7 +29,8 @@ export function serializeComplex(row: Complex, rating: Rating, servicesCount: nu
     industry: row.industry,
     years: row.years,
     employees: row.employees,
-    phone: row.phone,
+    // Raqam ochiq katalogda berilmaydi — faqat kirgan foydalanuvchiga /complexes/:id/contact orqali
+    hasPhone: Boolean(row.phone),
     telegram: row.telegram,
     hours: row.hours,
     priceNote: row.priceNote,
@@ -69,6 +70,7 @@ export function serializeService(row: Service) {
     tasks: row.tasks,
     requirements: row.requirements,
     offers: row.offers,
+    bookingMode: row.bookingMode,
     views: row.views,
     createdAt: row.createdAt,
   }

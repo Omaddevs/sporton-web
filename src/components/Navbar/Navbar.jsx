@@ -1,3 +1,4 @@
+import { tr } from '../../i18n/index.js'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiCalendar, FiPlus, FiUser } from 'react-icons/fi'
@@ -5,7 +6,6 @@ import { LayoutGrid, Map as MapIcon } from 'lucide-react'
 import CategoriesMenu from '../CategoriesMenu/CategoriesMenu.jsx'
 import MoreMenu from '../MoreMenu/MoreMenu.jsx'
 import HeartIcon from '../icons/HeartIcon.jsx'
-import MessageIcon from '../icons/MessageIcon.jsx'
 import Button from '../ui/Button.jsx'
 import SearchBar from '../SearchBar/SearchBar.jsx'
 import { loadJobsMapPage } from '../../pages/jobsMapLoader.js'
@@ -54,7 +54,7 @@ export default function Navbar() {
               icon={<LayoutGrid size={18} strokeWidth={2.4} />}
               {...buttonProps}
             >
-              Sport turlari
+              {tr('Sport turlari')}
             </Button>
           )}
         />
@@ -62,22 +62,16 @@ export default function Navbar() {
         <SearchBar />
 
         <div className="navbar__actions">
-          <NavPill
-            to="/xabarlar"
-            label="Xabarlar"
-            icon={<MessageIcon size={22} />}
-            badge={<span className="navbar__msg-dot" aria-hidden="true" />}
-          />
-          <NavPill to="/saqlanganlar" label="Saqlanganlar" icon={<HeartIcon size={22} />} />
+          <NavPill to="/saqlanganlar" label={tr('Saqlanganlar')} icon={<HeartIcon size={22} />} />
           <NavPill
             to="/xarita"
-            label="Xarita"
+            label={tr('Xarita')}
             icon={<MapIcon size={21} strokeWidth={1.6} />}
             onMouseEnter={loadJobsMapPage}
             onFocus={loadJobsMapPage}
             onTouchStart={loadJobsMapPage}
           />
-          <NavPill to="/bron" label="Bron qilish" icon={<FiCalendar size={20} />} />
+          <NavPill to="/bron" label={tr('Bron qilish')} icon={<FiCalendar size={20} />} />
 
           <Button
             variant="primary"
@@ -86,7 +80,7 @@ export default function Navbar() {
             className="navbar__cta navbar__action-hide-lg"
             onClick={openAddComplex}
           >
-            Majmua qo'shish
+            {tr('Majmua qo\'shish')}
           </Button>
 
           {user ? (
@@ -96,7 +90,7 @@ export default function Navbar() {
           ) : (
             <Link to="/kirish" className="navbar__login">
               <FiUser aria-hidden="true" />
-              Kirish
+              {tr('Kirish')}
             </Link>
           )}
 

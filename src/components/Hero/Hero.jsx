@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './Hero.css'
+import { tr } from '../../i18n/index.js'
 
 const TABS = [
-  { id: 'jobs', label: 'Sport turlari' },
-  { id: 'companies', label: 'Majmualar' },
-  { id: 'courses', label: 'Murabbiylar', soon: true },
+  { id: 'jobs', label: tr('Sport turlari') },
+  { id: 'companies', label: tr('Majmualar') },
+  { id: 'courses', label: tr('Murabbiylar'), soon: true },
 ]
 
 export default function Hero({ activeTab = 'jobs', onTabChange }) {
@@ -78,12 +79,12 @@ export default function Hero({ activeTab = 'jobs', onTabChange }) {
                 role="tab"
                 aria-selected={isActive}
                 disabled={tab.soon}
-                title={tab.soon ? 'Tez orada' : undefined}
+                title={tab.soon ? tr('Tez orada') : undefined}
                 className={`hero__tab${isActive ? ' hero__tab--active' : ''}${tab.soon ? ' hero__tab--soon' : ''}`}
                 onClick={() => onTabClick(tab)}
               >
                 {tab.label}
-                {tab.soon && <span className="hero__tab-badge">Soon</span>}
+                {tab.soon && <span className="hero__tab-badge">{tr('Soon')}</span>}
               </button>
             )
           })}

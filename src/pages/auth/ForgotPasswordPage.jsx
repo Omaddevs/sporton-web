@@ -24,26 +24,27 @@ import {
 } from '../../components/Auth/fields.jsx'
 import { isValidPhone, maskPhone } from '../../utils/phone.js'
 import { useAuthFlow } from './useAuthFlow.js'
+import { tr } from '../../i18n/index.js'
 
 const STEPS = ['Telefon raqamni kiriting', 'Telegram botdan kod oling', 'Yangi parol o‘rnating']
 const STEP_INDEX = { phone: 0, code: 1, password: 2, done: 3 }
 
 const HEADINGS = {
   phone: {
-    title: 'Parolni tiklash',
-    subtitle: 'Hisobingizga bog‘langan telefon raqamni kiriting.',
+    title: tr('Parolni tiklash'),
+    subtitle: tr('Hisobingizga bog‘langan telefon raqamni kiriting.'),
   },
   code: {
-    title: 'Tasdiqlash kodi',
-    subtitle: 'Kodni Telegram botimizdan oling va quyida kiriting.',
+    title: tr('Tasdiqlash kodi'),
+    subtitle: tr('Kodni Telegram botimizdan oling va quyida kiriting.'),
   },
   password: {
-    title: 'Yangi parol',
-    subtitle: 'Hisobingiz uchun yangi, ishonchli parol o‘ylab toping.',
+    title: tr('Yangi parol'),
+    subtitle: tr('Hisobingiz uchun yangi, ishonchli parol o‘ylab toping.'),
   },
   done: {
-    title: 'Parol yangilandi',
-    subtitle: 'Endi yangi parolingiz bilan hisobingizga kirishingiz mumkin.',
+    title: tr('Parol yangilandi'),
+    subtitle: tr('Endi yangi parolingiz bilan hisobingizga kirishingiz mumkin.'),
   },
 }
 
@@ -55,8 +56,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      panelTitle="Hisobingizni tiklang"
-      panelText="Parolni unutdingizmi? Xavotir olmang — Telegram orqali bir daqiqada tiklaysiz."
+      panelTitle={tr('Hisobingizni tiklang')}
+      panelText={tr('Parolni unutdingizmi? Xavotir olmang — Telegram orqali bir daqiqada tiklaysiz.')}
       steps={STEPS}
       activeStep={STEP_INDEX[step]}
       {...HEADINGS[step]}
@@ -91,16 +92,16 @@ export default function ForgotPasswordPage() {
             <FiCheck />
           </span>
           <Link to="/kirish" state={linkState} className="auth-submit">
-            Hisobga kirish
+            {tr('Hisobga kirish')}
           </Link>
         </div>
       )}
 
       {step !== 'done' && (
         <p className="auth-footer">
-          Parolingiz esingizga tushdimi?
+          {tr('Parolingiz esingizga tushdimi?')}
           <Link to="/kirish" state={linkState}>
-            Kirish
+            {tr('Kirish')}
           </Link>
         </p>
       )}
@@ -117,7 +118,7 @@ function PhoneStep({ phone, setPhone, linkState, onSent }) {
     event.preventDefault()
     setNotFound(false)
     if (!isValidPhone(phone)) {
-      setError('Telefon raqamni to‘liq kiriting')
+      setError(tr('Telefon raqamni to‘liq kiriting'))
       return
     }
     setError('')
@@ -142,20 +143,20 @@ function PhoneStep({ phone, setPhone, linkState, onSent }) {
           setNotFound(false)
         }}
         error={error}
-        hint="Ro‘yxatdan o‘tishda ko‘rsatgan raqamingiz."
+        hint={tr('Ro‘yxatdan o‘tishda ko‘rsatgan raqamingiz.')}
         autoFocus
       />
 
       {notFound && (
         <FormAlert tone="info">
-          Bu raqam bilan hisob topilmadi.{' '}
+          {tr('Bu raqam bilan hisob topilmadi.')}{' '}
           <Link to="/royxatdan-otish" state={linkState} className="auth-link">
-            Ro‘yxatdan o‘ting
+            {tr('Ro‘yxatdan o‘ting')}
           </Link>
         </FormAlert>
       )}
 
-      <SubmitButton loading={loading}>Davom etish</SubmitButton>
+      <SubmitButton loading={loading}>{tr('Davom etish')}</SubmitButton>
     </form>
   )
 }
@@ -223,52 +224,51 @@ function CodeStep({ phone, onBack, onVerified }) {
     >
       <div className="auth-code-meta">
         <span>
-          Raqam: <strong>{maskPhone(phone)}</strong>
+          {tr('Raqam:')} <strong>{maskPhone(phone)}</strong>
         </span>
         <button type="button" className="auth-link" onClick={onBack}>
-          O‘zgartirish
+          {tr('O‘zgartirish')}
         </button>
       </div>
 
-      <section className="auth-tg" aria-label="Telegram bot orqali kod olish">
+      <section className="auth-tg" aria-label={tr('Telegram bot orqali kod olish')}>
         <div className="auth-tg__head">
           <span className="auth-tg__logo" aria-hidden="true">
             <FaTelegramPlane />
           </span>
           <div>
             <strong>@{TELEGRAM_BOT}</strong>
-            <span>Rasmiy SportON boti</span>
+            <span>{tr('Rasmiy SportON boti')}</span>
           </div>
         </div>
 
         <ol className="auth-tg__steps">
           <li>
             <span>
-              Botni oching va <strong>/start</strong> buyrug‘ini bosing.
+              {tr('Botni oching va')} <strong>/start</strong> {tr('buyrug‘ini bosing.')}
             </span>
           </li>
           <li>
             <span>
-              <strong>«Raqamni yuborish»</strong> tugmasi orqali telefon raqamingizni yuboring.
+              <strong>{tr('«Raqamni yuborish»')}</strong> {tr('tugmasi orqali telefon raqamingizni yuboring.')}
             </span>
           </li>
           <li>
             <span>
-              Raqam bazamizda bo‘lsa, bot sizga <strong>{CODE_LENGTH} xonali kod</strong> yuboradi —
-              uni quyida kiriting.
+              {tr('Raqam bazamizda bo‘lsa, bot sizga')} <strong>{CODE_LENGTH} {tr('xonali kod')}</strong> {tr('yuboradi — uni quyida kiriting.')}
             </span>
           </li>
         </ol>
 
         <a className="auth-tg__btn" href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer">
           <FaTelegram />
-          Telegram botni ochish
+          {tr('Telegram botni ochish')}
           <FiExternalLink aria-hidden="true" />
         </a>
       </section>
 
       <div className="auth-field">
-        <span className="auth-field__label">Tasdiqlash kodi</span>
+        <span className="auth-field__label">{tr('Tasdiqlash kodi')}</span>
         <OtpInput
           length={CODE_LENGTH}
           value={code}
@@ -286,28 +286,28 @@ function CodeStep({ phone, onBack, onVerified }) {
 
       {devCode && (
         <p className="auth-dev-hint">
-          Dev rejim (bot ulanmagan): kod — <code>{devCode}</code>
+          {tr('Dev rejim (bot ulanmagan): kod —')} <code>{devCode}</code>
         </p>
       )}
 
       <div className="auth-code-meta">
-        <span>Kod kelmadimi?</span>
+        <span>{tr('Kod kelmadimi?')}</span>
         {seconds > 0 ? (
           <span aria-live="polite">
-            Qayta yuborish: <strong>0:{String(seconds).padStart(2, '0')}</strong>
+            {tr('Qayta yuborish:')} <strong>0:{String(seconds).padStart(2, '0')}</strong>
           </span>
         ) : (
           <button type="button" className="auth-link" onClick={resend} disabled={resending}>
-            {resending ? 'Yuborilmoqda…' : 'Yangi kod olish'}
+            {resending ? tr('Yuborilmoqda…') : tr('Yangi kod olish')}
           </button>
         )}
       </div>
 
-      <SubmitButton loading={loading}>Tasdiqlash</SubmitButton>
+      <SubmitButton loading={loading}>{tr('Tasdiqlash')}</SubmitButton>
 
       <button type="button" className="auth-secondary" onClick={onBack}>
         <FiArrowLeft />
-        Orqaga
+        {tr('Orqaga')}
       </button>
     </form>
   )
@@ -324,7 +324,7 @@ function PasswordStep({ resetToken, onDone }) {
     event.preventDefault()
     const next = {}
     if (password.length < MIN_PASSWORD) next.password = `Parol kamida ${MIN_PASSWORD} ta belgidan iborat bo‘lsin`
-    if (confirm !== password) next.confirm = 'Parollar mos kelmadi'
+    if (confirm !== password) next.confirm = tr('Parollar mos kelmadi')
     setErrors(next)
     setFormError('')
     if (Object.keys(next).length) return
@@ -343,24 +343,24 @@ function PasswordStep({ resetToken, onDone }) {
     <form className="auth-form" onSubmit={handleSubmit} noValidate>
       <FormAlert>{formError}</FormAlert>
       <PasswordInput
-        label="Yangi parol"
+        label={tr('Yangi parol')}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="Yangi parolni kiriting"
+        placeholder={tr('Yangi parolni kiriting')}
         autoComplete="new-password"
         error={errors.password}
         hint={`Kamida ${MIN_PASSWORD} ta belgi.`}
         autoFocus
       />
       <PasswordInput
-        label="Parolni tasdiqlang"
+        label={tr('Parolni tasdiqlang')}
         value={confirm}
         onChange={(e) => setConfirm(e.target.value)}
-        placeholder="Parolni qayta kiriting"
+        placeholder={tr('Parolni qayta kiriting')}
         autoComplete="new-password"
         error={errors.confirm}
       />
-      <SubmitButton loading={loading}>Parolni saqlash</SubmitButton>
+      <SubmitButton loading={loading}>{tr('Parolni saqlash')}</SubmitButton>
     </form>
   )
 }

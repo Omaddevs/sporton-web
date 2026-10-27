@@ -1,3 +1,4 @@
+import { tr } from '../i18n/index.js'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Check } from 'lucide-react'
@@ -21,14 +22,15 @@ import {
   getSimilarCompanies,
 } from '../data/companies.js'
 import { jobs } from '../data/jobs.js'
+import { useSaved } from '../hooks/useSaved.js'
 import './CompanyDetailPage.css'
 
 const TABS = [
-  { id: 'jobs', label: 'Xizmatlar' },
-  { id: 'about', label: 'Majmua haqida' },
-  { id: 'photos', label: 'Rasmlar' },
-  { id: 'reviews', label: 'Sharhlar' },
-  { id: 'contacts', label: 'Kontaktlar' },
+  { id: 'jobs', label: tr('Xizmatlar') },
+  { id: 'about', label: tr('Majmua haqida') },
+  { id: 'photos', label: tr('Rasmlar') },
+  { id: 'reviews', label: tr('Sharhlar') },
+  { id: 'contacts', label: tr('Kontaktlar') },
 ]
 
 export default function CompanyDetailPage() {
@@ -41,8 +43,7 @@ export default function CompanyDetailPage() {
   )
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState('jobs')
-  const [following, setFollowing] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [saved, toggleSaved] = useSaved('companies', company.id)
   const [sort, setSort] = useState('new')
 
   const filteredSidebar = useMemo(() => {
@@ -64,7 +65,7 @@ export default function CompanyDetailPage() {
           <aside className="company-page__sidebar">
             <div className="co-side-card">
               <div className="co-side-card__head">
-                <h2>Top majmualar</h2>
+                <h2>{tr('Top majmualar')}</h2>
                 <Link to="/majmualar">
                   Barchasini ko&apos;rish
                   <FiArrowRight />
@@ -75,7 +76,7 @@ export default function CompanyDetailPage() {
                 <FiSearch />
                 <input
                   type="search"
-                  placeholder="Majmua qidirish..."
+                  placeholder={tr('Majmua qidirish...')}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
@@ -102,7 +103,7 @@ export default function CompanyDetailPage() {
                         <span className="co-side-row__name-line">
                           <span className="co-side-row__name">{item.name}</span>
                           {item.verified && (
-                            <em className="co-verified" title="Tasdiqlangan" aria-label="Tasdiqlangan">
+                            <em className="co-verified" title={tr('Tasdiqlangan')} aria-label={tr('Tasdiqlangan')}>
                               <Check size={9} strokeWidth={3.5} />
                             </em>
                           )}
@@ -110,7 +111,7 @@ export default function CompanyDetailPage() {
                         <span className="co-side-row__meta">
                           <FiCalendar aria-hidden="true" />
                           <span>
-                            {item.adsCount} ta xizmat
+                            {item.adsCount} {tr('ta xizmat')}
                           </span>
                         </span>
                       </span>
@@ -123,7 +124,7 @@ export default function CompanyDetailPage() {
               </ul>
 
               <Link to="/majmualar" className="co-side-cta">
-                Barcha majmualar
+                {tr('Barcha majmualar')}
                 <FiArrowRight />
               </Link>
             </div>
@@ -131,7 +132,7 @@ export default function CompanyDetailPage() {
             <div className="co-side-teaser">
               <img src="/images/companies/buildings.svg" alt="" width={52} height={44} />
               <p>
-                <span>Ishonchli majmualar —</span>
+                <span>{tr('Ishonchli majmualar —')}</span>
                 <span>sog&apos;lom hayot!</span>
               </p>
             </div>
@@ -152,8 +153,9 @@ export default function CompanyDetailPage() {
                 <button
                   type="button"
                   className={`co-hero__fav ${saved ? 'is-active' : ''}`}
-                  aria-label="Saqlash"
-                  onClick={() => setSaved((v) => !v)}
+                  aria-label={tr('Saqlash')}
+                  aria-pressed={saved}
+                  onClick={toggleSaved}
                 >
                   <FiHeart />
                 </button>
@@ -199,15 +201,16 @@ export default function CompanyDetailPage() {
 
                 <button
                   type="button"
-                  className={`co-follow-btn ${following ? 'is-following' : ''}`}
-                  onClick={() => setFollowing((v) => !v)}
+                  className={`co-follow-btn ${saved ? 'is-following' : ''}`}
+                  aria-pressed={saved}
+                  onClick={toggleSaved}
                 >
-                  {following ? 'Kuzatilmoqda' : 'Majmuani kuzatish'}
+                  {saved ? tr('Saqlanganlarda') : tr('Majmuani saqlash')}
                 </button>
               </div>
             </section>
 
-            <div className="co-tabs" role="tablist" aria-label="Majmua bo‘limlari">
+            <div className="co-tabs" role="tablist" aria-label={tr('Majmua bo‘limlari')}>
               {TABS.map((item) => (
                 <button
                   key={item.id}
@@ -225,10 +228,10 @@ export default function CompanyDetailPage() {
             </div>
 
             <section className="co-stats">
-              <Stat icon={<HiOutlineBuildingOffice2 />} value={`${company.years} yil`} label="Faoliyatda" />
-              <Stat icon={<FiUsers />} value={company.employees} label="Murabbiylar" />
-              <Stat icon={<FiActivity />} value={company.industry} label="Turi" />
-              <Stat icon={<FiMapPin />} value={company.city} label="Manzil" />
+              <Stat icon={<HiOutlineBuildingOffice2 />} value={`${company.years} yil`} label={tr('Faoliyatda')} />
+              <Stat icon={<FiUsers />} value={company.employees} label={tr('Murabbiylar')} />
+              <Stat icon={<FiActivity />} value={company.industry} label={tr('Turi')} />
+              <Stat icon={<FiMapPin />} value={company.city} label={tr('Manzil')} />
             </section>
 
             {tab === 'jobs' && (
@@ -237,8 +240,8 @@ export default function CompanyDetailPage() {
                   <h2>{company.name} xizmatlari</h2>
                   <label className="co-jobs__sort">
                     <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                      <option value="new">Eng yangi</option>
-                      <option value="old">Eskiroq</option>
+                      <option value="new">{tr('Eng yangi')}</option>
+                      <option value="old">{tr('Eskiroq')}</option>
                     </select>
                   </label>
                 </div>
@@ -260,7 +263,7 @@ export default function CompanyDetailPage() {
                   </span>
                   <p>Bo&apos;sh vaqtlar va chegirmalardan birinchilardan bo&apos;lib xabardor bo&apos;ling!</p>
                   <button type="button" className="co-notify__btn">
-                    Kuzatishni yoqish
+                    {tr('Kuzatishni yoqish')}
                   </button>
                 </div>
               </section>
@@ -268,14 +271,14 @@ export default function CompanyDetailPage() {
 
             {tab === 'about' && (
               <section className="co-panel">
-                <h2>Majmua haqida</h2>
+                <h2>{tr('Majmua haqida')}</h2>
                 <p>{company.about}</p>
               </section>
             )}
 
             {tab === 'photos' && (
               <section className="co-panel">
-                <h2>Rasmlar</h2>
+                <h2>{tr('Rasmlar')}</h2>
                 <div className="co-photos">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <img key={n} src={`/images/sport/gallery/g${n}.jpg`} alt="" />
@@ -286,7 +289,7 @@ export default function CompanyDetailPage() {
 
             {tab === 'reviews' && (
               <section className="co-panel">
-                <h2>Sharhlar ({company.reviews})</h2>
+                <h2>{tr('Sharhlar (')}{company.reviews})</h2>
                 <p className="co-panel__muted">
                   Sportchilar sharhlari tez orada qo&apos;shiladi.
                 </p>
@@ -295,7 +298,7 @@ export default function CompanyDetailPage() {
 
             {tab === 'contacts' && (
               <section className="co-panel">
-                <h2>Kontaktlar</h2>
+                <h2>{tr('Kontaktlar')}</h2>
                 <p>
                   <FiMapPin /> {company.location}
                 </p>
@@ -307,8 +310,8 @@ export default function CompanyDetailPage() {
                     </a>
                   </p>
                 )}
-                <Link to={`/xabarlar?company=${company.id}`} className="co-follow-btn">
-                  Xabar yuborish
+                <Link to={`/sport-majmua/${company.id}#bron`} className="co-follow-btn">
+                  {tr('Bron qilish')}
                 </Link>
               </section>
             )}
@@ -329,7 +332,7 @@ export default function CompanyDetailPage() {
                       )}
                     </span>
                     <strong>{item.name}</strong>
-                    <span>{item.adsCount} ta xizmat</span>
+                    <span>{item.adsCount} {tr('ta xizmat')}</span>
                     <em>
                       <FiArrowRight />
                     </em>
@@ -359,7 +362,7 @@ function Stat({ icon, value, label }) {
 }
 
 function CompanyJobRow({ job }) {
-  const [saved, setSaved] = useState(false)
+  const [saved, toggleSaved] = useSaved('jobs', job.id)
 
   return (
     <article className="co-job-row">
@@ -379,14 +382,15 @@ function CompanyJobRow({ job }) {
         </div>
       </Link>
       <div className="co-job-row__actions">
-        <Link to={`/bron/${job.id}`} className="co-job-row__go" aria-label="Ochish">
+        <Link to={`/bron/${job.id}`} className="co-job-row__go" aria-label={tr('Ochish')}>
           <FiArrowRight />
         </Link>
         <button
           type="button"
           className={`co-job-row__save ${saved ? 'is-active' : ''}`}
-          aria-label="Saqlash"
-          onClick={() => setSaved((v) => !v)}
+          aria-label={tr('Saqlash')}
+          aria-pressed={saved}
+          onClick={toggleSaved}
         >
           <FiBookmark />
         </button>

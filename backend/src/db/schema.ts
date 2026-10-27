@@ -7,6 +7,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -25,6 +26,14 @@ const timestamps = {
 export const USER_ROLES = ['user', 'moderator', 'admin'] as const
 export const USER_STATUSES = ['active', 'blocked'] as const
 export const PUBLISH_STATUSES = ['published', 'hidden'] as const
+/** Majmua va xizmat e’lonlari: draft — hali to‘ldirilmoqda, hidden — vaqtincha olib qo‘yilgan */
+export const LISTING_STATUSES = ['draft', 'published', 'hidden'] as const
+/**
+ * Xizmatni qanday band qilish mumkin:
+ * slot — sana va soat tanlanadi (maydon, kort ijarasi); request — vaqtsiz ariza, majmua qo‘ng‘iroq
+ * qiladi (sektsiya, guruh darsi); call — onlayn bron yo‘q, faqat telefon/Telegram (oylik abonement).
+ */
+export const BOOKING_MODES = ['slot', 'request', 'call'] as const
 export const SERVICE_TYPES = ['full', 'part', 'remote', 'intern'] as const
 export const BOOKING_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed'] as const
 export const SUBMISSION_STATUSES = ['pending', 'approved', 'rejected'] as const
@@ -85,6 +94,12 @@ export const users = pgTable(
     tokenVersion: integer('token_version').notNull().default(0),
     telegramChatId: text('telegram_chat_id'),
     avatar: text('avatar'),
+    bio: text('bio'),
+    city: text('city'),
+    /** Qiziqadigan sport turlari (sports.id) */
+    sports: jsonb('sports').$type<string[]>().notNull().default([]),
+    /** Raqam Telegram bot orqali tasdiqlangan vaqt (eski hisoblarda bo‘sh) */
+    phoneVerifiedAt: timestamp('phone_verified_at', { withTimezone: true }),
     notifyPrefs: jsonb('notify_prefs').$type<Partial<NotifyPrefs>>().notNull().default({}),
     consentAt: timestamp('consent_at', { withTimezone: true }),
     lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
@@ -95,6 +110,25 @@ export const users = pgTable(
     uniqueIndex('users_email_uq').on(t.email),
     uniqueIndex('users_provider_uq').on(t.provider, t.providerId),
   ],
+)
+
+/**
+ * Ro‘yxatdan o‘tishda telefonni tasdiqlash: kodni Telegram bot beradi, foydalanuvchi botga aynan shu
+ * raqamni kontakt sifatida yuborgan bo‘ladi. chatId — hisob yaratilgach bildirishnomalar uchun ulanadi.
+ */
+export const phoneVerifications = pgTable(
+  'phone_verifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    phone: text('phone').notNull(),
+    chatId: text('chat_id'),
+    codeHash: text('code_hash').notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    consumedAt: timestamp('consumed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('phone_verifications_phone_idx').on(t.phone)],
 )
 
 export const resetCodes = pgTable(
@@ -151,6 +185,18 @@ export const ads = pgTable('ads', {
   ...timestamps,
 })
 
+/** Bosh sahifadagi promo karusel slaydlari. Faol slayd bo‘lmasa karusel ko‘rinmaydi. */
+export const promoSlides = pgTable('promo_slides', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  image: text('image').notNull(),
+  mobileImage: text('mobile_image'),
+  link: text('link'),
+  alt: text('alt'),
+  sortOrder: integer('sort_order').notNull().default(0),
+  active: boolean('active').notNull().default(true),
+  ...timestamps,
+})
+
 export const EVENT_STATUSES = ['published', 'draft'] as const
 
 export type EventScheduleItem = { time: string; label: string; note?: string }
@@ -190,6 +236,21 @@ export const events = pgTable(
   (t) => [index('events_status_starts_idx').on(t.status, t.startsAt)],
 )
 
+/** Tadbirga saytdan ro‘yxatdan o‘tganlar (tashkilotchi admin panelda ro‘yxatni ko‘radi) */
+export const eventRegistrations = pgTable(
+  'event_registrations',
+  {
+    eventId: text('event_id')
+      .notNull()
+      .references(() => events.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.eventId, t.userId] })],
+)
+
 export const complexes = pgTable(
   'complexes',
   {
@@ -201,7 +262,7 @@ export const complexes = pgTable(
     listed: boolean('listed').notNull().default(false),
     /** Namuna (demo) ma’lumot — launchdan oldin yashirish mumkin */
     isDemo: boolean('is_demo').notNull().default(false),
-    status: text('status', { enum: PUBLISH_STATUSES }).notNull().default('published'),
+    status: text('status', { enum: LISTING_STATUSES }).notNull().default('published'),
     tagline: text('tagline'),
     location: text('location'),
     city: text('city'),
@@ -264,7 +325,8 @@ export const services = pgTable(
     requirements: jsonb('requirements').$type<ServiceDetailList>().notNull().default([]),
     offers: jsonb('offers').$type<ServiceDetailList>().notNull().default([]),
     views: integer('views').notNull().default(0),
-    status: text('status', { enum: PUBLISH_STATUSES }).notNull().default('published'),
+    bookingMode: text('booking_mode', { enum: BOOKING_MODES }).notNull().default('slot'),
+    status: text('status', { enum: LISTING_STATUSES }).notNull().default('published'),
     ...timestamps,
   },
   (t) => [index('services_complex_idx').on(t.complexId), index('services_sport_idx').on(t.sportId)],
@@ -331,7 +393,10 @@ export const reviews = pgTable(
     status: text('status', { enum: PUBLISH_STATUSES }).notNull().default('published'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index('reviews_complex_idx').on(t.complexId, t.status)],
+  (t) => [
+    index('reviews_complex_idx').on(t.complexId, t.status),
+    uniqueIndex('reviews_user_complex_uq').on(t.complexId, t.userId).where(sql`user_id is not null`),
+  ],
 )
 
 // ── Bronlar va arizalar ────────────────────────────────────────────
@@ -523,9 +588,90 @@ export const pushSubscriptions = pgTable(
 export type User = typeof users.$inferSelect
 export type Complex = typeof complexes.$inferSelect
 export type Service = typeof services.$inferSelect
+export type BookingMode = (typeof BOOKING_MODES)[number]
+export type ListingStatus = (typeof LISTING_STATUSES)[number]
 export type News = typeof news.$inferSelect
 export type SportEvent = typeof events.$inferSelect
 export type Booking = typeof bookings.$inferSelect
 export type Submission = typeof submissions.$inferSelect
 export type Notification = typeof notifications.$inferSelect
 export type Broadcast = typeof broadcasts.$inferSelect
+
+// ── Sevimlilar va layklar (serverda — qurilmalar orasida saqlanadi) ─────
+
+export const FAVORITE_KINDS = ['complex', 'service', 'course'] as const
+export const LIKE_KINDS = ['complex', 'news'] as const
+export type FavoriteKind = (typeof FAVORITE_KINDS)[number]
+export type LikeKind = (typeof LIKE_KINDS)[number]
+
+export const favorites = pgTable(
+  'favorites',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    kind: text('kind', { enum: FAVORITE_KINDS }).notNull(),
+    itemId: text('item_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.kind, t.itemId] }), index('favorites_item_idx').on(t.kind, t.itemId)],
+)
+
+export const likes = pgTable(
+  'likes',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    kind: text('kind', { enum: LIKE_KINDS }).notNull(),
+    itemId: text('item_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.kind, t.itemId] }), index('likes_item_idx').on(t.kind, t.itemId)],
+)
+
+// ── Reels (bosh sahifa va «Reels» bo‘limi) — admin paneldan boshqariladi ─
+
+export const REEL_TONES = ['blue', 'orange', 'purple', 'pink', 'teal', 'green'] as const
+
+export const reels = pgTable('reels', {
+  /** Instagram reel kodi: instagram.com/reel/<code>/ */
+  code: text('code').primaryKey(),
+  title: text('title').notNull(),
+  tag: text('tag').notNull().default('SportON'),
+  tagTone: text('tag_tone', { enum: REEL_TONES }).notNull().default('blue'),
+  cover: text('cover').notNull(),
+  /** Saytda o‘ynatiladigan mp4 (bo‘lmasa Instagram embed) */
+  video: text('video'),
+  publishedOn: date('published_on', { mode: 'string' }),
+  sortOrder: integer('sort_order').notNull().default(0),
+  active: boolean('active').notNull().default(true),
+  ...timestamps,
+})
+
+// ── Texnik: so‘rovlar cheklovi va xatolar jurnali ───────────────────────
+
+/** Bir nechta server jarayonida ham ishlaydigan cheklovchi (src/lib/rate-limit.ts) */
+export const rateLimits = pgTable('rate_limits', {
+  key: text('key').primaryKey(),
+  count: integer('count').notNull().default(0),
+  resetAt: timestamp('reset_at', { withTimezone: true }).notNull(),
+})
+
+export const errorEvents = pgTable(
+  'error_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    source: text('source', { enum: ['api', 'client'] }).notNull(),
+    message: text('message').notNull(),
+    stack: text('stack'),
+    url: text('url'),
+    userAgent: text('user_agent'),
+    userId: uuid('user_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('error_events_created_idx').on(t.createdAt)],
+)
+
+export type Reel = typeof reels.$inferSelect
+export type ErrorEvent = typeof errorEvents.$inferSelect

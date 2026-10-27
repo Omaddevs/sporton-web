@@ -1,5 +1,6 @@
 'use server'
 
+import { panelUrl } from '@/lib/env'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
@@ -37,7 +38,7 @@ export async function approveSubmission(form: FormData) {
     await tx.insert(complexes).values({
       id: complexId,
       name: p.name,
-      status: publish ? 'published' : 'hidden',
+      status: publish ? 'published' : 'draft',
       listed: true,
       region: p.region,
       city: region?.city ?? null,
@@ -67,7 +68,7 @@ export async function approveSubmission(form: FormData) {
         priceValue: p.price,
         hours,
         description: p.description,
-        status: publish ? ('published' as const) : ('hidden' as const),
+        status: publish ? ('published' as const) : ('draft' as const),
       }
     })
     if (rows.length) await tx.insert(services).values(rows)
@@ -83,9 +84,9 @@ export async function approveSubmission(form: FormData) {
     type: 'submission',
     title: 'Arizangiz tasdiqlandi 🎉',
     body: publish
-      ? `«${p.name}» saytda e’lon qilindi. Endi mijozlar uni topib, bron qila oladi.`
-      : `«${p.name}» tasdiqlandi. Ma’lumotlar tekshirilgach saytda e’lon qilinadi.`,
-    link: publish ? `/sport-majmua/${complexId}` : '/profil',
+      ? `«${p.name}» saytda e’lon qilindi. Bronlar va ma’lumotlarni Majmua kabinetida (telefon raqam va parolingiz bilan) boshqaring.`
+      : `«${p.name}» tasdiqlandi. Majmua kabinetida ma’lumotlarni to‘ldiring — tekshirilgach saytda e’lon qilinadi.`,
+    link: panelUrl('/kabinet'),
   })
   redirect(`/admin/complexes/${complexId}?ok=${encodeURIComponent('Ariza tasdiqlandi. Ma’lumotlarni tekshirib, e’lon qiling.')}`)
 }

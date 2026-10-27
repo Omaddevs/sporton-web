@@ -961,3 +961,71 @@
     height: 88px;
   }
 }
+
+/* Raqam tasdiqlanmagan (eski hisob) — Telegram bot orqali tasdiqlash */
+.pf-verify {
+  display: flex;
+  gap: 14px;
+  border: 1px solid rgb(245 158 11 / 0.45);
+  background: rgb(245 158 11 / 0.08);
+}
+
+.pf-verify__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgb(245 158 11 / 0.16);
+  color: #d97706;
+  font-size: 20px;
+}
+
+.pf-verify__body h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.pf-verify__body p {
+  margin: 0 0 12px;
+  color: var(--color-text-muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.pf-verify__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.pf-verify__actions .btn {
+  gap: 8px;
+}
+
+.pf-badge.is-warning {
+  background: rgb(245 158 11 / 0.15);
+  color: #b45309;
+}
+
+.profile-premium-card__btn svg {
+  margin-left: 6px;
+}
+
+.pf-spin {
+  animation: pf-spin 0.9s linear infinite;
+}
+
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-spin {
+    animation: none;
+  }
+}

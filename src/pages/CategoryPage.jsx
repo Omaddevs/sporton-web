@@ -1,3 +1,4 @@
+import { tr } from '../i18n/index.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
@@ -7,7 +8,6 @@ import {
   Building2,
   Heart,
   MapPin,
-  MessageCircle,
   Newspaper,
   Share2,
   SlidersHorizontal,
@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react'
 import { categoryMenuById } from '../data/categoryMenu.js'
+import { useSeo } from '../hooks/useSeo.js'
 import { getCandidatesForCategory } from '../data/candidates.js'
 import { getComplexesForCategory } from '../data/complexes.js'
 import { getCategoryArticles } from '../data/articles.js'
@@ -33,10 +34,13 @@ import {
 } from '../components/CategoryContent/coachFilters.js'
 import './CategoryPage.css'
 
+// Murabbiylar bo‘limi hali haqiqiy ma’lumotga ulanmagan (namuna profillar ko‘rsatilmaydi)
+const COACHES_READY = false
+
 const TABS = [
-  { id: 'majmualar', label: 'Sport majmualari', Icon: Building2 },
-  { id: 'murabbiylar', label: 'Murabbiylar', Icon: UsersRound },
-  { id: 'maqolalar', label: 'Yangiliklar va blog', Icon: Newspaper },
+  { id: 'majmualar', label: tr('Sport majmualari'), Icon: Building2 },
+  { id: 'murabbiylar', label: tr('Murabbiylar'), Icon: UsersRound },
+  { id: 'maqolalar', label: tr('Yangiliklar va blog'), Icon: Newspaper },
 ]
 
 export default function CategoryPage() {
@@ -44,7 +48,8 @@ export default function CategoryPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const category = categoryMenuById[categoryId] ?? categoryMenuById.futbol
-  const candidates = useMemo(() => getCandidatesForCategory(category.id), [category.id])
+  useSeo({ title: `${category.title} — sport majmualari va mashg‘ulotlar`, description: `${category.title} bo‘yicha sport majmualari, narxlar va onlayn bron — SportON.` })
+  const candidates = useMemo(() => (COACHES_READY ? getCandidatesForCategory(category.id) : []), [category.id])
   const categoryComplexes = useMemo(() => getComplexesForCategory(category.id), [category.id])
   const articles = useMemo(() => getCategoryArticles(category.id), [category.id])
   const tabRefs = useRef({})
@@ -130,16 +135,16 @@ export default function CategoryPage() {
     <div className="category-page">
       <div className="container">
         <header className="cat-header">
-          <nav className="cat-results__crumbs" aria-label="Breadcrumb">
-            <Link to="/">Bosh sahifa</Link>
+          <nav className="cat-results__crumbs" aria-label={tr('Breadcrumb')}>
+            <Link to="/">{tr('Bosh sahifa')}</Link>
             <span aria-hidden="true">/</span>
-            <Link to="/sport-turlari">Sport turlari</Link>
+            <Link to="/sport-turlari">{tr('Sport turlari')}</Link>
             <span aria-hidden="true">/</span>
             <span aria-current="page">{category.title}</span>
           </nav>
 
           <div className="cat-results__title">
-            <Link to="/sport-turlari" className="cat-header__back" aria-label="Sport turlariga qaytish">
+            <Link to="/sport-turlari" className="cat-header__back" aria-label={tr('Sport turlariga qaytish')}>
               <ArrowLeft size={20} strokeWidth={2.2} />
             </Link>
             <span
@@ -150,7 +155,7 @@ export default function CategoryPage() {
             </span>
             <div>
               <h1>{category.title}</h1>
-              <p>«{category.title}» bo‘yicha murabbiylar, sport majmualari, yangiliklar va foydali maqolalar</p>
+              <p>«{category.title}{tr('» bo‘yicha murabbiylar, sport majmualari, yangiliklar va foydali maqolalar')}</p>
             </div>
           </div>
 
@@ -191,7 +196,17 @@ export default function CategoryPage() {
             <CategoryArticles key={category.id} category={category} items={articles} />
           )}
 
-          {tab === 'murabbiylar' && (
+          {tab === 'murabbiylar' && !COACHES_READY && (
+            <div className="category-page__inner">
+              <EmptyState
+                Icon={UsersRound}
+                title={tr('Murabbiylar bo‘limi tez orada')}
+                text={`«${category.title}» bo‘yicha tasdiqlangan murabbiylar profillari shu yerda chiqadi. Murabbiy bo‘lsangiz — «Majmua qo‘shish» orqali ariza qoldiring.`}
+              />
+            </div>
+          )}
+
+          {tab === 'murabbiylar' && COACHES_READY && (
             <div className="category-page__inner">
               <CoachFilterPanel
                 filters={filters}
@@ -206,7 +221,7 @@ export default function CategoryPage() {
               <section className="cat-results">
                 <div className="cat-results__head">
                   <p className="cat-results__found" aria-live="polite">
-                    <strong>{visible.length}</strong> ta murabbiy topildi
+                    <strong>{visible.length}</strong> {tr('ta murabbiy topildi')}
                   </p>
 
                   <div className="cat-results__meta">
@@ -218,21 +233,21 @@ export default function CategoryPage() {
                       aria-expanded={filtersOpen}
                     >
                       <SlidersHorizontal size={16} strokeWidth={2.2} />
-                      Filtrlar
+                      {tr('Filtrlar')}
                       {chips.length > 0 && <span className="cat-filter-toggle__count">{chips.length}</span>}
                     </button>
                     <Select
                       value={filters.sort}
                       onChange={(sort) => updateFilters({ sort })}
                       options={SORT_OPTIONS}
-                      ariaLabel="Saralash"
+                      ariaLabel={tr('Saralash')}
                       size="sm"
                     />
                   </div>
                 </div>
 
                 {chips.length > 0 && (
-                  <div className="cat-active-filters" aria-label="Faol filtrlar">
+                  <div className="cat-active-filters" aria-label={tr('Faol filtrlar')}>
                     {chips.map((chip) => (
                       <button
                         key={chip.key}
@@ -246,7 +261,7 @@ export default function CategoryPage() {
                       </button>
                     ))}
                     <button type="button" className="cat-active-chip cat-active-chip--clear" onClick={clearFilters}>
-                      Barchasini tozalash
+                      {tr('Barchasini tozalash')}
                     </button>
                   </div>
                 )}
@@ -254,11 +269,11 @@ export default function CategoryPage() {
                 {visible.length === 0 && (
                   <EmptyState
                     Icon={UsersRound}
-                    title="Mos murabbiy topilmadi"
-                    text="Tanlangan filtrlarga mos murabbiy yo‘q. Ba’zi filtrlarni olib tashlab ko‘ring."
+                    title={tr('Mos murabbiy topilmadi')}
+                    text={tr('Tanlangan filtrlarga mos murabbiy yo‘q. Ba’zi filtrlarni olib tashlab ko‘ring.')}
                     action={
                       <button type="button" className="cc-btn cc-btn--primary" onClick={clearFilters}>
-                        Filtrlarni tozalash
+                        {tr('Filtrlarni tozalash')}
                       </button>
                     }
                   />
@@ -279,8 +294,8 @@ export default function CategoryPage() {
                           <div>
                             <div className="cand-card__name-row">
                               <h3>{person.name}</h3>
-                              {person.premium && <span className="cand-card__badge">Premium</span>}
-                              {person.online && <span className="cand-card__online" title="Online" />}
+                              {person.premium && <span className="cand-card__badge">{tr('Premium')}</span>}
+                              {person.online && <span className="cand-card__online" title={tr('Online')} />}
                             </div>
                             <p className="cand-card__role">{person.title}</p>
                           </div>
@@ -314,13 +329,13 @@ export default function CategoryPage() {
                             showDetail(person.id)
                           }}
                         >
-                          Batafsil
+                          {tr('Batafsil')}
                           <ArrowRight size={15} />
                         </button>
                         <button
                           type="button"
                           className={`cand-card__heart ${saved.has(person.id) ? 'is-active' : ''}`}
-                          aria-label="Saqlash"
+                          aria-label={tr('Saqlash')}
                           onClick={(e) => {
                             e.stopPropagation()
                             toggleSaved(person.id)
@@ -337,12 +352,12 @@ export default function CategoryPage() {
               {selected && (
                 <aside className="cat-detail" ref={detailRef}>
                   <div className="cat-detail__toolbar">
-                    <button type="button" aria-label="Ulashish">
+                    <button type="button" aria-label={tr('Ulashish')}>
                       <Share2 size={17} />
                     </button>
                     <button
                       type="button"
-                      aria-label="Saqlash"
+                      aria-label={tr('Saqlash')}
                       className={saved.has(selected.id) ? 'is-active' : ''}
                       onClick={() => toggleSaved(selected.id)}
                     >
@@ -355,7 +370,7 @@ export default function CategoryPage() {
                     <div>
                       <div className="cand-card__name-row">
                         <h2>{selected.name}</h2>
-                        {selected.online && <span className="cand-card__online" title="Online" />}
+                        {selected.online && <span className="cand-card__online" title={tr('Online')} />}
                       </div>
                       <p className="cat-detail__role">{selected.title}</p>
                       <div className="cand-card__facts">
@@ -373,12 +388,12 @@ export default function CategoryPage() {
                   </div>
 
                   <section className="cat-detail__block">
-                    <h3>Murabbiy haqida</h3>
+                    <h3>{tr('Murabbiy haqida')}</h3>
                     <p>{selected.about}</p>
                   </section>
 
                   <section className="cat-detail__block">
-                    <h3>Mutaxassislik</h3>
+                    <h3>{tr('Mutaxassislik')}</h3>
                     <div className="cand-card__skills">
                       {selected.skills.map((skill) => (
                         <span key={skill}>{skill}</span>
@@ -387,7 +402,7 @@ export default function CategoryPage() {
                   </section>
 
                   <section className="cat-detail__block">
-                    <h3>Ta’lim va unvonlar</h3>
+                    <h3>{tr('Ta’lim va unvonlar')}</h3>
                     {selected.education.map((item) => (
                       <div key={item.school} className="cat-detail__edu">
                         <strong>{item.school}</strong>
@@ -398,7 +413,7 @@ export default function CategoryPage() {
                   </section>
 
                   <section className="cat-detail__block">
-                    <h3>Murabbiylik tajribasi</h3>
+                    <h3>{tr('Murabbiylik tajribasi')}</h3>
                     {selected.work.map((item) => (
                       <div key={`${item.company}-${item.role}`} className="cat-detail__job">
                         <div className="cat-detail__job-head">
@@ -416,25 +431,18 @@ export default function CategoryPage() {
                   </section>
 
                   <div className="cat-detail__cta">
-                    <Link
-                      to={`/xabarlar?candidate=${selected.id}`}
-                      className="cat-detail__contact"
-                    >
-                      <MessageCircle size={17} />
-                      Mashg‘ulotga yozilish
-                    </Link>
                     <button
                       type="button"
                       className={`cat-detail__save ${saved.has(selected.id) ? 'is-active' : ''}`}
                       onClick={() => toggleSaved(selected.id)}
                     >
                       <Heart size={17} fill={saved.has(selected.id) ? 'currentColor' : 'none'} />
-                      Saqlash
+                      {tr('Saqlash')}
                     </button>
                   </div>
 
                   <button type="button" className="cat-detail__back" onClick={() => navigate('/')}>
-                    Bosh sahifaga qaytish
+                    {tr('Bosh sahifaga qaytish')}
                   </button>
                 </aside>
               )}

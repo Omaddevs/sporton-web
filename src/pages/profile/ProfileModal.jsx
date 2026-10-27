@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { FiPlus, FiX } from 'react-icons/fi'
 import Button from '../../components/ui/Button.jsx'
+import { tr } from '../../i18n/index.js'
 
 /** Native <dialog>: fokus tuzog‘i, Esc va fon ustida bosish bilan yopiladi */
 export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = 'Saqlash', danger, wide, children }) {
@@ -40,7 +41,7 @@ export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = 'Sa
         >
           <div className="pf-modal__head">
             <h2 id={titleId}>{title}</h2>
-            <button type="button" className="pf-modal__close" onClick={onClose} aria-label="Yopish">
+            <button type="button" className="pf-modal__close" onClick={onClose} aria-label={tr('Yopish')}>
               <FiX />
             </button>
           </div>
@@ -48,7 +49,7 @@ export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = 'Sa
           {onSubmit && (
             <div className="pf-modal__foot">
               <Button type="button" variant="outline" onClick={onClose}>
-                Bekor qilish
+                {tr('Bekor qilish')}
               </Button>
               <Button type="submit" variant="primary" className={danger ? 'pf-btn-danger' : ''}>
                 {submitLabel}
@@ -143,7 +144,7 @@ export function TagEditor({ value, onChange, suggestions = [], placeholder, max 
             </button>
           </span>
         ))}
-        {!value.length && <span className="pf-muted">Hali hech narsa qo‘shilmagan</span>}
+        {!value.length && <span className="pf-muted">{tr('Hali hech narsa qo‘shilmagan')}</span>}
       </div>
 
       <div className="pf-tags-editor__add">
@@ -167,13 +168,13 @@ export function TagEditor({ value, onChange, suggestions = [], placeholder, max 
           ))}
         </datalist>
         <Button type="button" variant="outline" icon={<FiPlus />} onClick={() => add(draft)} disabled={!draft.trim()}>
-          Qo‘shish
+          {tr('Qo‘shish')}
         </Button>
       </div>
 
       {rest.length > 0 && (
         <div className="pf-suggest">
-          <span className="pf-muted">Tavsiyalar:</span>
+          <span className="pf-muted">{tr('Tavsiyalar:')}</span>
           {rest.slice(0, 10).map((item) => (
             <button key={item} type="button" className="pf-suggest__chip" onClick={() => add(item)}>
               <FiPlus aria-hidden /> {item}

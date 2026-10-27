@@ -1,6 +1,8 @@
+import { tr } from '../../i18n/index.js'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Gift, Star } from 'lucide-react'
+import { useSaved } from '../../hooks/useSaved.js'
 import { FiHeart } from 'react-icons/fi'
 import { FALLBACK_IMAGE, formatPrice } from '../../data/complexes.js'
 import './ComplexCard.css'
@@ -9,7 +11,7 @@ const CARD_IMAGES = 4
 
 export default function ComplexCard({ complex }) {
   const [slide, setSlide] = useState(0)
-  const [saved, setSaved] = useState(false)
+  const [saved, toggleSaved] = useSaved('companies', complex.id)
   const images = complex.images.slice(0, CARD_IMAGES)
   const url = `/sport-majmua/${complex.id}`
   const priceLabel = complex.minPrice
@@ -52,13 +54,13 @@ export default function ComplexCard({ complex }) {
                 <span className="complex-card__badge-icon complex-card__badge-icon--green" aria-hidden="true">
                   <Check size={10} strokeWidth={3.5} />
                 </span>
-                Tasdiqlangan
+                {tr('Tasdiqlangan')}
               </span>
             )}
             {complex.hasTrial && (
               <span
                 className={`complex-card__badge ${complex.verified ? 'complex-card__badge--icon' : ''}`}
-                title="Bepul sinov darsi"
+                title={tr('Bepul sinov darsi')}
               >
                 <span className="complex-card__badge-icon complex-card__badge-icon--orange" aria-hidden="true">
                   <Gift size={10} strokeWidth={3} />
@@ -86,9 +88,9 @@ export default function ComplexCard({ complex }) {
         <button
           type="button"
           className={`complex-card__save ${saved ? 'complex-card__save--active' : ''}`}
-          aria-label={saved ? 'Saqlanganlardan olib tashlash' : 'Saqlash'}
+          aria-label={saved ? tr('Saqlanganlardan olib tashlash') : tr('Saqlash')}
           aria-pressed={saved}
-          onClick={() => setSaved((value) => !value)}
+          onClick={toggleSaved}
         >
           <FiHeart />
         </button>

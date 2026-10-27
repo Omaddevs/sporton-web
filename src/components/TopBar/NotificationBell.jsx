@@ -5,6 +5,7 @@ import { FiBell } from 'react-icons/fi'
 import { formatAgo, useNotifications } from '../../hooks/useNotifications.js'
 import DropPanel from '../ui/DropPanel.jsx'
 import './NotificationBell.css'
+import { tr } from '../../i18n/index.js'
 
 const TYPE_ICONS = {
   booking: CalendarCheck,
@@ -60,7 +61,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={panelId}
-        title="Bildirishnomalar"
+        title={tr('Bildirishnomalar')}
         onClick={handleToggle}
       >
         <FiBell className={unreadCount ? 'notif__bell notif__bell--ring' : 'notif__bell'} />
@@ -77,10 +78,10 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
         className="topbar-menu notif-panel"
         origin="end"
         role="dialog"
-        aria-label="Bildirishnomalar"
+        aria-label={tr('Bildirishnomalar')}
       >
         <div className="notif-panel__head">
-          <h3 className="notif-panel__title">Bildirishnomalar</h3>
+          <h3 className="notif-panel__title">{tr('Bildirishnomalar')}</h3>
           <button
             type="button"
             className="notif-panel__action"
@@ -88,11 +89,11 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
             disabled={!unreadCount}
           >
             <CheckCheck size={16} strokeWidth={2.25} />
-            Hammasini o‘qilgan qilish
+            {tr('Hammasini o‘qilgan qilish')}
           </button>
         </div>
 
-        <div className="notif-panel__tabs" role="tablist" aria-label="Filtr">
+        <div className="notif-panel__tabs" role="tablist" aria-label={tr('Filtr')}>
           <button
             type="button"
             role="tab"
@@ -100,7 +101,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
             className={`notif-panel__tab ${tab === 'all' ? 'notif-panel__tab--active' : ''}`}
             onClick={() => setTab('all')}
           >
-            Barchasi
+            {tr('Barchasi')}
           </button>
           <button
             type="button"
@@ -109,7 +110,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
             className={`notif-panel__tab ${tab === 'unread' ? 'notif-panel__tab--active' : ''}`}
             onClick={() => setTab('unread')}
           >
-            O‘qilmagan
+            {tr('O‘qilmagan')}
             {unreadCount > 0 && <span className="notif-panel__count">{unreadCount}</span>}
           </button>
         </div>
@@ -119,15 +120,15 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
             <span className="notif-panel__empty-icon">
               <BellOff size={26} strokeWidth={1.9} />
             </span>
-            <p className="notif-panel__empty-title">Bildirishnomalarni olish uchun kiring</p>
-            <p className="notif-panel__empty-text">Bron holati, eslatmalar va chegirmalar haqida shu yerda xabar beramiz.</p>
+            <p className="notif-panel__empty-title">{tr('Bildirishnomalarni olish uchun kiring')}</p>
+            <p className="notif-panel__empty-text">{tr('Bron holati, eslatmalar va chegirmalar haqida shu yerda xabar beramiz.')}</p>
             <Link to="/kirish" state={{ from: location.pathname }} className="notif-panel__login" onClick={onClose}>
-              Kirish
+              {tr('Kirish')}
             </Link>
           </div>
         ) : !notifications.loaded ? (
           <div className="notif-panel__empty">
-            <p className="notif-panel__empty-text">Yuklanmoqda…</p>
+            <p className="notif-panel__empty-text">{tr('Yuklanmoqda…')}</p>
           </div>
         ) : visible.length ? (
           <ul className="notif-panel__list">
@@ -147,13 +148,13 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
                       <span className="notif-item__text">{item.text}</span>
                       <span className="notif-item__time">{item.timeLabel}</span>
                     </span>
-                    {item.unread && <span className="notif-item__dot" aria-label="O‘qilmagan" />}
+                    {item.unread && <span className="notif-item__dot" aria-label={tr('O‘qilmagan')} />}
                   </button>
                   <button
                     type="button"
                     className="notif-item__remove"
                     aria-label={`«${item.title}» bildirishnomasini o‘chirish`}
-                    title="O‘chirish"
+                    title={tr('O‘chirish')}
                     onClick={() => remove(item.id)}
                   >
                     <X size={14} strokeWidth={2.5} />
@@ -168,12 +169,12 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
               <BellOff size={26} strokeWidth={1.9} />
             </span>
             <p className="notif-panel__empty-title">
-              {tab === 'unread' ? 'Hammasi o‘qilgan' : 'Bildirishnomalar yo‘q'}
+              {tab === 'unread' ? tr('Hammasi o‘qilgan') : tr('Bildirishnomalar yo‘q')}
             </p>
             <p className="notif-panel__empty-text">
               {tab === 'unread'
-                ? 'Yangi bildirishnomalar shu yerda paydo bo‘ladi.'
-                : 'Bron, xabar va chegirmalar haqida shu yerda xabar beramiz.'}
+                ? tr('Yangi bildirishnomalar shu yerda paydo bo‘ladi.')
+                : tr('Bron, xabar va chegirmalar haqida shu yerda xabar beramiz.')}
             </p>
           </div>
         )}
@@ -181,7 +182,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
         {signedIn && (
           <div className="notif-panel__foot">
             <Link to="/profil?bolim=bildirishnomalar" className="notif-panel__all" onClick={onClose}>
-              Barchasini ko‘rish
+              {tr('Barchasini ko‘rish')}
             </Link>
             {items.length > 0 && (
               <button
@@ -191,7 +192,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
                   if (window.confirm('Barcha bildirishnomalar o‘chirilsinmi?')) clearAll()
                 }}
               >
-                Barchasini tozalash
+                {tr('Barchasini tozalash')}
               </button>
             )}
           </div>

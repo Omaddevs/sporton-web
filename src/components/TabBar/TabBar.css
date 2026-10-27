@@ -199,17 +199,6 @@
     font-weight: 700;
   }
 
-  .tabbar__dot {
-    position: absolute;
-    top: 0;
-    right: -3px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    box-shadow: 0 0 0 2px var(--tabbar-bg);
-  }
-
   .app {
     padding-bottom: var(--tabbar-space);
   }
