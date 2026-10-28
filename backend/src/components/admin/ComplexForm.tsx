@@ -140,10 +140,10 @@ export default function ComplexForm({
             <CoverImageField name="logo" initial={c?.logo} aspect="1:1" />
             <small>Bo‘lmasa brend rangi va nomning bosh harfi ko‘rsatiladi.</small>
           </div>
-          <div className="fld">
-            <span>Muqova rasmi (16:9)</span>
-            <CoverImageField name="bannerImage" initial={c?.bannerImage} aspect="16:9" />
-            <small>Galereyada birinchi chiqadi.</small>
+          <div className="fld span-2">
+            <span>Banner — sahifa tepasidagi keng rasm (24:5)</span>
+            <CoverImageField name="bannerImage" initial={c?.bannerImage} aspect="24:5" />
+            <small>Yuklagach kesish oynasi ochiladi: rasmni surib, kattalashtirib kerakli qismini tanlang — saytda aynan shu qism ko‘rinadi.</small>
           </div>
           <div className="fld span-2">
             <span>Rasm va videolar</span>

@@ -10,7 +10,7 @@ const SIDE_COUNT = 3
 
 // Bosh sahifadagi yangilik kartalari kutadigan ko‘rinishga keltiradi
 function toCard(article, index) {
-  const badge = article.kind === 'blog' ? 'Blog' : index === 0 ? 'Bosh yangilik' : 'Yangilik'
+  const badge = article.kind === 'blog' ? tr('Blog') : index === 0 ? tr('Bosh yangilik') : tr('Yangilik')
   return { ...article, category: article.tag, badge }
 }
 
@@ -95,7 +95,7 @@ export default function CategoryArticles({ category, items }) {
         <EmptyState
           Icon={Newspaper}
           title={tr('Hozircha maqolalar yo‘q')}
-          text={`«${category.title}» bo‘yicha yangiliklar tez orada paydo bo‘ladi.`}
+          text={tr('«{title}» bo‘yicha yangiliklar tez orada paydo bo‘ladi.', { title: category.title })}
         />
       )}
     </section>

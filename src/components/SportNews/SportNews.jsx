@@ -4,8 +4,10 @@ import { FiArrowLeft, FiArrowRight, FiArrowUpRight, FiCalendar } from 'react-ico
 import { featuredNews, latestNews, newsTicker, sideNews } from '../../data/news.js'
 import LogoIcon from '../icons/LogoIcon.jsx'
 import './SportNews.css'
+import { tr } from '../../i18n/index.js'
 
 export default function SportNews({ id = 'yangiliklar' }) {
+  if (!featuredNews.id) return null
   return (
     <section className="sport-news container" id={id}>
       <div className="sport-news__top">
@@ -18,7 +20,7 @@ export default function SportNews({ id = 'yangiliklar' }) {
       </div>
 
       <NewsTicker items={newsTicker} />
-      <LatestNews items={latestNews} />
+      {latestNews.length > 0 && <LatestNews items={latestNews} />}
     </section>
   )
 }
@@ -32,12 +34,12 @@ function Meta({ category, date }) {
         <span className="news-meta__avatar">
           <LogoIcon size={11} />
         </span>
-        {category}
+        {tr(category)}
       </span>
       <span className="news-meta__dot" aria-hidden="true" />
       <span className="news-meta__date">
         <FiCalendar />
-        {date}
+        {tr(date)}
       </span>
     </div>
   )
@@ -56,10 +58,10 @@ function NotchArrow({ size = 'sm' }) {
 export function FeaturedCard({ news }) {
   return (
     <Link to={newsHref(news)} className="news-featured">
-      <img className="news-featured__img" src={news.image} alt="" />
+      <img loading="lazy" decoding="async" className="news-featured__img" src={news.image} alt="" />
       <div className="news-featured__shade" />
       <div className="news-featured__body">
-        <span className="news-featured__badge">{news.badge}</span>
+        <span className="news-featured__badge">{tr(news.badge)}</span>
         <h3 className="news-featured__title">{news.title}</h3>
         <p className="news-featured__excerpt">{news.excerpt}</p>
         <Meta category={news.category} date={news.date} />
@@ -85,7 +87,7 @@ export function NewsRow({ news }) {
   )
 }
 
-export function NewsTicker({ items, label = 'So‘nggi xabarlar' }) {
+export function NewsTicker({ items, label = tr('So‘nggi xabarlar') }) {
   // Uzluksiz aylanish uchun ro‘yxat ikki marta takrorlanadi
   const loop = [...items, ...items]
 
@@ -108,7 +110,7 @@ export function NewsTicker({ items, label = 'So‘nggi xabarlar' }) {
   )
 }
 
-export function LatestNews({ items, title = 'So‘nggi yangiliklar' }) {
+export function LatestNews({ items, title = tr('So‘nggi yangiliklar') }) {
   const trackRef = useRef(null)
   const [edges, setEdges] = useState({ start: true, end: false })
 
@@ -145,7 +147,7 @@ export function LatestNews({ items, title = 'So‘nggi yangiliklar' }) {
             className="latest-news__btn"
             onClick={() => scroll(-1)}
             disabled={edges.start}
-            aria-label={`${title}: oldingilari`}
+            aria-label={`${title}: ${tr('oldingilari')}`}
           >
             <FiArrowLeft />
           </button>
@@ -154,7 +156,7 @@ export function LatestNews({ items, title = 'So‘nggi yangiliklar' }) {
             className="latest-news__btn"
             onClick={() => scroll(1)}
             disabled={edges.end}
-            aria-label={`${title}: keyingilari`}
+            aria-label={`${title}: ${tr('keyingilari')}`}
           >
             <FiArrowRight />
           </button>

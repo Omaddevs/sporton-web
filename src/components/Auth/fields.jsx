@@ -42,7 +42,7 @@ export function TextInput({ label, error, hint, ...props }) {
 }
 
 /** +998 prefiksli telefon maydoni; value — 9 ta mahalliy raqam */
-export function PhoneInput({ label = 'Telefon raqam', error, hint, value, onChange, ...props }) {
+export function PhoneInput({ label = tr('Telefon raqam'), error, hint, value, onChange, ...props }) {
   return (
     <Field label={label} error={error} hint={hint}>
       {(a11y) => (
@@ -67,7 +67,7 @@ export function PhoneInput({ label = 'Telefon raqam', error, hint, value, onChan
   )
 }
 
-export function PasswordInput({ label = 'Parol', error, hint, ...props }) {
+export function PasswordInput({ label = tr('Parol'), error, hint, ...props }) {
   const [visible, setVisible] = useState(false)
 
   return (
@@ -155,7 +155,7 @@ export function OtpInput({ length = 6, value, onChange, error, disabled, autoFoc
           value={digit}
           disabled={disabled}
           autoFocus={autoFocus && index === 0}
-          aria-label={`${index + 1}-raqam`}
+          aria-label={tr('{n}-raqam', { n: index + 1 })}
           aria-invalid={Boolean(error)}
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
@@ -200,7 +200,7 @@ export function SocialButtons({ onSelect, loading }) {
   )
 }
 
-export function Divider({ children = 'Yoki' }) {
+export function Divider({ children = tr('Yoki') }) {
   return (
     <div className="auth-divider" role="separator">
       <span>{children}</span>

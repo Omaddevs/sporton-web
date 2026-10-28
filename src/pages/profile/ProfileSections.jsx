@@ -51,7 +51,7 @@ function SectionCard({ title, subtitle, action, children }) {
 }
 
 /* —— Bronlar —— */
-export function BookingsList({ bookings, onCancel, limit, empty = 'Bronlar topilmadi' }) {
+export function BookingsList({ bookings, onCancel, limit, empty = tr('Bronlar topilmadi') }) {
   const rows = limit ? bookings.slice(0, limit) : bookings
   if (!rows.length) return <p className="pf-empty">{empty}</p>
 
@@ -112,7 +112,7 @@ export function BookingsSection({ profile, update, notify }) {
   return (
     <SectionCard
       title={tr('Mening bronlarim')}
-      subtitle={`Jami ${profile.bookings.length} ta bron · ${profile.bookings.filter(isUpcoming).length} ta faol`}
+      subtitle={tr('Jami {total} ta bron · {active} ta faol', { total: profile.bookings.length, active: profile.bookings.filter(isUpcoming).length })}
       action={
         <Link to="/sport-turlari" className="btn btn--primary pf-head-btn">
           <span className="btn__icon">
@@ -258,7 +258,7 @@ export function NotificationsSection() {
             type="button"
             className="pf-link is-danger"
             onClick={() => {
-              if (window.confirm('Barcha bildirishnomalar o‘chirilsinmi?')) clearAll()
+              if (window.confirm(tr('Barcha bildirishnomalar o‘chirilsinmi?'))) clearAll()
             }}
           >
             <FiTrash2 aria-hidden /> {tr('Barchasini tozalash')}
@@ -358,7 +358,7 @@ function PasswordForm({ user, notify }) {
     const next = {}
     if (!values.currentPassword) next.currentPassword = tr('Joriy parolni kiriting')
     if (values.newPassword.length < authApi.MIN_PASSWORD)
-      next.newPassword = `Kamida ${authApi.MIN_PASSWORD} ta belgi`
+      next.newPassword = tr('Kamida {n} ta belgi', { n: authApi.MIN_PASSWORD })
     if (values.confirm !== values.newPassword) next.confirm = tr('Parollar mos kelmadi')
     if (Object.keys(next).length) return setErrors(next)
 
@@ -423,7 +423,7 @@ export function SecuritySection({ profile, notify }) {
   }
 
   return (
-    <SectionCard title={tr('Hisob xavfsizligi')} subtitle={`Kirish raqami: ${profile.phone ? maskPhone(profile.phone) : '—'}`}>
+    <SectionCard title={tr('Hisob xavfsizligi')} subtitle={`${tr('Kirish raqami')}: ${profile.phone ? maskPhone(profile.phone) : '—'}`}>
       <div className="pf-group">
         <h2>{tr('Parolni o‘zgartirish')}</h2>
         <PasswordForm user={user} notify={notify} />

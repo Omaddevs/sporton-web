@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { FiUser } from 'react-icons/fi'
 import { LANGUAGES } from '../../data/languages.js'
-import { REGIONS } from '../../data/regions.js'
+import { isRegionActive, REGION_PICKER } from '../../data/regions.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import SearchBar from '../SearchBar/SearchBar.jsx'
 import './MobileMenu.css'
@@ -117,9 +117,9 @@ export default function MobileMenu({
                 onChange={(event) => onRegionChange(event.target.value)}
                 tabIndex={tab}
               >
-                {REGIONS.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.label}
+                {REGION_PICKER.map((item) => (
+                  <option key={item.id} value={item.id} disabled={!isRegionActive(item.id)}>
+                    {isRegionActive(item.id) ? item.label : `${item.label} — ${tr('tez orada')}`}
                   </option>
                 ))}
               </select>

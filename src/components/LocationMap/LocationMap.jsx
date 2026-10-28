@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { ATTRIBUTION, currentTheme, TILES } from '../../utils/mapTiles.js'
 import './LocationMap.css'
+import { tr } from '../../i18n/index.js'
 
 const pinIcon = L.divIcon({
   className: 'loc-map__pin-wrap',
@@ -25,7 +26,7 @@ export default function LocationMap({ coords, title, zoom = 16 }) {
       minZoom: 10,
       maxZoom: 18,
     })
-    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Yaqinlashtirish', zoomOutTitle: 'Uzoqlashtirish' }).addTo(map)
+    L.control.zoom({ position: 'bottomright', zoomInTitle: tr('Yaqinlashtirish'), zoomOutTitle: tr('Uzoqlashtirish') }).addTo(map)
     map.attributionControl.setPrefix(false)
 
     const tileOptions = { maxNativeZoom: 19, maxZoom: 18 }

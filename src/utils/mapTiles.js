@@ -1,3 +1,4 @@
+import { tr } from '../i18n/index.js'
 // OpenStreetMap standart tile'lari — kalitsiz; yorliqlar fon bilan bitta qatlamda.
 // OSM'da qorong'i variant yo'q: ikkala mavzuda bir xil xarita (tile'larga CSS filtr berilmaydi —
 // filtr pan/zoom paytida xaritani qotirib qo'yardi). Massiv: [fon, ...ustki qatlamlar].
@@ -21,6 +22,6 @@ export function externalMapLinks({ lat, lng }, label = '') {
   return [
     { id: 'google', label: 'Google Maps', href: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` },
     { id: 'yandex', label: 'Yandex Maps', href: `https://yandex.uz/maps/?pt=${lng},${lat}&z=17&l=map` },
-    { id: 'apple', label: 'Apple Maps', href: `https://maps.apple.com/?ll=${lat},${lng}&q=${name || 'Manzil'}&z=17` },
+    { id: 'apple', label: 'Apple Maps', href: `https://maps.apple.com/?ll=${lat},${lng}&q=${encodeURIComponent(name || tr('Manzil'))}&z=17` },
   ]
 }

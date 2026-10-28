@@ -1,14 +1,21 @@
 import { useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { FiSearch } from 'react-icons/fi'
 import './SearchBar.css'
 import { tr } from '../../i18n/index.js'
 
 export default function SearchBar({ onSearch }) {
-  const [value, setValue] = useState('')
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [params] = useSearchParams()
+  // Qidiruv sahifasida so‘rov maydonda qoladi
+  const [value, setValue] = useState(() => (pathname === '/qidiruv' ? (params.get('q') ?? '') : ''))
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    onSearch?.(value)
+    const query = value.trim()
+    if (onSearch) return onSearch(query)
+    if (query) navigate(`/qidiruv?q=${encodeURIComponent(query)}`)
   }
 
   return (

@@ -5,15 +5,43 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
 import { complexes, services } from '@/db/schema'
+import { slugify } from '@/lib/admin'
 import { audit } from '@/lib/audit'
+import { isUniqueViolation } from '@/lib/booking'
 import { invalidateCatalog } from '@/lib/catalog'
 import { readOwnerComplex } from '@/lib/complex-form'
 import { requireOwnedComplex, requireOwner } from '@/lib/owner'
 import { readService } from '@/lib/service-form'
+import { notifyAdmins } from '@/lib/telegram'
 
 const go = (path: string, kind: 'ok' | 'error', message: string): never =>
   redirect(`${path}${path.includes('?') ? '&' : '?'}${kind}=${encodeURIComponent(message)}`)
 const messageOf = (error: unknown) => (error instanceof Error ? error.message : 'Saqlashda xatolik')
+
+/**
+ * Egasi kabinetdan yangi majmua qo‘shadi: qoralama holatida yaratiladi,
+ * admin tekshirib e’lon qiladi. Sport turlari keyin «Xizmatlar» orqali qo‘shiladi.
+ */
+export async function ownerCreateComplex(form: FormData) {
+  const { user } = await requireOwner()
+  let id = ''
+  try {
+    const data = readOwnerComplex(form)
+    const db = await getDb()
+    id = slugify(data.name) || `majmua-${Date.now()}`
+    const [clash] = await db.select({ id: complexes.id }).from(complexes).where(eq(complexes.id, id)).limit(1)
+    // «new» — /kabinet/majmua/new sahifasi bilan to‘qnashmasin
+    if (clash || id === 'new') id = `${id}-${Date.now().toString(36).slice(-4)}`
+    await db.insert(complexes).values({ id, ...data, status: 'draft', listed: true, ownerId: user.id })
+  } catch (error) {
+    go('/kabinet/majmua/new', 'error', isUniqueViolation(error) ? 'Bunday majmua mavjud — nomini o‘zgartiring' : messageOf(error))
+  }
+  await audit(user.id, 'complex.create', 'complex', id, { by: 'owner' })
+  notifyAdmins('🏟 Kabinetdan yangi majmua', [String(form.get('name') ?? ''), `${user.firstName} ${user.lastName}`.trim(), `/admin/complexes/${id}`])
+  invalidateCatalog()
+  revalidatePath('/kabinet', 'layout')
+  go(`/kabinet/majmua/${encodeURIComponent(id)}`, 'ok', 'Majmua qo‘shildi. Endi sport turlari (xizmatlar) qo‘shing — admin tekshirib e’lon qiladi.')
+}
 
 /** Egasi majmua ma’lumotlarini tahrirlaydi (holat va tasdiq belgilari — faqat admin) */
 export async function ownerUpdateComplex(form: FormData) {

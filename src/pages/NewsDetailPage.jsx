@@ -125,13 +125,13 @@ function NewsDetailView({ newsId }) {
           <span>/</span>
           <Link to="/#yangiliklar">{tr('Yangiliklar')}</Link>
           <span>/</span>
-          <strong>{news.category}</strong>
+          <strong>{tr(news.category)}</strong>
         </nav>
 
         <header className="news-head">
           <div className="news-head__tags">
-            <span className="news-head__cat">{news.category}</span>
-            {news.badge && <span className="news-head__badge">{news.badge}</span>}
+            <span className="news-head__cat">{tr(news.category)}</span>
+            {news.badge && <span className="news-head__badge">{tr(news.badge)}</span>}
           </div>
           <h1 className="news-head__title">{news.title}</h1>
           <p className="news-head__lead">{news.excerpt}</p>
@@ -147,7 +147,7 @@ function NewsDetailView({ newsId }) {
               </div>
             </div>
             <ul className="news-head__stats">
-              <li><FiCalendar /> {news.date}</li>
+              <li><FiCalendar /> {tr(news.date)}</li>
               <li><FiClock /> {news.readTime} {tr('daqiqa o‘qish')}</li>
               <li><FiEye /> {news.views.toLocaleString('ru-RU')}</li>
             </ul>
@@ -155,7 +155,7 @@ function NewsDetailView({ newsId }) {
         </header>
 
         <figure className="news-cover">
-          <img src={news.image} alt={news.title} />
+          <img fetchPriority="high" src={news.image} alt={news.title} />
           <figcaption>{news.caption}</figcaption>
         </figure>
 
@@ -233,7 +233,7 @@ function NewsDetailView({ newsId }) {
                     target="_blank"
                     rel="noreferrer"
                     className="news-share__icon"
-                    aria-label={`${s.label} orqali ulashish`}
+                    aria-label={tr('{name} orqali ulashish', { name: s.label })}
                   >
                     {s.icon}
                   </a>
@@ -285,7 +285,7 @@ function NewsDetailView({ newsId }) {
                       <span className="news-side__num">{String(i + 1).padStart(2, '0')}</span>
                       <div className="news-side__body">
                         <strong>{item.title}</strong>
-                        <span>{item.category} · {item.date}</span>
+                        <span>{tr(item.category)} · {tr(item.date)}</span>
                       </div>
                       <img src={item.image} alt="" loading="lazy" />
                     </Link>
@@ -295,7 +295,7 @@ function NewsDetailView({ newsId }) {
             </section>
 
             <section className="news-promo">
-              <img src="/images/sport/banner.jpg" alt="" loading="lazy" />
+              <img src="/images/sport/banner.webp" alt="" loading="lazy" />
               <div className="news-promo__body">
                 <span className="news-promo__eyebrow">{tr('SportON · Bron')}</span>
                 <h3>{tr('Sevimli maydoningizni hoziroq bron qiling')}</h3>
@@ -319,10 +319,10 @@ function NewsDetailView({ newsId }) {
               <Link key={item.id} to={`/yangilik/${item.id}`} className="news-card">
                 <div className="news-card__media">
                   <img src={item.image} alt="" loading="lazy" />
-                  <span className="news-card__cat">{item.category}</span>
+                  <span className="news-card__cat">{tr(item.category)}</span>
                 </div>
                 <div className="news-card__body">
-                  <span className="news-card__date"><FiCalendar /> {item.date}</span>
+                  <span className="news-card__date"><FiCalendar /> {tr(item.date)}</span>
                   <h3>{item.title}</h3>
                   <p>{item.excerpt}</p>
                 </div>

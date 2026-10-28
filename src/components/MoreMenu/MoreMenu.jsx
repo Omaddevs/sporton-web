@@ -89,7 +89,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
             <span className="more-menu__title-icon" aria-hidden="true">
               <Compass size={17} strokeWidth={2.4} />
             </span>
-            <h2>Ko&apos;proq</h2>
+            <h2>{tr('Ko‘proq')}</h2>
           </div>
           <p className="more-menu__tagline">{tr('Yangiliklar, musobaqalar va SportON hayoti')}</p>
         </div>
@@ -123,7 +123,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
             <span className="more-quick__icon" aria-hidden="true">
               <FiPlus />
             </span>
-            Majmua qo&apos;shish
+            {tr('Majmua qo‘shish')}
           </button>
         </div>
 
@@ -201,7 +201,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
                   </span>
                   <span className="more-card__text">
                     <span className="more-card__tags">
-                      <span className="more-card__tag">{item.tag}</span>
+                      <span className="more-card__tag">{tr(item.tag)}</span>
                       {item.status && (
                         <span className={`more-card__status more-card__status--${item.status.tone}`}>
                           {item.status.label}
@@ -209,7 +209,7 @@ export default function MoreMenu({ open, onOpenChange, onAddComplex }) {
                       )}
                     </span>
                     <span className="more-card__title">{item.title}</span>
-                    <span className="more-card__meta">{item.meta}</span>
+                    <span className="more-card__meta">{tr(item.meta)}</span>
                   </span>
                 </Link>
               ))}

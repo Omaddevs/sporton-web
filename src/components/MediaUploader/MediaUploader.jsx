@@ -15,7 +15,7 @@ import { MediaLinkError, mediaThumb, parseMediaLink } from '../../utils/media.js
 import './MediaUploader.css'
 import { tr } from '../../i18n/index.js'
 
-const PROVIDER_LABEL = { youtube: 'YouTube', instagram: 'Instagram', link: 'Havola' }
+const PROVIDER_LABEL = { youtube: 'YouTube', instagram: 'Instagram', link: tr('Havola') }
 
 let seq = 0
 const newKey = () => `m${Date.now().toString(36)}${(seq += 1)}`
@@ -120,7 +120,7 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
       onChange((items) => [...items, { ...item, key: newKey() }])
       setLink('')
     } catch (error) {
-      setLinkError(error instanceof MediaLinkError ? error.message : 'Havola noto‘g‘ri')
+      setLinkError(error instanceof MediaLinkError ? error.message : tr('Havola noto‘g‘ri'))
     }
   }
 
@@ -196,7 +196,7 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
       {value.length > 0 && (
         <>
           <p className="mu-summary">
-            {value.filter((i) => i.type === 'image').length} {tr('rasm ·')} {value.filter((i) => i.type === 'video').length} video
+            {value.filter((i) => i.type === 'image').length} {tr('rasm ·')} {value.filter((i) => i.type === 'video').length} {tr('video')}
             {uploadingCount > 0 && <span> · {uploadingCount} {tr('ta yuklanmoqda…')}</span>}
           </p>
           <ul className="mu-grid">
@@ -221,7 +221,7 @@ export default function MediaUploader({ value, onChange, invalid = false, descri
                     )}
                     {item.key === coverKey && <span className="mu-tile__cover">{tr('Muqova')}</span>}
                     {item.progress != null && !item.error && (
-                      <span className="mu-tile__progress" aria-label={`Yuklanmoqda ${item.progress}%`}>
+                      <span className="mu-tile__progress" aria-label={tr('Yuklanmoqda {n}%', { n: item.progress })}>
                         <span style={{ width: `${item.progress}%` }} />
                         <em>{item.progress}%</em>
                       </span>

@@ -26,6 +26,7 @@ import {
   LogOut,
 } from 'lucide-react'
 import { adminLogout } from '@/app/admin/login/actions'
+import ThemeToggle from './ThemeToggle'
 
 type Counts = { bookings: number; submissions: number; tickets: number }
 type Me = { name: string; role: string; isAdmin: boolean }
@@ -114,6 +115,7 @@ export default function Sidebar({ counts, me }: { counts: Counts; me: Me }) {
             <span>{ROLE_LABEL[me.role] ?? me.role}</span>
           </div>
         </div>
+        <ThemeToggle />
         <form action={adminLogout}>
           <button className="btn btn--block btn--sm">
             <LogOut aria-hidden="true" /> Chiqish

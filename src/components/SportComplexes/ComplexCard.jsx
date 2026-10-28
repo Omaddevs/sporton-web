@@ -15,8 +15,8 @@ export default function ComplexCard({ complex }) {
   const images = complex.images.slice(0, CARD_IMAGES)
   const url = `/sport-majmua/${complex.id}`
   const priceLabel = complex.minPrice
-    ? `${formatPrice(complex.minPrice)} so‘mdan`
-    : (complex.priceNote ?? 'Bepul')
+    ? `${formatPrice(complex.minPrice)} ${tr('so‘mdan')}`
+    : tr(complex.priceNote ?? 'Bepul')
 
   // Kursor rasm ustida yurganda — slayd kursor turgan qismga mos almashadi
   const handleMove = (event) => {
@@ -65,7 +65,7 @@ export default function ComplexCard({ complex }) {
                 <span className="complex-card__badge-icon complex-card__badge-icon--orange" aria-hidden="true">
                   <Gift size={10} strokeWidth={3} />
                 </span>
-                {!complex.verified && 'Bepul sinov'}
+                {!complex.verified && tr('Bepul sinov')}
               </span>
             )}
           </div>
@@ -107,8 +107,8 @@ export default function ComplexCard({ complex }) {
         ) : null}
         <p className="complex-card__name">{complex.name}</p>
         <p className="complex-card__meta">
-          {complex.location}
-          {complex.sports.length > 0 && ` · ${complex.sports.join(', ')}`}
+          {tr(complex.location)}
+          {complex.sports.length > 0 && ` · ${complex.sports.map((s) => tr(s)).join(', ')}`}
         </p>
       </Link>
     </article>

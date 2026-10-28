@@ -9,16 +9,16 @@ const FALLBACK_SLIDES = [
   {
     id: 'telegram',
     link: SOCIAL_LINKS.telegram.href,
-    image: '/images/promo/sporton-telegram-wide.png',
-    mobileImage: '/images/promo/sporton-telegram-mobile.png',
-    alt: 'SportON Telegram kanali',
+    image: '/images/promo/sporton-telegram-wide.webp',
+    mobileImage: '/images/promo/sporton-telegram-mobile.webp',
+    alt: tr('SportON Telegram kanali'),
   },
   {
     id: 'instagram',
     link: SOCIAL_LINKS.instagram.href,
-    image: '/images/promo/sporton-instagram-wide.png',
-    mobileImage: '/images/promo/sporton-instagram-mobile.png',
-    alt: 'SportON — Instagramda ham kuzatib boring',
+    image: '/images/promo/sporton-instagram-wide.webp',
+    mobileImage: '/images/promo/sporton-instagram-mobile.webp',
+    alt: tr('SportON — Instagramda ham kuzatib boring'),
   },
 ]
 
@@ -246,6 +246,8 @@ function Carousel({ slides }) {
                     width={1920}
                     height={400}
                     draggable={false}
+                    loading={isActive ? 'eager' : 'lazy'}
+                    decoding="async"
                   />
                 </picture>
               )
@@ -284,7 +286,7 @@ function Carousel({ slides }) {
                 key={slide.id}
                 type="button"
                 className={`promo-carousel__dot${i === active ? ' promo-carousel__dot--active' : ''}`}
-                aria-label={`${i + 1}-slayd`}
+                aria-label={tr('{n}-slayd', { n: i + 1 })}
                 aria-current={i === active}
                 onClick={() => goToDot(i)}
               />

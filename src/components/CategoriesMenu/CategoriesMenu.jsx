@@ -30,12 +30,12 @@ function readRecent() {
 function formatRelativeTime(timestamp) {
   const diffMs = Date.now() - timestamp
   const minutes = Math.max(1, Math.floor(diffMs / 60000))
-  if (minutes < 60) return `${minutes} daqiqa oldin`
+  if (minutes < 60) return tr('{n} daqiqa oldin', { n: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} soat oldin`
+  if (hours < 24) return tr('{n} soat oldin', { n: hours })
   const days = Math.floor(hours / 24)
-  if (days === 1) return 'Kecha'
-  return `${days} kun oldin`
+  if (days === 1) return tr('Kecha')
+  return tr('{n} kun oldin', { n: days })
 }
 
 export default function CategoriesMenu({ open, onOpenChange, trigger }) {
@@ -164,7 +164,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
             <X size={18} strokeWidth={2.4} />
           </button>
           <p className="categories-menu__tagline">
-            Majmualar, mashg&apos;ulotlar va murabbiylar — bir joyda!
+            {tr('Majmualar, mashg‘ulotlar va murabbiylar — bir joyda!')}
           </p>
         </div>
 
@@ -208,7 +208,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
               <span className="cat-all__text">
                 <span className="cat-all__title">{tr('Barcha sport turlari')}</span>
                 <span className="cat-all__sub">
-                  Hammasini ko&apos;rish
+                  {tr('Hammasini ko‘rish')}
                   <ChevronRight size={13} strokeWidth={2.5} />
                 </span>
               </span>
@@ -218,7 +218,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
               <div className="cat-recent__head">
                 <h3>
                   <Clock3 size={14} strokeWidth={2.4} />
-                  Yaqinda ko&apos;rilgan
+                  {tr('Yaqinda ko‘rilgan')}
                 </h3>
                 {recentItems.length > 0 && (
                   <button
@@ -233,7 +233,7 @@ export default function CategoriesMenu({ open, onOpenChange, trigger }) {
               </div>
 
               {recentItems.length === 0 ? (
-                <p className="cat-recent__empty">Hali ko&apos;rilgan sport turi yo&apos;q</p>
+                <p className="cat-recent__empty">{tr('Hali ko‘rilgan sport turi yo‘q')}</p>
               ) : (
                 <div className="cat-recent__list">
                   {recentItems.map((item) => (

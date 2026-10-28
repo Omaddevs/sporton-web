@@ -49,7 +49,7 @@ export default function CategoryComplexes({ category, items }) {
     return (
       <EmptyState
         title={tr('Hozircha majmualar yo‘q')}
-        text={`«${category.title}» bo‘yicha sport majmualari tez orada qo‘shiladi. Boshqa sport turlarini ko‘rib chiqing.`}
+        text={tr('«{title}» bo‘yicha sport majmualari tez orada qo‘shiladi. Boshqa sport turlarini ko‘rib chiqing.', { title: category.title })}
         action={<Link to="/sport-turlari" className="cc-btn cc-btn--primary">{tr('Sport turlari')}</Link>}
       />
     )

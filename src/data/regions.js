@@ -16,3 +16,11 @@ export const REGIONS = [
   { id: 'surxondaryo', label: tr('Surxondaryo') },
   { id: 'xorazm', label: tr('Xorazm') },
 ]
+
+/** Hozircha xizmat faqat Toshkent shahrida — boshqa hududlar «tez orada» */
+export const ACTIVE_REGION_IDS = ['toshkent-shahar']
+export const DEFAULT_REGION_ID = 'toshkent-shahar'
+export const isRegionActive = (id) => ACTIVE_REGION_IDS.includes(id)
+
+/** Tepadagi hudud tanlovi: «Barcha hududlar» yo‘q, faol bo‘lmaganlari — o‘chirilgan */
+export const REGION_PICKER = REGIONS.filter((r) => r.id !== 'all')

@@ -4,7 +4,7 @@ import Button from '../../components/ui/Button.jsx'
 import { tr } from '../../i18n/index.js'
 
 /** Native <dialog>: fokus tuzog‘i, Esc va fon ustida bosish bilan yopiladi */
-export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = 'Saqlash', danger, wide, children }) {
+export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = tr('Saqlash'), danger, wide, children }) {
   const ref = useRef(null)
   const openRef = useRef(open)
   const titleId = useId()
@@ -62,7 +62,7 @@ export function ProfileModal({ open, title, onClose, onSubmit, submitLabel = 'Sa
   )
 }
 
-export function ConfirmModal({ open, title, text, confirmLabel = 'Tasdiqlash', onConfirm, onClose, danger = true }) {
+export function ConfirmModal({ open, title, text, confirmLabel = tr('Tasdiqlash'), onConfirm, onClose, danger = true }) {
   return (
     <ProfileModal
       open={open}

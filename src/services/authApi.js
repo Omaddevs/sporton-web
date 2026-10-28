@@ -1,5 +1,6 @@
 import { api, ApiError } from './apiClient.js'
 import { toLocalDigits } from '../utils/phone.js'
+import { tr } from '../i18n/index.js'
 
 /**
  * Autentifikatsiya API (backend: /api/v1/auth/*). Sahifalar va AuthContext shu interfeys orqali ishlaydi.
@@ -76,7 +77,7 @@ function loadScript(src) {
       script.dataset.loaded = '1'
       resolve()
     })
-    script.addEventListener('error', () => reject(new ApiError('SCRIPT', 'Tashqi xizmat yuklanmadi. Keyinroq urinib ko‘ring')))
+    script.addEventListener('error', () => reject(new ApiError('SCRIPT', tr('Tashqi xizmat yuklanmadi. Keyinroq urinib ko‘ring'))))
     if (!existing) document.head.appendChild(script)
   })
 }
@@ -86,12 +87,12 @@ async function googleCredential() {
   return new Promise((resolve, reject) => {
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
-      callback: (res) => (res.credential ? resolve(res.credential) : reject(new ApiError('CANCELLED', 'Kirish bekor qilindi'))),
+      callback: (res) => (res.credential ? resolve(res.credential) : reject(new ApiError('CANCELLED', tr('Kirish bekor qilindi')))),
       cancel_on_tap_outside: true,
     })
     window.google.accounts.id.prompt((note) => {
       if (note.isNotDisplayed?.() || note.isSkippedMoment?.()) {
-        reject(new ApiError('CANCELLED', 'Google oynasi ochilmadi. Brauzerda Google hisobingizga kiring va qayta urinib ko‘ring'))
+        reject(new ApiError('CANCELLED', tr('Google oynasi ochilmadi. Brauzerda Google hisobingizga kiring va qayta urinib ko‘ring')))
       }
     })
   })
@@ -101,7 +102,7 @@ async function telegramAuthData() {
   await loadScript('https://telegram.org/js/telegram-widget.js?22')
   return new Promise((resolve, reject) => {
     window.Telegram.Login.auth({ bot_id: TELEGRAM_BOT_ID, request_access: 'write' }, (data) =>
-      data ? resolve(data) : reject(new ApiError('CANCELLED', 'Kirish bekor qilindi')),
+      data ? resolve(data) : reject(new ApiError('CANCELLED', tr('Kirish bekor qilindi'))),
     )
   })
 }
@@ -109,16 +110,16 @@ async function telegramAuthData() {
 /** Google / Telegram orqali kirish: provayder tokenini olib, backendda tekshiramiz */
 export async function loginWithProvider(provider) {
   if (provider === 'google') {
-    if (!GOOGLE_CLIENT_ID) throw new ApiError('PROVIDER_DISABLED', 'Google orqali kirish tez orada ishga tushadi')
+    if (!GOOGLE_CLIENT_ID) throw new ApiError('PROVIDER_DISABLED', tr('Google orqali kirish tez orada ishga tushadi'))
     const credential = await googleCredential()
     return (await api('/auth/google', { method: 'POST', body: { credential } })).user
   }
   if (provider === 'telegram') {
-    if (!TELEGRAM_BOT_ID) throw new ApiError('PROVIDER_DISABLED', 'Telegram orqali kirish tez orada ishga tushadi')
+    if (!TELEGRAM_BOT_ID) throw new ApiError('PROVIDER_DISABLED', tr('Telegram orqali kirish tez orada ishga tushadi'))
     const data = await telegramAuthData()
     return (await api('/auth/telegram', { method: 'POST', body: data })).user
   }
-  throw new ApiError('PROVIDER_UNSUPPORTED', 'Bu usul qo‘llab-quvvatlanmaydi')
+  throw new ApiError('PROVIDER_UNSUPPORTED', tr('Bu usul qo‘llab-quvvatlanmaydi'))
 }
 
 export async function requestResetCode(phone) {

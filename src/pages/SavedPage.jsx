@@ -5,50 +5,30 @@ import {
   CalendarCheck,
   Check,
   Clock3,
-  Dumbbell,
   Eye,
-  Flame,
-  Footprints,
   Heart,
-  HeartPulse,
   MapPin,
-  MoreVertical,
   Search,
-  Swords,
-  Target,
-  Trophy,
-  Waves,
+  Share2,
 } from 'lucide-react'
 import {
   FiArrowRight,
   FiCalendar,
-  FiClock,
+  FiCheck,
   FiHeart,
   FiTrendingUp,
 } from 'react-icons/fi'
 import Select from '../components/ui/Select.jsx'
 import { jobs } from '../data/jobs.js'
 import { companies } from '../data/companies.js'
-import { courses } from '../data/courses.js'
 import { toggleSaved, useSavedList } from '../hooks/useSaved.js'
+import { sharePage } from '../utils/share.js'
 import './SavedPage.css'
 import { tr } from '../i18n/index.js'
-
-const COURSE_ICONS = {
-  dumbbell: Dumbbell,
-  waves: Waves,
-  trophy: Trophy,
-  heart: HeartPulse,
-  swords: Swords,
-  footprints: Footprints,
-  target: Target,
-  flame: Flame,
-}
 
 const TABS = [
   { id: 'jobs', label: tr('Bo‘sh joylar'), icon: CalendarCheck },
   { id: 'companies', label: tr('Majmualar'), icon: Building2 },
-  { id: 'courses', label: tr('Mashg‘ulotlar'), icon: Dumbbell },
 ]
 
 const SORT_OPTIONS = [
@@ -94,15 +74,12 @@ export default function SavedPage() {
   const [sort, setSort] = useState('newest')
   const savedJobList = useSavedList('jobs')
   const savedCompanyList = useSavedList('companies')
-  const savedCourseList = useSavedList('courses')
   const savedJobs = useMemo(() => new Set(savedJobList), [savedJobList])
   const savedCompanies = useMemo(() => new Set(savedCompanyList), [savedCompanyList])
-  const savedCourses = useMemo(() => new Set(savedCourseList), [savedCourseList])
 
   const counts = {
     jobs: savedJobs.size,
     companies: savedCompanies.size,
-    courses: savedCourses.size,
   }
 
   const jobItems = useMemo(() => {
@@ -129,20 +106,6 @@ export default function SavedPage() {
     return sortItems(list, sort, (c) => c.name, (c) => c.adsCount ?? 0, (c) => c.id)
   }, [savedCompanies, query, sort])
 
-  const courseItems = useMemo(() => {
-    let list = courses.filter((c) => savedCourses.has(c.id))
-    const q = query.trim().toLowerCase()
-    if (q) {
-      list = list.filter(
-        (c) =>
-          c.title.toLowerCase().includes(q) ||
-          c.provider.toLowerCase().includes(q) ||
-          c.category.toLowerCase().includes(q),
-      )
-    }
-    return sortItems(list, sort, (c) => c.title, () => 0, (c) => c.id)
-  }, [savedCourses, query, sort])
-
   function unsaveJob(id) {
     toggleSaved('jobs', id)
   }
@@ -151,33 +114,22 @@ export default function SavedPage() {
     toggleSaved('companies', id)
   }
 
-  function unsaveCourse(id) {
-    toggleSaved('courses', id)
-  }
-
   const emptyCopy = {
     jobs: {
       title: tr('Saqlangan joylar yo\'q'),
       text: tr('Yoqtirgan maydon va zallaringizni yurakcha orqali saqlang — ular shu yerda paydo bo\'ladi.'),
       cta: tr('Bo\'sh joylarni ko\'rish'),
-      to: '/bron',
+      to: '/#majmualar',
     },
     companies: {
       title: tr('Saqlangan majmualar yo\'q'),
       text: tr('Sevimli majmualaringizni saqlang va bo\'sh vaqtlarini kuzatib boring.'),
       cta: tr('Majmualarni ko\'rish'),
-      to: '/majmualar',
-    },
-    courses: {
-      title: tr('Saqlangan mashg\'ulotlar yo\'q'),
-      text: tr('Qiziqarli mashg\'ulot dasturlarini saqlang va keyinroq qayting.'),
-      cta: tr('Mashg\'ulotlarni ko\'rish'),
       to: '/#majmualar',
     },
   }
 
-  const activeList =
-    tab === 'jobs' ? jobItems : tab === 'companies' ? companyItems : courseItems
+  const activeList = tab === 'jobs' ? jobItems : companyItems
   const empty = emptyCopy[tab]
 
   return (
@@ -192,7 +144,7 @@ export default function SavedPage() {
               {tr('Saqlanganlar')}
             </h1>
             <p className="saved-hero__sub">
-              Yoqtirgan maydonlar, majmualar va mashg&apos;ulotlaringiz — barchasi bir joyda.
+              {tr('Yoqtirgan maydon va majmualaringiz — barchasi bir joyda.')}
             </p>
           </div>
         </header>
@@ -231,9 +183,7 @@ export default function SavedPage() {
               placeholder={
                 tab === 'jobs'
                   ? tr('Saqlangan joylar ichidan qidirish...')
-                  : tab === 'companies'
-                    ? tr('Majmua nomi bo‘yicha qidirish...')
-                    : tr('Mashg‘ulot yoki murabbiy bo‘yicha qidirish...')
+                  : tr('Majmua nomi bo‘yicha qidirish...')
               }
               aria-label={tr('Saqlanganlar ichidan qidirish')}
             />
@@ -281,19 +231,24 @@ export default function SavedPage() {
                   />
                 </li>
               ))}
-            {tab === 'courses' &&
-              courseItems.map((course, index) => (
-                <li key={course.id} style={{ '--i': index }}>
-                  <SavedCourseCard
-                    course={course}
-                    onUnsave={() => unsaveCourse(course.id)}
-                  />
-                </li>
-              ))}
           </ul>
         )}
       </div>
     </section>
+  )
+}
+
+function ShareButton({ title, path }) {
+  const [copied, setCopied] = useState(false)
+  const share = async () => {
+    if ((await sharePage({ title, url: `${window.location.origin}${path}` })) !== 'copied') return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1800)
+  }
+  return (
+    <button type="button" className="saved-card__more" aria-label={tr('Ulashish')} onClick={share}>
+      {copied ? <FiCheck /> : <Share2 size={17} strokeWidth={2.25} />}
+    </button>
   )
 }
 
@@ -329,12 +284,12 @@ function SavedJobCard({ job, onUnsave }) {
             <span className="saved-card__dot" aria-hidden="true" />
             <span className="saved-card__loc">
               <MapPin size={13} strokeWidth={2.25} aria-hidden />
-              {job.location}
+              {tr(job.location)}
             </span>
           </div>
           <div className="saved-card__tags">
-            <span className={`saved-tag saved-tag--${job.typeTone}`}>{job.typeLabel}</span>
-            <span className="saved-tag saved-tag--neutral">{job.category}</span>
+            <span className={`saved-tag saved-tag--${job.typeTone}`}>{tr(job.typeLabel)}</span>
+            <span className="saved-tag saved-tag--neutral">{tr(job.category)}</span>
           </div>
         </div>
 
@@ -352,7 +307,7 @@ function SavedJobCard({ job, onUnsave }) {
 
       <div className="saved-card__actions">
         <Link to={`/bron/${job.id}`} className="saved-card__cta">
-          Batafsil ko&apos;rish
+          {tr('Batafsil ko‘rish')}
           <FiArrowRight />
         </Link>
         <button
@@ -363,9 +318,7 @@ function SavedJobCard({ job, onUnsave }) {
         >
           <Heart size={18} fill="currentColor" strokeWidth={0} />
         </button>
-        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
-          <MoreVertical size={18} strokeWidth={2.25} />
-        </button>
+        <ShareButton title={job.title} path={`/bron/${job.id}`} />
       </div>
     </article>
   )
@@ -410,7 +363,7 @@ function SavedCompanyCard({ company, onUnsave }) {
 
       <div className="saved-card__actions">
         <Link to={`/majmua/${company.id}`} className="saved-card__cta">
-          Profilni ko&apos;rish
+          {tr('Profilni ko‘rish')}
           <FiArrowRight />
         </Link>
         <button
@@ -421,61 +374,9 @@ function SavedCompanyCard({ company, onUnsave }) {
         >
           <Heart size={18} fill="currentColor" strokeWidth={0} />
         </button>
-        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
-          <MoreVertical size={18} strokeWidth={2.25} />
-        </button>
+        <ShareButton title={company.name} path={`/majmua/${company.id}`} />
       </div>
     </article>
   )
 }
 
-function SavedCourseCard({ course, onUnsave }) {
-  const Icon = COURSE_ICONS[course.icon] ?? Dumbbell
-
-  return (
-    <article className="saved-card">
-      <span className="saved-logo saved-logo--course" style={{ background: course.accent }}>
-        <Icon size={22} strokeWidth={1.75} />
-      </span>
-
-      <div className="saved-card__body">
-        <div className="saved-card__main">
-          <h2 className="saved-card__title">{course.title}</h2>
-          <div className="saved-card__sub">
-            <span className="saved-card__company">{course.provider}</span>
-            <span className="saved-card__dot" aria-hidden="true" />
-            <span className="saved-card__loc">
-              <FiClock aria-hidden />
-              {course.duration}
-            </span>
-          </div>
-          <div className="saved-card__tags">
-            <span className={`saved-tag ${course.isFree ? 'saved-tag--green' : 'saved-tag--pink'}`}>
-              {course.price}
-            </span>
-            <span className="saved-tag saved-tag--neutral">{course.category}</span>
-            <span className="saved-tag saved-tag--orange">{course.level}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="saved-card__actions">
-        <a href="/#majmualar" className="saved-card__cta">
-          Batafsil ko&apos;rish
-          <FiArrowRight />
-        </a>
-        <button
-          type="button"
-          className="saved-card__heart is-active"
-          aria-label={tr('Saqlashdan olib tashlash')}
-          onClick={onUnsave}
-        >
-          <Heart size={18} fill="currentColor" strokeWidth={0} />
-        </button>
-        <button type="button" className="saved-card__more" aria-label={tr('Qo\'shimcha')}>
-          <MoreVertical size={18} strokeWidth={2.25} />
-        </button>
-      </div>
-    </article>
-  )
-}

@@ -24,13 +24,13 @@
   pointer-events: none;
   background:
     linear-gradient(180deg, rgba(240, 245, 252, 0.82) 0%, rgba(240, 245, 252, 0.9) 100%),
-    url('/images/sport/banner.jpg') center / cover no-repeat;
+    url('/images/sport/banner.webp') center / cover no-repeat;
 }
 
 [data-theme='dark'] .campaigns__bg {
   background:
     linear-gradient(180deg, rgba(11, 14, 20, 0.86) 0%, rgba(11, 14, 20, 0.92) 100%),
-    url('/images/sport/banner.jpg') center / cover no-repeat;
+    url('/images/sport/banner.webp') center / cover no-repeat;
 }
 
 .campaigns__header {

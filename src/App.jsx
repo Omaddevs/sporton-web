@@ -20,15 +20,13 @@ import NewsDetailPage from './pages/NewsDetailPage.jsx'
 import EventDetailPage from './pages/EventDetailPage.jsx'
 import ComplexDetailPage from './pages/ComplexDetailPage.jsx'
 import ExplorePage from './pages/ExplorePage.jsx'
-import { jobs } from './data/jobs.js'
-import { DEFAULT_COMPANY_ID } from './data/companies.js'
+import NotFound from './components/ui/NotFound.jsx'
+import SearchPage from './pages/SearchPage.jsx'
 import MapPageSkeleton from './components/JobsMap/MapPageSkeleton.jsx'
 import { loadJobsMapPage } from './pages/jobsMapLoader.js'
 
 // Leaflet faqat xarita sahifasi ochilganda yuklanadi
 const JobsMapPage = lazy(loadJobsMapPage)
-
-const demoJobId = jobs.find((j) => j.companyId === DEFAULT_COMPANY_ID)?.id ?? 1
 
 export default function App() {
   return (
@@ -39,10 +37,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/bron/:jobId" element={<JobDetailPage />} />
-            <Route path="/bron" element={<Navigate to={`/bron/${demoJobId}`} replace />} />
+            <Route path="/bron" element={<Navigate to="/#majmualar" replace />} />
             <Route path="/majmua/:companyId" element={<CompanyDetailPage />} />
             <Route path="/sport-majmua/:complexId" element={<ComplexDetailPage />} />
-            <Route path="/majmualar" element={<Navigate to={`/majmua/${DEFAULT_COMPANY_ID}`} replace />} />
+            <Route path="/majmualar" element={<Navigate to="/#majmualar" replace />} />
             <Route path="/kirish" element={<LoginPage />} />
             <Route path="/royxatdan-otish" element={<RegisterPage />} />
             <Route path="/parolni-tiklash" element={<ForgotPasswordPage />} />
@@ -78,7 +76,8 @@ export default function App() {
             <Route path="/bolim/:section" element={<ExplorePage />} />
             <Route path="/bolim/:section/:itemId" element={<ExplorePage />} />
             <Route path="/sahifa/:slug" element={<InfoPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/qidiruv" element={<SearchPage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </MainLayout>
         </AuthGateProvider>

@@ -172,7 +172,7 @@ export default function JobsMapPage() {
             <X size={18} strokeWidth={2.4} />
           </button>
           <h1 className="jmp-panel__title">{tr('Yaqin atrofdagi majmualar')}</h1>
-          <p className="jmp-panel__subtitle">Sport majmualari sizdan uzoqligi bo&apos;yicha saralangan</p>
+          <p className="jmp-panel__subtitle">{tr('Sport majmualari sizdan uzoqligi bo‘yicha saralangan')}</p>
           <LocationStatus geo={geo} origin={origin} onEnable={enableLocation} />
         </header>
 
@@ -227,7 +227,7 @@ export default function JobsMapPage() {
                   {visibleJobs.length} {tr('ta joy')}
                 </p>
                 <p className="jmp-results__hint">
-                  {area ? tr('Chizilgan hudud') : radiusKm ? `${radiusKm} km ichida` : tr('Barcha hududlar')} {tr('· eng yaqini birinchi')}
+                  {area ? tr('Chizilgan hudud') : radiusKm ? tr('{n} km ichida', { n: radiusKm }) : tr('Barcha hududlar')} {tr('· eng yaqini birinchi')}
                 </p>
               </div>
 
@@ -249,7 +249,7 @@ export default function JobsMapPage() {
                   <span className="jmp-empty__icon" aria-hidden="true">
                     <MapPinOff size={24} strokeWidth={1.8} />
                   </span>
-                  <p className="jmp-empty__title">Bu radiusda majmua yo&apos;q</p>
+                  <p className="jmp-empty__title">{tr('Bu radiusda majmua yo‘q')}</p>
                   <p className="jmp-empty__text">{tr('Qidiruv hududini kengaytiring yoki boshqa joy turini tanlang.')}</p>
                   {area ? (
                     <button type="button" className="jmp-btn jmp-btn--primary" onClick={() => setArea(null)}>
@@ -257,7 +257,7 @@ export default function JobsMapPage() {
                     </button>
                   ) : nextRadius && (
                     <button type="button" className="jmp-btn jmp-btn--primary" onClick={() => changeRadius(nextRadius.km)}>
-                      {nextRadius.km ? `${nextRadius.label} gacha kengaytirish` : tr('Barchasini ko\'rsatish')}
+                      {nextRadius.km ? tr('{radius} gacha kengaytirish', { radius: tr(nextRadius.label) }) : tr('Barchasini ko\'rsatish')}
                     </button>
                   )}
                 </div>
@@ -326,8 +326,8 @@ export default function JobsMapPage() {
                 {!origin
                   ? tr('Joylashuvni yoqing')
                   : area
-                    ? `Hududda ${visibleJobs.length} ta majmua`
-                    : `${visibleJobs.length} ta majmua`}
+                    ? tr('Hududda {n} ta majmua', { n: visibleJobs.length })
+                    : tr('{n} ta majmua', { n: visibleJobs.length })}
               </span>
             </div>
           )}
@@ -373,7 +373,7 @@ export default function JobsMapPage() {
           <button type="button" className="jmp-list-toggle" onClick={() => setSheetOpen(true)}>
             <List size={20} strokeWidth={2.2} aria-hidden="true" />
             <span>
-              Ro&apos;yxat<span className="jmp-list-toggle__more"> ko&apos;rinishida</span>
+              {tr('Ro‘yxat')}<span className="jmp-list-toggle__more"> {tr('ko‘rinishida')}</span>
             </span>
           </button>
         )}
@@ -419,7 +419,7 @@ function LocationStatus({ geo, origin, onEnable }) {
         </span>
         <span className="jmp-location__text">
           <span className="jmp-location__title">{tr('Toshkent markazi')}</span>
-          <span className="jmp-location__meta">Taxminiy joylashuv bo&apos;yicha</span>
+          <span className="jmp-location__meta">{tr('Taxminiy joylashuv bo‘yicha')}</span>
         </span>
         {geo.status !== 'unsupported' && (
           <button type="button" className="jmp-btn jmp-btn--soft jmp-btn--sm" onClick={onEnable}>
@@ -436,7 +436,7 @@ const PERMISSION_COPY = {
   idle: {
     title: tr('Yaqin atrofingizdagi majmualarni toping'),
     text: tr('Joylashuvingizni yoqing — sport majmualarini sizdan qancha uzoqligi bo\'yicha saralab ko\'rsatamiz.'),
-    action: 'Joylashuvni yoqish',
+    action: tr('Joylashuvni yoqish'),
   },
   locating: {
     title: tr('Joylashuvingiz aniqlanmoqda…'),
@@ -445,12 +445,12 @@ const PERMISSION_COPY = {
   denied: {
     title: tr('Joylashuvga ruxsat berilmagan'),
     text: tr('Manzil satridagi qulf belgisini bosing → «Joylashuv» → «Ruxsat berish», so\'ng qayta urinib ko\'ring.'),
-    action: 'Qayta urinish',
+    action: tr('Qayta urinish'),
   },
   unavailable: {
     title: tr('Joylashuvni aniqlab bo‘lmadi'),
     text: tr('GPS yoki internet aloqasini tekshirib, qayta urinib ko\'ring.'),
-    action: 'Qayta urinish',
+    action: tr('Qayta urinish'),
   },
   unsupported: {
     title: tr('Joylashuv bu yerda ishlamaydi'),
@@ -485,7 +485,7 @@ function PermissionCard({ status, onEnable, onFallback }) {
         )}
         {!locating && (
           <button type="button" className="jmp-btn jmp-btn--ghost jmp-btn--block" onClick={onFallback}>
-            Toshkent bo&apos;yicha ko&apos;rish
+            {tr('Toshkent bo‘yicha ko‘rish')}
           </button>
         )}
 
@@ -541,7 +541,7 @@ function JobItem({ job, active, onSelect, onHover }) {
       <span className="jmp-job__body">
         <span className="jmp-job__top">
           <span className="jmp-job__title">{job.title}</span>
-          <span className="jmp-distance" aria-label={`${formatDistance(job.distance)} uzoqlikda`}>
+          <span className="jmp-distance" aria-label={`${formatDistance(job.distance)} ${tr('uzoqlikda')}`}>
             <FiNavigation aria-hidden="true" />
             {formatDistance(job.distance)}
           </span>
@@ -550,12 +550,12 @@ function JobItem({ job, active, onSelect, onHover }) {
           <span className="jmp-job__company-name">{job.company}</span>
           {job.verified && <VerifiedBadge />}
         </span>
-        <span className="jmp-job__salary">{job.salary}</span>
+        <span className="jmp-job__salary">{tr(job.salary)}</span>
         <span className="jmp-job__meta">
-          <span className="jmp-tag">{job.typeLabel}</span>
+          <span className="jmp-tag">{tr(job.typeLabel)}</span>
           <span className="jmp-job__location">
             <FiMapPin aria-hidden="true" />
-            {job.location}
+            {tr(job.location)}
           </span>
         </span>
       </span>
@@ -582,15 +582,15 @@ function SelectedJobCard({ job, onClose }) {
         </div>
       </div>
 
-      <p className="jmp-selected__salary">{job.salary}</p>
+      <p className="jmp-selected__salary">{tr(job.salary)}</p>
       <ul className="jmp-selected__facts">
         <li>
           <FiNavigation aria-hidden="true" />
-          {formatDistance(job.distance)} {tr('uzoqlikda ·')} {job.location}
+          {formatDistance(job.distance)} {tr('uzoqlikda ·')} {tr(job.location)}
         </li>
         <li>
           <FiActivity aria-hidden="true" />
-          {job.typeLabel} · {job.category}
+          {tr(job.typeLabel)} · {tr(job.category)}
         </li>
       </ul>
 
@@ -601,7 +601,7 @@ function SelectedJobCard({ job, onClose }) {
         </Link>
         <a href={directions} target="_blank" rel="noopener noreferrer" className="jmp-btn jmp-btn--outline">
           <FiNavigation aria-hidden="true" />
-          Yo&apos;nalish
+          {tr('Yo‘nalish')}
         </a>
       </div>
     </article>

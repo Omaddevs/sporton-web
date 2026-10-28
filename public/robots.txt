@@ -8,6 +8,7 @@ Disallow: /saqlanganlar
 Disallow: /kirish
 Disallow: /royxatdan-otish
 Disallow: /parolni-tiklash
+Disallow: /qidiruv
 
 # Production domenida nginx /sitemap.xml ni backendga yo‘naltiradi
 Sitemap: https://sporton.uz/sitemap.xml

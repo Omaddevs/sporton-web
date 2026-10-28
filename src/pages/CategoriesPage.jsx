@@ -40,7 +40,7 @@ export default function CategoriesPage() {
             <h1>{tr('Barcha sport turlari')}</h1>
             <p>
               {categoryMenuItems.length} {tr('ta sport turi — jami')}{' '}
-              {totalAds.toLocaleString('uz-UZ')} ta majmua va mashg&apos;ulot
+              {totalAds.toLocaleString('ru-RU')} {tr('ta majmua va mashg‘ulot')}
             </p>
           </div>
 
@@ -106,7 +106,7 @@ export default function CategoriesPage() {
 
         {!filtered.length && (
           <p className="categories-page__empty">
-            «{query}» bo&apos;yicha sport turi topilmadi.
+            {tr('«{query}» bo‘yicha sport turi topilmadi.', { query })}
           </p>
         )}
       </div>

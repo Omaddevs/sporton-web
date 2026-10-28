@@ -141,7 +141,7 @@ function ReelPlayer({ index, onChange, onClose }) {
             )}
 
             <div className="reels-player__overlay">
-              <span className={`reels-card__tag reels-card__tag--${reel.tagTone}`}>{reel.tag}</span>
+              <span className={`reels-card__tag reels-card__tag--${reel.tagTone}`}>{tr(reel.tag)}</span>
               <h3>{reel.title}</h3>
               <div className="reels-player__meta">
                 <span className="reels-card__company">
@@ -215,7 +215,7 @@ function ReelCard({ reel, isClone, onOpen }) {
       role="button"
       tabIndex={isClone ? -1 : 0}
       aria-hidden={isClone || undefined}
-      aria-label={`${reel.title} — videoni ochish`}
+      aria-label={tr('{title} — videoni ochish', { title: reel.title })}
       className={`reels-card${ready ? ' is-playing' : ''}`}
       onClick={onOpen}
       onKeyDown={(e) => {
@@ -246,7 +246,7 @@ function ReelCard({ reel, isClone, onOpen }) {
       )}
       <span className="reels-card__shade" aria-hidden="true" />
 
-      <span className={`reels-card__tag reels-card__tag--${reel.tagTone}`}>{reel.tag}</span>
+      <span className={`reels-card__tag reels-card__tag--${reel.tagTone}`}>{tr(reel.tag)}</span>
 
       <span className="reels-card__play" aria-hidden="true">
         <FiPlay />
@@ -487,7 +487,7 @@ function ReelsCarousel() {
               <FiVideo />
               {tr('Reels')}
             </span>
-            <h2 className="reels__title">Qisqa videolar bilan mashg&apos;ulotni boshlang</h2>
+            <h2 className="reels__title">{tr('Qisqa videolar bilan mashg‘ulotni boshlang')}</h2>
             <p className="reels__subtitle">
               {tr('Mashq texnikasi, murabbiylardan maslahatlar va sport hayotidan lavhalar – barchasi bir joyda!')}
             </p>
@@ -554,7 +554,7 @@ function ReelsCarousel() {
                 key={reel.code}
                 role="tab"
                 aria-selected={active === i}
-                aria-label={`${i + 1}-video`}
+                aria-label={tr('{n}-video', { n: i + 1 })}
                 className={`reels__dot${active === i ? ' is-active' : ''}`}
                 onClick={() => goToDot(i)}
               />

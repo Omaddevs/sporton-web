@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Check, Menu, Moon, Sun } from 'lucide-react'
 import { FiChevronDown, FiGlobe, FiMapPin } from 'react-icons/fi'
 import { LANGUAGES } from '../../data/languages.js'
-import { REGIONS } from '../../data/regions.js'
+import { DEFAULT_REGION_ID, isRegionActive, REGION_PICKER } from '../../data/regions.js'
 import { useLocalStorageState } from '../../hooks/useLocalStorageState.js'
 import { useTheme } from '../../hooks/useTheme.js'
 import useMediaQuery from '../../hooks/useMediaQuery.js'
@@ -24,7 +24,9 @@ export default function TopBar() {
   const isMobile = useMediaQuery('(max-width: 639px)')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const closeDrawer = useCallback(() => setDrawerOpen(false), [])
-  const [regionId, setRegionId] = useLocalStorageState('sporton-region', 'all')
+  const [storedRegionId, setRegionId] = useLocalStorageState('sporton-region', DEFAULT_REGION_ID)
+  // Avval «Barcha hududlar» yoki hozircha yopiq hudud tanlangan bo‘lsa — Toshkent shahri
+  const regionId = isRegionActive(storedRegionId) ? storedRegionId : DEFAULT_REGION_ID
   // Til almashganda sahifa qayta yuklanadi (src/i18n)
   const langId = lang
   const setLangId = setLang
@@ -33,7 +35,7 @@ export default function TopBar() {
   const langRef = useRef(null)
   const notifRef = useRef(null)
 
-  const region = REGIONS.find((item) => item.id === regionId) ?? REGIONS[0]
+  const region = REGION_PICKER.find((item) => item.id === regionId) ?? REGION_PICKER[0]
   const language = LANGUAGES.find((item) => item.id === langId) ?? LANGUAGES[0]
 
   const closeMenus = useCallback(() => setOpenMenu(null), [])
@@ -82,10 +84,11 @@ export default function TopBar() {
       menuClassName="topbar-menu--regions"
       origin="start"
     >
-      {REGIONS.map((item) => (
+      {REGION_PICKER.map((item) => (
         <DropdownOption
           key={item.id}
           selected={item.id === region.id}
+          disabled={!isRegionActive(item.id)}
           onSelect={() => {
             setRegionId(item.id)
             closeMenus()
@@ -106,7 +109,7 @@ export default function TopBar() {
               type="button"
               className="topbar__burger"
               onClick={() => setDrawerOpen(true)}
-              aria-label={unreadCount ? `Menyu, ${unreadCount} ta o‘qilmagan bildirishnoma` : tr('Menyu')}
+              aria-label={unreadCount ? tr('Menyu, {n} ta o‘qilmagan bildirishnoma', { n: unreadCount }) : tr('Menyu')}
               aria-expanded={drawerOpen}
             >
               <Menu size={26} strokeWidth={2.2} />
@@ -256,16 +259,19 @@ function Dropdown({
   )
 }
 
-function DropdownOption({ selected, onSelect, children }) {
+function DropdownOption({ selected, disabled, onSelect, children }) {
   return (
     <button
       type="button"
       role="option"
       aria-selected={selected}
-      className={`topbar-menu__item ${selected ? 'topbar-menu__item--selected' : ''}`}
-      onClick={onSelect}
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      className={`topbar-menu__item ${selected ? 'topbar-menu__item--selected' : ''} ${disabled ? 'topbar-menu__item--soon' : ''}`}
+      onClick={disabled ? undefined : onSelect}
     >
       <span className="topbar-menu__label">{children}</span>
+      {disabled && <span className="topbar-menu__soon">{tr('Tez orada')}</span>}
       {selected && <Check className="topbar-menu__check" size={16} strokeWidth={2.5} />}
     </button>
   )

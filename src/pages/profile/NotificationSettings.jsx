@@ -13,11 +13,11 @@ const PREF_ITEMS = [
 ]
 
 const PUSH_TEXT = {
-  on: 'Yoqilgan — sayt yopiq bo‘lsa ham xabar keladi',
-  off: 'Sayt yopiq bo‘lsa ham xabarlarni brauzer orqali oling',
-  denied: 'Brauzerda bloklangan. Manzil satridagi qulf belgisi → Bildirishnomalar → Ruxsat berish',
-  unsupported: 'Bu brauzer qo‘llab-quvvatlamaydi (iPhone’da saytni «Bosh ekranga qo‘shing»)',
-  unavailable: 'Hozircha mavjud emas',
+  on: tr('Yoqilgan — sayt yopiq bo‘lsa ham xabar keladi'),
+  off: tr('Sayt yopiq bo‘lsa ham xabarlarni brauzer orqali oling'),
+  denied: tr('Brauzerda bloklangan. Manzil satridagi qulf belgisi → Bildirishnomalar → Ruxsat berish'),
+  unsupported: tr('Bu brauzer qo‘llab-quvvatlamaydi (iPhone’da saytni «Bosh ekranga qo‘shing»)'),
+  unavailable: tr('Hozircha mavjud emas'),
 }
 
 /** Bildirishnoma sozlamalari — serverda saqlanadi, barcha qurilmalarda bir xil */
@@ -52,7 +52,7 @@ export default function NotificationSettings({ notify }) {
     setData((d) => ({ ...d, prefs: { ...d.prefs, [key]: value } }))
     try {
       setData(await api('/notifications/prefs', { method: 'PATCH', body: { [key]: value } }))
-      notify(value ? 'Yoqildi' : 'O‘chirildi')
+      notify(value ? tr('Yoqildi') : tr('O‘chirildi'))
     } catch (err) {
       setData(prev)
       notify(err.message)
@@ -65,7 +65,7 @@ export default function NotificationSettings({ notify }) {
       const next = value ? await enablePush(data.push.publicKey) : await disablePush()
       setPush(next)
       if (data.prefs.push !== value) await setPref('push', value)
-      else notify(value ? 'Brauzer bildirishnomalari yoqildi' : 'Brauzer bildirishnomalari o‘chirildi')
+      else notify(value ? tr('Brauzer bildirishnomalari yoqildi') : tr('Brauzer bildirishnomalari o‘chirildi'))
     } catch (err) {
       notify(err.message)
       setPush(await pushStatus())

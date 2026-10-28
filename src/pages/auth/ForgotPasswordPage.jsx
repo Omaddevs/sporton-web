@@ -177,7 +177,7 @@ function CodeStep({ phone, onBack, onVerified }) {
 
   async function verify(value) {
     if (value.length !== CODE_LENGTH) {
-      setError(`${CODE_LENGTH} xonali kodni to‘liq kiriting`)
+      setError(tr('{n} xonali kodni to‘liq kiriting', { n: CODE_LENGTH }))
       return
     }
     setError('')
@@ -323,7 +323,7 @@ function PasswordStep({ resetToken, onDone }) {
   async function handleSubmit(event) {
     event.preventDefault()
     const next = {}
-    if (password.length < MIN_PASSWORD) next.password = `Parol kamida ${MIN_PASSWORD} ta belgidan iborat bo‘lsin`
+    if (password.length < MIN_PASSWORD) next.password = tr('Parol kamida {n} ta belgidan iborat bo‘lsin', { n: MIN_PASSWORD })
     if (confirm !== password) next.confirm = tr('Parollar mos kelmadi')
     setErrors(next)
     setFormError('')
@@ -349,7 +349,7 @@ function PasswordStep({ resetToken, onDone }) {
         placeholder={tr('Yangi parolni kiriting')}
         autoComplete="new-password"
         error={errors.password}
-        hint={`Kamida ${MIN_PASSWORD} ta belgi.`}
+        hint={tr('Kamida {n} ta belgi.', { n: MIN_PASSWORD })}
         autoFocus
       />
       <PasswordInput

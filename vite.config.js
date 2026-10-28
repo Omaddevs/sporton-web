@@ -1,13 +1,16 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   server: {
-    // Backend (Next.js, ./backend) — `cd backend && npm run dev`
+    // Backend (Next.js, ./backend) — `cd backend && npm run dev`. Manzil .env.local’dagi VITE_API_PROXY’dan
     proxy: {
-      '/api': { target: process.env.VITE_API_PROXY || 'http://localhost:3001', changeOrigin: false },
+      '/api': {
+        target: process.env.VITE_API_PROXY || loadEnv(mode, process.cwd(), '').VITE_API_PROXY || 'http://localhost:3001',
+        changeOrigin: false,
+      },
     },
     watch: {
       ignored: ['**/temp-fonts/**', '**/public/images/categories/**', '**/backend/**'],
@@ -24,4 +27,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

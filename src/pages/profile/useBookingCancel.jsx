@@ -12,7 +12,7 @@ export function useBookingCancel(_profile, _update, notify) {
       title={tr('Bronni bekor qilasizmi?')}
       text={
         target
-          ? `«${target.title}» — ${target.place}, ${formatDate(target.date)} ${target.time}. Bron boshlanishiga kamida 3 soat qolgan bo‘lsa, bepul bekor qilinadi.`
+          ? `«${target.title}» — ${target.place}, ${formatDate(target.date)} ${target.time}. ${tr('Bron boshlanishiga kamida 3 soat qolgan bo‘lsa, bepul bekor qilinadi.')}`
           : ''
       }
       confirmLabel={tr('Ha, bekor qilish')}

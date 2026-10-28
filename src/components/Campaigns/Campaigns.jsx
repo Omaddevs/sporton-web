@@ -2,13 +2,14 @@ import { Link } from 'react-router-dom'
 import { FiChevronRight, FiMapPin } from 'react-icons/fi'
 import { sportEvents } from '../../data/campaigns.js'
 import './Campaigns.css'
+import { tr } from '../../i18n/index.js'
 
 export default function Campaigns({
   id,
-  title = 'Sport',
-  highlight = 'tadbirlari',
+  title = tr('Sport'),
+  highlight = tr('tadbirlari'),
   items = sportEvents,
-  allLabel = "Barchasini ko'rish",
+  allLabel = tr('Barchasini ko‘rish'),
 }) {
   // Admin paneldan tadbir qo‘shilmaguncha bo‘lim ko‘rsatilmaydi
   if (!items.length) return null
@@ -43,9 +44,9 @@ function EventCard({ event }) {
     <Link to={`/tadbir/${event.id}`} className="event-card">
       <div className="event-card__body">
         <h3 className="event-card__title">{event.title}</h3>
-        <span className="event-card__location" title={event.location}>
+        <span className="event-card__location" title={tr(event.location)}>
           <FiMapPin />
-          <span>{event.location}</span>
+          <span>{tr(event.location)}</span>
         </span>
       </div>
 
@@ -56,7 +57,7 @@ function EventCard({ event }) {
           </span>
         ))}
         <span className="event-card__year">{event.year}</span>
-        <span className="event-card__time">{event.time}</span>
+        <span className="event-card__time">{tr(event.time)}</span>
       </div>
     </Link>
   )

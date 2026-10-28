@@ -46,6 +46,7 @@ export async function hydrateCatalog({ timeout = 2500 } = {}) {
   }
 
   if (news.status === 'fulfilled') hydrateNews(news.value.news ?? [])
+  else if (!import.meta.env.DEV) hydrateNews([])
   // Admin paneldagi tadbirlar va Reels; bo‘sh bo‘lsa bosh sahifadagi bo‘lim ko‘rinmaydi
   if (events.status === 'fulfilled') hydrateEvents(events.value.events ?? [])
   else if (!import.meta.env.DEV) hydrateEvents([])

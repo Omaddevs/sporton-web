@@ -343,7 +343,7 @@ function ProfileHero({ profile, avatarBusy, onEdit, onPickAvatar, onRemoveAvatar
   )
 }
 
-function SectionHead({ title, action = 'Tahrirlash', onAction }) {
+function SectionHead({ title, action = tr('Tahrirlash'), onAction }) {
   return (
     <div className="profile-section__head">
       <h2>{title}</h2>
@@ -367,7 +367,7 @@ function VerifyPhoneCard({ onChecked }) {
     try {
       const me = await authApi.fetchMe()
       if (me) refresh(me)
-      onChecked(me?.phoneVerified ? 'Raqamingiz tasdiqlandi ✅' : 'Hali tasdiqlanmagan — botga raqamingizni yuboring')
+      onChecked(me?.phoneVerified ? tr('Raqamingiz tasdiqlandi ✅') : tr('Hali tasdiqlanmagan — botga raqamingizni yuboring'))
     } finally {
       setChecking(false)
     }
@@ -476,7 +476,7 @@ function CompletenessRing({ percent }) {
   const offset = circumference - (percent / 100) * circumference
 
   return (
-    <div className="profile-ring" aria-label={`Profil to‘ldirilishi ${percent}%`}>
+    <div className="profile-ring" aria-label={tr('Profil to‘ldirilishi {n}%', { n: percent })}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle className="profile-ring__track" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} fill="none" />
         <circle

@@ -1,3 +1,4 @@
+import { tr } from '../i18n/index.js'
 /**
  * Galereya elementlari: { type: 'image' | 'video', url, provider: 'file' | 'link' | 'youtube' | 'instagram' }.
  * Mantiq backend/src/lib/media.ts bilan bir xil (server baribir qayta tekshiradi).
@@ -11,9 +12,9 @@ export function parseMediaLink(raw) {
   try {
     url = new URL(String(raw).trim())
   } catch {
-    throw new MediaLinkError('Havola noto‘g‘ri. To‘liq manzilni kiriting (https://…)')
+    throw new MediaLinkError(tr('Havola noto‘g‘ri. To‘liq manzilni kiriting (https://…)'))
   }
-  if (url.protocol !== 'https:') throw new MediaLinkError('Faqat https:// bilan boshlanadigan havolalar qabul qilinadi')
+  if (url.protocol !== 'https:') throw new MediaLinkError(tr('Faqat https:// bilan boshlanadigan havolalar qabul qilinadi'))
   const host = url.hostname.replace(/^(www\.|m\.)/, '')
 
   if (host === 'youtube.com' || host === 'youtu.be' || host === 'youtube-nocookie.com') {
@@ -21,13 +22,13 @@ export function parseMediaLink(raw) {
       host === 'youtu.be'
         ? url.pathname.slice(1)
         : (url.searchParams.get('v') ?? url.pathname.match(/^\/(?:shorts|embed|live)\/([^/]+)/)?.[1])
-    if (!id || !/^[\w-]{11}$/.test(id)) throw new MediaLinkError('YouTube havolasidan video topilmadi')
+    if (!id || !/^[\w-]{11}$/.test(id)) throw new MediaLinkError(tr('YouTube havolasidan video topilmadi'))
     return { type: 'video', provider: 'youtube', url: `https://www.youtube.com/embed/${id}` }
   }
 
   if (host === 'instagram.com') {
     const match = url.pathname.match(/^\/(?:[\w.]+\/)?(p|reel|reels|tv)\/([\w-]+)/)
-    if (!match) throw new MediaLinkError('Instagram post yoki reels havolasini kiriting')
+    if (!match) throw new MediaLinkError(tr('Instagram post yoki reels havolasini kiriting'))
     const kind = match[1] === 'p' ? 'p' : 'reel'
     return { type: 'video', provider: 'instagram', url: `https://www.instagram.com/${kind}/${match[2]}/embed` }
   }

@@ -41,7 +41,7 @@ export default function Pagination({ page, totalPages, onChange, className = '' 
                 type="button"
                 className={`pagination__page ${item === page ? 'pagination__page--active' : ''}`}
                 aria-current={item === page ? 'page' : undefined}
-                aria-label={`${item}-sahifa`}
+                aria-label={tr('{n}-sahifa', { n: item })}
                 onClick={() => onChange(item)}
               >
                 {item}

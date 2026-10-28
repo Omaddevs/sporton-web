@@ -42,7 +42,7 @@ export default function AuthLayout({
                       <span className="auth-steps__num" aria-hidden="true">
                         {state === 'done' ? <FiCheck /> : index + 1}
                       </span>
-                      {label}
+                      {tr(label)}
                     </li>
                   )
                 })}

@@ -101,7 +101,8 @@ async function main() {
         id: c.id,
         name: c.name,
         color: c.color,
-        verified: Boolean(c.verified),
+        // «Tasdiqlangan» belgisi faqat haqiqiy e’lonlarga — namuna majmuaga soxta ishonch belgisi qo‘yilmaydi
+        verified: !isDemo && Boolean(c.verified),
         listed: Boolean(raw.listed),
         isDemo,
         status: 'published' as const,

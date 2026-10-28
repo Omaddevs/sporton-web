@@ -53,8 +53,8 @@ export default function Hero({ activeTab = 'jobs', onTabChange }) {
     <section className="hero">
       <div className="container hero__inner">
         <div className="hero__text">
-          <h1 className="hero__title">Sport majmualari O&apos;zbekistonda</h1>
-          <p className="hero__subtitle">Toping, bron qiling va mashg&apos;ulotni boshlang</p>
+          <h1 className="hero__title">{tr('Sport majmualari O‘zbekistonda')}</h1>
+          <p className="hero__subtitle">{tr('Toping, bron qiling va mashg‘ulotni boshlang')}</p>
         </div>
 
         <div className="hero__tabs" role="tablist" ref={tabsRef}>

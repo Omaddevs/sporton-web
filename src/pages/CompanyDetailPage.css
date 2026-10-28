@@ -246,9 +246,10 @@
   margin-bottom: 14px;
 }
 
+/* Nisbat admin paneldagi banner kesish nisbati (24:5) bilan bir xil — kesilgan qism to‘liq ko‘rinadi */
 .co-hero__banner {
   position: relative;
-  height: 210px;
+  aspect-ratio: 24 / 5;
   border-radius: 18px;
   overflow: hidden;
   background: var(--color-card);
@@ -816,7 +817,9 @@
     flex-wrap: wrap;
   }
 
+  /* Tor ekranda 24:5 juda past bo‘lib qoladi — balandlik saqlanadi, yon tomonlar qirqiladi */
   .co-hero__banner {
+    aspect-ratio: auto;
     height: 170px;
   }
 }

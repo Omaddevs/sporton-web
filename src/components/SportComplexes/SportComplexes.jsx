@@ -28,7 +28,7 @@ export default function SportComplexes({ id = 'majmualar' }) {
           className="sport-complexes__more"
           onClick={() => setVisible((value) => value + PAGE_SIZE)}
         >
-          Ko&apos;proq
+          {tr('Ko‘proq')}
         </button>
       )}
     </section>

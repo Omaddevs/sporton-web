@@ -84,7 +84,7 @@ export default function Navbar() {
           </Button>
 
           {user ? (
-            <Link to="/profil" className="navbar__profile navbar__profile--user" aria-label={`Profil: ${user.firstName} ${user.lastName}`}>
+            <Link to="/profil" className="navbar__profile navbar__profile--user" aria-label={`${tr('Profil')}: ${user.firstName} ${user.lastName}`}>
               <span aria-hidden="true">{initials || <FiUser />}</span>
             </Link>
           ) : (

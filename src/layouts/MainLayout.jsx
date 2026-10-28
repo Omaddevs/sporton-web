@@ -7,6 +7,7 @@ import TabBar from '../components/TabBar/TabBar.jsx'
 import NotificationToaster from '../components/NotificationToaster/NotificationToaster.jsx'
 import { catalogSource } from '../services/catalog.js'
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary.jsx'
+import ScrollManager from '../components/ScrollManager/ScrollManager.jsx'
 
 // Auth sahifalari to‘liq ekranda — header va footer’siz
 const AUTH_ROUTES = ['/kirish', '/royxatdan-otish', '/parolni-tiklash']
@@ -16,6 +17,7 @@ export default function MainLayout({ children }) {
   if (AUTH_ROUTES.includes(pathname)) {
     return (
       <main>
+        <ScrollManager />
         <ErrorBoundary resetKey={pathname}>{children}</ErrorBoundary>
       </main>
     )
@@ -28,6 +30,7 @@ export default function MainLayout({ children }) {
     <div
       className={`app ${hideFooter ? 'app--fullscreen' : ''} ${pathname === '/' ? 'app--home' : ''} ${isMap ? 'app--map' : ''}`}
     >
+      <ScrollManager />
       <header className="app-header">
         <TopBar />
         <Navbar />

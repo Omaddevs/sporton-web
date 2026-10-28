@@ -1,4 +1,5 @@
 import { api } from './apiClient.js'
+import { tr } from '../i18n/index.js'
 
 /** Brauzer push: qo‘llab-quvvatlanishi, yoqish va o‘chirish */
 export const pushSupported = () =>
@@ -24,10 +25,10 @@ export async function pushStatus() {
 }
 
 export async function enablePush(publicKey) {
-  if (!pushSupported()) throw new Error('Bu brauzer push bildirishnomalarni qo‘llab-quvvatlamaydi')
+  if (!pushSupported()) throw new Error(tr('Bu brauzer push bildirishnomalarni qo‘llab-quvvatlamaydi'))
   const permission = await Notification.requestPermission()
   if (permission !== 'granted') {
-    throw new Error('Ruxsat berilmadi. Brauzer sozlamalarida sayt uchun bildirishnomalarni yoqing')
+    throw new Error(tr('Ruxsat berilmadi. Brauzer sozlamalarida sayt uchun bildirishnomalarni yoqing'))
   }
   const reg = await registration()
   await navigator.serviceWorker.ready

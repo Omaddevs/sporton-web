@@ -25,7 +25,8 @@ export default function HomePage() {
       <SportComplexes />
       <SportNews id="yangiliklar" />
       <Reels />
-      <Campaigns id="tadbirlar" items={sportEvents} />
+      {/* Tugagan tadbirlar bosh sahifada ko‘rsatilmaydi — ular «Barchasini ko‘rish» bo‘limida qoladi */}
+      <Campaigns id="tadbirlar" items={sportEvents.filter((e) => !e.endsAt || new Date(e.endsAt) > Date.now())} />
       <AdBanner slot="home" />
       <Partners />
     </>

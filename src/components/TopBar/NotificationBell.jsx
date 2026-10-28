@@ -49,8 +49,8 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
 
   const badge = unreadCount > 9 ? '9+' : String(unreadCount)
   const label = unreadCount
-    ? `Bildirishnomalar, ${unreadCount} ta o‘qilmagan`
-    : 'Bildirishnomalar'
+    ? tr('Bildirishnomalar, {n} ta o‘qilmagan', { n: unreadCount })
+    : tr('Bildirishnomalar')
 
   return (
     <div className={`topbar-dropdown notif ${open ? 'topbar-dropdown--open' : ''}`} ref={ref}>
@@ -153,7 +153,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
                   <button
                     type="button"
                     className="notif-item__remove"
-                    aria-label={`«${item.title}» bildirishnomasini o‘chirish`}
+                    aria-label={tr('«{title}» bildirishnomasini o‘chirish', { title: item.title })}
                     title={tr('O‘chirish')}
                     onClick={() => remove(item.id)}
                   >
@@ -189,7 +189,7 @@ export default function NotificationBell({ ref, open, onToggle, onClose }) {
                 type="button"
                 className="notif-panel__clear"
                 onClick={() => {
-                  if (window.confirm('Barcha bildirishnomalar o‘chirilsinmi?')) clearAll()
+                  if (window.confirm(tr('Barcha bildirishnomalar o‘chirilsinmi?'))) clearAll()
                 }}
               >
                 {tr('Barchasini tozalash')}

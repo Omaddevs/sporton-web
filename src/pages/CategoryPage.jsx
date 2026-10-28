@@ -32,6 +32,7 @@ import {
   readCoachFilters,
   writeCoachFilters,
 } from '../components/CategoryContent/coachFilters.js'
+import { sharePage } from '../utils/share.js'
 import './CategoryPage.css'
 
 // Murabbiylar bo‘limi hali haqiqiy ma’lumotga ulanmagan (namuna profillar ko‘rsatilmaydi)
@@ -48,7 +49,7 @@ export default function CategoryPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const category = categoryMenuById[categoryId] ?? categoryMenuById.futbol
-  useSeo({ title: `${category.title} — sport majmualari va mashg‘ulotlar`, description: `${category.title} bo‘yicha sport majmualari, narxlar va onlayn bron — SportON.` })
+  useSeo({ title: `${category.title} — ${tr('sport majmualari va mashg‘ulotlar')}`, description: tr('{title} bo‘yicha sport majmualari, narxlar va onlayn bron — SportON.', { title: category.title }) })
   const candidates = useMemo(() => (COACHES_READY ? getCandidatesForCategory(category.id) : []), [category.id])
   const categoryComplexes = useMemo(() => getComplexesForCategory(category.id), [category.id])
   const articles = useMemo(() => getCategoryArticles(category.id), [category.id])
@@ -159,7 +160,7 @@ export default function CategoryPage() {
             </div>
           </div>
 
-          <div className="cat-tabs" role="tablist" aria-label={`${category.title} bo‘limlari`}>
+          <div className="cat-tabs" role="tablist" aria-label={`${category.title}: ${tr('bo‘limlar')}`}>
             {TABS.map(({ id, label, Icon: TabIcon }) => {
               const active = tab === id
               return (
@@ -201,7 +202,7 @@ export default function CategoryPage() {
               <EmptyState
                 Icon={UsersRound}
                 title={tr('Murabbiylar bo‘limi tez orada')}
-                text={`«${category.title}» bo‘yicha tasdiqlangan murabbiylar profillari shu yerda chiqadi. Murabbiy bo‘lsangiz — «Majmua qo‘shish» orqali ariza qoldiring.`}
+                text={tr('«{title}» bo‘yicha tasdiqlangan murabbiylar profillari shu yerda chiqadi. Murabbiy bo‘lsangiz — «Majmua qo‘shish» orqali ariza qoldiring.', { title: category.title })}
               />
             </div>
           )}
@@ -254,7 +255,7 @@ export default function CategoryPage() {
                         type="button"
                         className="cat-active-chip"
                         onClick={() => updateFilters(chip.patch)}
-                        aria-label={`Filtrni olib tashlash: ${chip.label}`}
+                        aria-label={`${tr('Filtrni olib tashlash')}: ${chip.label}`}
                       >
                         {chip.label}
                         <X size={13} strokeWidth={2.6} />
@@ -288,7 +289,7 @@ export default function CategoryPage() {
                       }`}
                       onClick={() => showDetail(person.id)}
                     >
-                      <img className="cand-card__avatar" src={person.avatar} alt="" />
+                      <img loading="lazy" decoding="async" className="cand-card__avatar" src={person.avatar} alt="" />
                       <div className="cand-card__body">
                         <div className="cand-card__top">
                           <div>
@@ -352,7 +353,11 @@ export default function CategoryPage() {
               {selected && (
                 <aside className="cat-detail" ref={detailRef}>
                   <div className="cat-detail__toolbar">
-                    <button type="button" aria-label={tr('Ulashish')}>
+                    <button
+                      type="button"
+                      aria-label={tr('Ulashish')}
+                      onClick={() => sharePage({ title: selected.name, url: `${window.location.origin}${window.location.pathname}?tab=murabbiylar` })}
+                    >
                       <Share2 size={17} />
                     </button>
                     <button

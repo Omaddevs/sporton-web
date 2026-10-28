@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
+import { tr } from '../i18n/index.js'
 
 const SITE = 'SportON'
-const DEFAULT_TITLE = 'SportON — Sport majmualari, bron va mashg‘ulotlar'
+const DEFAULT_TITLE = tr('SportON — Sport majmualari, bron va mashg‘ulotlar')
 const DEFAULT_DESCRIPTION =
-  'SportON — sport majmualarini topish va onlayn bron qilish: futbol maydonlari, fitnes zallar, suzish havzalari, sektsiyalar.'
+  tr('SportON — sport majmualarini topish va onlayn bron qilish: futbol maydonlari, fitnes zallar, suzish havzalari, sektsiyalar.')
 const DEFAULT_IMAGE = '/images/og-cover.jpg'
 
 const absolute = (url) => (!url ? '' : /^https?:\/\//.test(url) ? url : `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`)

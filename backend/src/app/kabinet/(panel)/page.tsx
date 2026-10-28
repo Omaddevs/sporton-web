@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { and, count, desc, eq, gte, inArray } from 'drizzle-orm'
+import { Plus } from 'lucide-react'
 import { getDb } from '@/db'
 import { bookings, complexes, services } from '@/db/schema'
 import OwnerBookingRow from '@/components/admin/OwnerBookingRow'
@@ -100,6 +101,9 @@ export default async function OwnerDashboard({ searchParams }: { searchParams: P
         <section className="card">
           <div className="card-head">
             <h2>Majmualarim</h2>
+            <Link href="/kabinet/majmua/new">
+              <Plus size={14} style={{ verticalAlign: -2 }} /> Qo‘shish
+            </Link>
           </div>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {list.map((c) => {

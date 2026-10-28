@@ -23,6 +23,7 @@ import {
 } from '../data/companies.js'
 import { jobs } from '../data/jobs.js'
 import { useSaved } from '../hooks/useSaved.js'
+import NotFound from '../components/ui/NotFound.jsx'
 import './CompanyDetailPage.css'
 
 const TABS = [
@@ -36,6 +37,19 @@ const TABS = [
 export default function CompanyDetailPage() {
   const { companyId } = useParams()
   const company = useMemo(() => getCompanyById(companyId), [companyId])
+  if (!company)
+    return (
+      <NotFound
+        title={tr('Majmua topilmadi')}
+        text={tr('Bu sahifa o‘chirilgan yoki manzil noto‘g‘ri. Boshqa majmualarni ko‘rib chiqing.')}
+        to="/#majmualar"
+        cta={tr('Barcha majmualar')}
+      />
+    )
+  return <CompanyDetailView key={company.id} company={company} />
+}
+
+function CompanyDetailView({ company }) {
   const similar = useMemo(() => getSimilarCompanies(company, 4), [company])
   const companyJobs = useMemo(
     () => jobs.filter((j) => j.companyId === company.id),
@@ -67,7 +81,7 @@ export default function CompanyDetailPage() {
               <div className="co-side-card__head">
                 <h2>{tr('Top majmualar')}</h2>
                 <Link to="/majmualar">
-                  Barchasini ko&apos;rish
+                  {tr('Barchasini ko‘rish')}
                   <FiArrowRight />
                 </Link>
               </div>
@@ -94,7 +108,7 @@ export default function CompanyDetailPage() {
                         style={item.logo ? undefined : { background: item.color, color: '#fff' }}
                       >
                         {item.logo ? (
-                          <img src={`${item.logo}?v=2`} alt="" />
+                          <img loading="lazy" decoding="async" src={`${item.logo}?v=2`} alt="" />
                         ) : (
                           item.name.charAt(0)
                         )}
@@ -133,7 +147,7 @@ export default function CompanyDetailPage() {
               <img src="/images/companies/buildings.svg" alt="" width={52} height={44} />
               <p>
                 <span>{tr('Ishonchli majmualar —')}</span>
-                <span>sog&apos;lom hayot!</span>
+                <span>{tr('sog‘lom hayot!')}</span>
               </p>
             </div>
           </aside>
@@ -142,7 +156,7 @@ export default function CompanyDetailPage() {
             <section className="co-hero">
               <div className="co-hero__banner">
                 {company.bannerImage ? (
-                  <img src={company.bannerImage} alt="" />
+                  <img fetchPriority="high" src={company.bannerImage} alt="" />
                 ) : (
                   <div
                     className="co-hero__banner-fallback"
@@ -182,11 +196,11 @@ export default function CompanyDetailPage() {
                         </em>
                       )}
                     </h1>
-                    <p className="co-hero__tagline">{company.tagline}</p>
+                    <p className="co-hero__tagline">{tr(company.tagline)}</p>
                     <div className="co-hero__meta">
                       <span>
                         <FiMapPin />
-                        {company.location}
+                        {tr(company.location)}
                       </span>
                       {company.website && (
                         <a href={company.website} target="_blank" rel="noreferrer">
@@ -228,16 +242,16 @@ export default function CompanyDetailPage() {
             </div>
 
             <section className="co-stats">
-              <Stat icon={<HiOutlineBuildingOffice2 />} value={`${company.years} yil`} label={tr('Faoliyatda')} />
-              <Stat icon={<FiUsers />} value={company.employees} label={tr('Murabbiylar')} />
-              <Stat icon={<FiActivity />} value={company.industry} label={tr('Turi')} />
-              <Stat icon={<FiMapPin />} value={company.city} label={tr('Manzil')} />
+              <Stat icon={<HiOutlineBuildingOffice2 />} value={`${company.years} ${tr('yil')}`} label={tr('Faoliyatda')} />
+              <Stat icon={<FiUsers />} value={tr(company.employees)} label={tr('Murabbiylar')} />
+              <Stat icon={<FiActivity />} value={tr(company.industry)} label={tr('Turi')} />
+              <Stat icon={<FiMapPin />} value={tr(company.city)} label={tr('Manzil')} />
             </section>
 
             {tab === 'jobs' && (
               <section className="co-jobs">
                 <div className="co-jobs__head">
-                  <h2>{company.name} xizmatlari</h2>
+                  <h2>{tr('{name} xizmatlari', { name: company.name })}</h2>
                   <label className="co-jobs__sort">
                     <select value={sort} onChange={(e) => setSort(e.target.value)}>
                       <option value="new">{tr('Eng yangi')}</option>
@@ -253,7 +267,7 @@ export default function CompanyDetailPage() {
                     </li>
                   ))}
                   {!sortedJobs.length && (
-                    <li className="co-jobs__empty">Hozircha bron uchun bo&apos;sh joy yo&apos;q.</li>
+                    <li className="co-jobs__empty">{tr('Hozircha bron uchun bo‘sh joy yo‘q.')}</li>
                   )}
                 </ul>
 
@@ -261,9 +275,9 @@ export default function CompanyDetailPage() {
                   <span className="co-notify__icon" aria-hidden="true">
                     <FiBell />
                   </span>
-                  <p>Bo&apos;sh vaqtlar va chegirmalardan birinchilardan bo&apos;lib xabardor bo&apos;ling!</p>
-                  <button type="button" className="co-notify__btn">
-                    {tr('Kuzatishni yoqish')}
+                  <p>{tr('Majmuani saqlang — u doim «Saqlanganlar» bo‘limida qo‘l ostingizda bo‘ladi.')}</p>
+                  <button type="button" className="co-notify__btn" aria-pressed={saved} onClick={toggleSaved}>
+                    {saved ? tr('Saqlanganlarda') : tr('Majmuani saqlash')}
                   </button>
                 </div>
               </section>
@@ -272,7 +286,7 @@ export default function CompanyDetailPage() {
             {tab === 'about' && (
               <section className="co-panel">
                 <h2>{tr('Majmua haqida')}</h2>
-                <p>{company.about}</p>
+                <p>{tr(company.about)}</p>
               </section>
             )}
 
@@ -281,7 +295,7 @@ export default function CompanyDetailPage() {
                 <h2>{tr('Rasmlar')}</h2>
                 <div className="co-photos">
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <img key={n} src={`/images/sport/gallery/g${n}.jpg`} alt="" />
+                    <img loading="lazy" decoding="async" key={n} src={`/images/sport/gallery/g${n}.webp`} alt="" />
                   ))}
                 </div>
               </section>
@@ -291,7 +305,7 @@ export default function CompanyDetailPage() {
               <section className="co-panel">
                 <h2>{tr('Sharhlar (')}{company.reviews})</h2>
                 <p className="co-panel__muted">
-                  Sportchilar sharhlari tez orada qo&apos;shiladi.
+                  {tr('Sportchilar sharhlari tez orada qo‘shiladi.')}
                 </p>
               </section>
             )}
@@ -300,7 +314,7 @@ export default function CompanyDetailPage() {
               <section className="co-panel">
                 <h2>{tr('Kontaktlar')}</h2>
                 <p>
-                  <FiMapPin /> {company.location}
+                  <FiMapPin /> {tr(company.location)}
                 </p>
                 {company.website && (
                   <p>
@@ -317,7 +331,7 @@ export default function CompanyDetailPage() {
             )}
 
             <section className="co-similar">
-              <h2>O&apos;xshash majmualar</h2>
+              <h2>{tr('O‘xshash majmualar')}</h2>
               <div className="co-similar__grid">
                 {similar.map((item) => (
                   <Link key={item.id} to={`/majmua/${item.id}`} className="co-similar-card">
@@ -326,7 +340,7 @@ export default function CompanyDetailPage() {
                       style={item.logo ? undefined : { background: item.color, color: '#fff' }}
                     >
                       {item.logo ? (
-                        <img src={`${item.logo}?v=2`} alt="" />
+                        <img loading="lazy" decoding="async" src={`${item.logo}?v=2`} alt="" />
                       ) : (
                         item.name.charAt(0)
                       )}
@@ -369,16 +383,16 @@ function CompanyJobRow({ job }) {
       <Link to={`/bron/${job.id}`} className="co-job-row__link">
         <div className="co-job-row__main">
           <h3>{job.title}</h3>
-          <span className={`job-pill job-pill--sm job-pill--${job.typeTone}`}>{job.typeLabel}</span>
+          <span className={`job-pill job-pill--sm job-pill--${job.typeTone}`}>{tr(job.typeLabel)}</span>
         </div>
         <div className="co-job-row__meta">
           <span>
-            <FiMapPin /> {job.location}
+            <FiMapPin /> {tr(job.location)}
           </span>
           <span>
-            <FiActivity /> {job.category}
+            <FiActivity /> {tr(job.category)}
           </span>
-          <span>{job.salary}</span>
+          <span>{tr(job.salary)}</span>
         </div>
       </Link>
       <div className="co-job-row__actions">

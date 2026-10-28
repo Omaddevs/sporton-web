@@ -328,3 +328,34 @@
     transition: none;
   }
 }
+
+/* Hozircha yopiq hududlar (faqat Toshkent shahri faol) */
+.topbar-menu__item--soon,
+.topbar-menu__item--soon:hover {
+  background: transparent;
+  color: #9aa1ad;
+  cursor: not-allowed;
+}
+
+.topbar-menu__soon {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(30, 111, 245, 0.1);
+  color: #1e6ff5;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-theme='dark'] .topbar-menu__item--soon,
+[data-theme='dark'] .topbar-menu__item--soon:hover {
+  background: transparent;
+  color: #6b7280;
+}
+
+[data-theme='dark'] .topbar-menu__soon {
+  background: rgba(96, 165, 250, 0.16);
+  color: #93c5fd;
+}

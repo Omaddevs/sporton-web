@@ -57,7 +57,7 @@ export function AuthGateContent({ from, onNavigate, titleId, reason = 'complex' 
         {benefits.map((item) => (
           <li key={item}>
             <FiCheck aria-hidden="true" />
-            {item}
+            {tr(item)}
           </li>
         ))}
       </ul>

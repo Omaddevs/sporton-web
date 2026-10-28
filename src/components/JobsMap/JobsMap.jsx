@@ -24,7 +24,7 @@ function jobIcon(job, iconHtml) {
 
   return L.divIcon({
     className: 'jm-pin-wrap',
-    html: `<div class="jm-pin"><div class="jm-pin__body"><span class="jm-pin__icon" style="${iconStyle}">${iconHtml}</span><span class="jm-pin__label">${escapeHtml(job.category)}</span></div></div>`,
+    html: `<div class="jm-pin"><div class="jm-pin__body"><span class="jm-pin__icon" style="${iconStyle}">${iconHtml}</span><span class="jm-pin__label">${escapeHtml(tr(job.category))}</span></div></div>`,
     // O‘lcham matnga qarab o‘zgaradi — joylashuvni CSS boshqaradi, langar pastki uchida
     iconSize: [0, 0],
     iconAnchor: [0, 0],
@@ -94,7 +94,7 @@ export default function JobsMap({
       maxZoom: 18,
       wheelPxPerZoomLevel: 90,
     })
-    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Yaqinlashtirish', zoomOutTitle: 'Uzoqlashtirish' }).addTo(map)
+    L.control.zoom({ position: 'bottomright', zoomInTitle: tr('Yaqinlashtirish'), zoomOutTitle: tr('Uzoqlashtirish') }).addTo(map)
     map.attributionControl.setPrefix(false)
     mapRef.current = map
 

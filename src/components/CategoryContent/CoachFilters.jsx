@@ -89,7 +89,7 @@ export default function CoachFilterPanel({ filters, onChange, onClear, activeCou
             {tr('Tozalash')}
           </button>
           <button type="button" className="cat-filters__apply" onClick={onClose}>
-            {resultCount > 0 ? `${resultCount} ta murabbiyni ko‘rsatish` : tr('Natija topilmadi')}
+            {resultCount > 0 ? tr('{n} ta murabbiyni ko‘rsatish', { n: resultCount }) : tr('Natija topilmadi')}
           </button>
         </div>
       </aside>

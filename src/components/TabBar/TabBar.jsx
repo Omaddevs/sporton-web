@@ -1,6 +1,6 @@
 import { tr } from '../../i18n/index.js'
 import { NavLink, useLocation } from 'react-router-dom'
-import { FiHome, FiUser } from 'react-icons/fi'
+import { FiHome, FiPlus, FiUser } from 'react-icons/fi'
 import { Map as MapIcon } from 'lucide-react'
 import HeartIcon from '../icons/HeartIcon.jsx'
 import { loadJobsMapPage } from '../../pages/jobsMapLoader.js'
@@ -27,6 +27,13 @@ export default function TabBar() {
       label: tr('Saqlanganlar'),
       short: tr('Saqlangan'),
       icon: <HeartIcon size={22} strokeWidth={1.8} />,
+    },
+    {
+      to: '/majmua-qoshish',
+      label: tr('Majmua qo‘shish'),
+      short: tr('Qo‘shish'),
+      icon: <FiPlus size={22} strokeWidth={2.4} />,
+      accent: true,
     },
     {
       to: '/xarita',
@@ -57,12 +64,14 @@ export default function TabBar() {
           </span>
         ) : null}
 
-        {tabs.map(({ to, label, short, icon, end, prefetch }) => (
+        {tabs.map(({ to, label, short, icon, end, prefetch, accent }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
-            className={({ isActive }) => `tabbar__item${isActive ? ' tabbar__item--active' : ''}`}
+            className={({ isActive }) =>
+              `tabbar__item${accent ? ' tabbar__item--accent' : ''}${isActive ? ' tabbar__item--active' : ''}`
+            }
             aria-label={label}
             onTouchStart={prefetch}
             onFocus={prefetch}

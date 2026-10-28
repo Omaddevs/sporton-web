@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Building2, CalendarCheck, ExternalLink, Gauge, LogOut, Menu, MessageSquare, X } from 'lucide-react'
+import { Building2, CalendarCheck, ExternalLink, Gauge, LogOut, Menu, MessageSquare, Plus, X } from 'lucide-react'
 import { ownerLogout } from '@/app/kabinet/login/actions'
+import ThemeToggle from './ThemeToggle'
 
 type Owned = { id: string; name: string }
 
@@ -43,6 +44,7 @@ export default function OwnerSidebar({ me, owned, pending, siteUrl }: { me: stri
       <nav className="adm-nav">
         <div className="adm-nav-label">Majmualarim</div>
         {owned.map((c) => link(`/kabinet/majmua/${c.id}`, c.name, Building2))}
+        {link('/kabinet/majmua/new', 'Majmua qo‘shish', Plus)}
       </nav>
       <nav className="adm-nav">
         <a href={siteUrl || '/'} target="_blank" rel="noreferrer">
@@ -57,6 +59,7 @@ export default function OwnerSidebar({ me, owned, pending, siteUrl }: { me: stri
             <span>Majmua egasi</span>
           </div>
         </div>
+        <ThemeToggle />
         <form action={ownerLogout}>
           <button className="btn btn--block btn--sm">
             <LogOut aria-hidden="true" /> Chiqish

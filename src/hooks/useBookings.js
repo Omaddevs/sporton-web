@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import { api } from '../services/apiClient.js'
+import { tr } from '../i18n/index.js'
 
 /** Foydalanuvchining backenddagi bronlari — profil bo‘limlari uchun umumiy store */
 let state = { userId: null, items: [], loaded: false }
@@ -23,7 +24,7 @@ function toRow(b) {
     place: b.complexName,
     date: b.date ?? b.createdAt.slice(0, 10),
     hour: b.hour,
-    time: b.hour == null ? 'Vaqt kelishiladi' : `${pad(b.hour)}:00–${pad(b.hour + 1)}:00`,
+    time: b.hour == null ? tr('Vaqt kelishiladi') : `${pad(b.hour)}:00–${pad(b.hour + 1)}:00`,
     // Ariza (vaqtsiz) bron — sana yo‘q, faol bo‘lsa bekor qilish mumkin
     flexible: b.date == null,
     price: b.priceLabel,

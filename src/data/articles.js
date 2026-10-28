@@ -1,6 +1,7 @@
 import { allNews, getNewsById } from './news.js'
 import { blogPosts } from './explore.js'
 import { categoryMenuById } from './categoryMenu.js'
+import { tr } from '../i18n/index.js'
 
 /**
  * Sport turi bo‘yicha yangiliklar va blog maqolalari.
@@ -14,7 +15,7 @@ const SPORT_IMAGE = {
   shaxmat: 'boshqa',
 }
 
-const imageFor = (sportId) => `/images/sport/cat/${SPORT_IMAGE[sportId] ?? sportId}.jpg`
+const imageFor = (sportId) => `/images/sport/cat/${SPORT_IMAGE[sportId] ?? sportId}.webp`
 
 // Mavjud yangilik/blog yozuvlari qaysi sport turlariga tegishli
 const NEWS_SPORTS = {
@@ -43,29 +44,27 @@ const CUSTOM_ARTICLES = {
     {
       slug: 'rekordlar',
       kind: 'news',
-      title: 'Suzish bo‘yicha O‘zbekiston chempionatida 4 ta milliy rekord yangilandi',
+      title: tr('Suzish bo‘yicha O‘zbekiston chempionatida 4 ta milliy rekord yangilandi'),
       excerpt:
-        'Toshkentdagi 50 metrli havzada o‘tgan chempionatda yosh suzuvchilar erkin usul va brass masofalarida yangi rekordlar o‘rnatdi.',
-      date: '2-oktabr 2026',
+        tr('Toshkentdagi 50 metrli havzada o‘tgan chempionatda yosh suzuvchilar erkin usul va brass masofalarida yangi rekordlar o‘rnatdi.'),
+      date: tr('2-oktabr 2026'),
     },
     {
       slug: 'bepul-darslar',
       kind: 'news',
-      title: 'Poytaxt havzalarida bolalar uchun bepul sinov darslari boshlandi',
+      title: tr('Poytaxt havzalarida bolalar uchun bepul sinov darslari boshlandi'),
       excerpt:
-        'Oktabr oyi davomida 6 yoshdan 12 yoshgacha bo‘lgan bolalar hamkor majmualarda birinchi darsni bepul o‘tishi mumkin.',
-      date: '29-sentabr 2026',
+        tr('Oktabr oyi davomida 6 yoshdan 12 yoshgacha bo‘lgan bolalar hamkor majmualarda birinchi darsni bepul o‘tishi mumkin.'),
+      date: tr('29-sentabr 2026'),
     },
     {
       slug: 'havzaga-birinchi-marta',
       kind: 'blog',
-      title: 'Havzaga birinchi marta: o‘zingiz bilan nimalarni olish kerak',
+      title: tr('Havzaga birinchi marta: o‘zingiz bilan nimalarni olish kerak'),
       excerpt:
-        'Shapka, ko‘zoynak, shippak va gigiyena vositalari — birinchi mashg‘ulotga tayyorgarlikning qisqa ro‘yxati.',
-      date: '25-sentabr 2026',
-      tag: 'Qo‘llanma',
-      author: 'Madina Rasulova',
-      authorRole: 'Suzish murabbiyi',
+        tr('Shapka, ko‘zoynak, shippak va gigiyena vositalari — birinchi mashg‘ulotga tayyorgarlikning qisqa ro‘yxati.'),
+      date: tr('25-sentabr 2026'),
+      tag: tr('Qo‘llanma'),
     },
   ],
 }
@@ -75,36 +74,36 @@ function templateArticles(title) {
     {
       slug: 'ochiq-chempionat',
       kind: 'news',
-      title: `${title} bo‘yicha Toshkent ochiq chempionatiga ro‘yxatdan o‘tish boshlandi`,
+      title: tr('{title} bo‘yicha Toshkent ochiq chempionatiga ro‘yxatdan o‘tish boshlandi', { title }),
       excerpt:
-        'Musobaqa havaskorlar va professionallar uchun alohida toifalarda o‘tadi. Arizalar 20-oktabrgacha qabul qilinadi.',
-      date: '2-oktabr 2026',
+        tr('Musobaqa havaskorlar va professionallar uchun alohida toifalarda o‘tadi. Arizalar 20-oktabrgacha qabul qilinadi.'),
+      date: tr('2-oktabr 2026'),
     },
     {
       slug: 'yangi-mavsum',
       kind: 'news',
-      title: `Yangi mavsum: «${title}» seksiyalariga qabul davom etmoqda`,
+      title: tr('Yangi mavsum: «{title}» seksiyalariga qabul davom etmoqda', { title }),
       excerpt:
-        'Poytaxtdagi hamkor majmualarda kattalar va bolalar uchun yangi guruhlar ochildi, birinchi darslar chegirma bilan.',
-      date: '28-sentabr 2026',
+        tr('Poytaxtdagi hamkor majmualarda kattalar va bolalar uchun yangi guruhlar ochildi, birinchi darslar chegirma bilan.'),
+      date: tr('28-sentabr 2026'),
     },
     {
       slug: 'boshlovchilar-uchun',
       kind: 'blog',
-      title: `«${title}»: yangi boshlovchilar uchun to‘liq qo‘llanma`,
+      title: tr('«{title}»: yangi boshlovchilar uchun to‘liq qo‘llanma', { title }),
       excerpt:
-        'Qaysi inventar kerak, haftasiga necha marta shug‘ullanish va dastlabki natijani qachon kutish mumkin.',
-      date: '24-sentabr 2026',
-      tag: 'Qo‘llanma',
+        tr('Qaysi inventar kerak, haftasiga necha marta shug‘ullanish va dastlabki natijani qachon kutish mumkin.'),
+      date: tr('24-sentabr 2026'),
+      tag: tr('Qo‘llanma'),
     },
     {
       slug: 'murabbiy-tanlash',
       kind: 'blog',
-      title: `${title}: to‘g‘ri murabbiyni qanday tanlash kerak?`,
+      title: tr('{title}: to‘g‘ri murabbiyni qanday tanlash kerak?', { title }),
       excerpt:
-        'Tajriba, sertifikatlar, shogirdlar natijalari va sinov darsi — tanlov oldidan tekshirish kerak bo‘lgan 5 jihat.',
-      date: '18-sentabr 2026',
-      tag: 'Maslahat',
+        tr('Tajriba, sertifikatlar, shogirdlar natijalari va sinov darsi — tanlov oldidan tekshirish kerak bo‘lgan 5 jihat.'),
+      date: tr('18-sentabr 2026'),
+      tag: tr('Maslahat'),
     },
   ]
 }
@@ -113,7 +112,8 @@ function generatedFor(categoryId) {
   const category = categoryMenuById[categoryId]
   // «Boshqa» umumiy bo‘lim — unga shablon maqolalar mos kelmaydi
   if (!category || categoryId === 'boshqa') return []
-  const source = CUSTOM_ARTICLES[categoryId] ?? templateArticles(category.title)
+  // Shablon «yangilik»lar haqiqiy voqea emas — faqat umumiy qo‘llanma (blog) maqolalari ko‘rsatiladi
+  const source = (CUSTOM_ARTICLES[categoryId] ?? templateArticles(category.title)).filter((item) => item.kind !== 'news')
 
   return source.map((item, index) => ({
     id: `${categoryId}-${item.slug}`,
@@ -128,8 +128,8 @@ function generatedFor(categoryId) {
     readTime: 4 + (index % 3),
     author:
       item.kind === 'news'
-        ? { name: 'SportON tahririyati', role: 'Sport muxbiri' }
-        : { name: item.author ?? 'SportON jamoasi', role: item.authorRole ?? `${category.title} murabbiyi` },
+        ? { name: tr('SportON tahririyati'), role: tr('Sport muxbiri') }
+        : { name: item.author ?? tr('SportON jamoasi'), role: item.authorRole ?? tr('{title} murabbiyi', { title: category.title }) },
   }))
 }
 
@@ -144,7 +144,7 @@ function fromNews(news) {
     date: news.date,
     image: news.image,
     readTime: 4,
-    author: { name: 'SportON tahririyati', role: 'Sport muxbiri' },
+    author: { name: tr('SportON tahririyati'), role: tr('Sport muxbiri') },
   }
 }
 
@@ -198,7 +198,7 @@ function buildBody(article) {
       lead: article.excerpt,
       paragraphs: article.content.map((c) => `${c.heading}. ${c.body}`),
       quote: {
-        text: 'Eng muhimi — muntazamlik. Kichik, lekin har kungi qadamlar katta natijaga olib keladi.',
+        text: tr('Eng muhimi — muntazamlik. Kichik, lekin har kungi qadamlar katta natijaga olib keladi.'),
         author: article.author.name,
       },
     }
@@ -206,13 +206,13 @@ function buildBody(article) {
   return {
     lead: article.excerpt,
     paragraphs: [
-      `${article.title}. Mavzu ${article.category.toLowerCase()} ixlosmandlari orasida katta qiziqish uyg‘otdi. Mutaxassislar bu yo‘nalishda so‘nggi yillarda sezilarli o‘sish kuzatilayotganini ta’kidlashmoqda.`,
-      'Federatsiya va hamkor sport majmualari yosh sportchilarni qo‘llab-quvvatlash, murabbiylar malakasini oshirish va infratuzilmani kengaytirish bo‘yicha yangi dasturlarni amalga oshirmoqda.',
-      'Mashg‘ulotlarga yozilish, murabbiy tanlash va majmualarni bron qilish SportON platformasi orqali bir necha daqiqada amalga oshiriladi.',
+      `${article.title}. ${tr('Mavzu {category} ixlosmandlari orasida katta qiziqish uyg‘otdi. Mutaxassislar bu yo‘nalishda so‘nggi yillarda sezilarli o‘sish kuzatilayotganini ta’kidlashmoqda.', { category: tr(article.category).toLowerCase() })}`,
+      tr('Federatsiya va hamkor sport majmualari yosh sportchilarni qo‘llab-quvvatlash, murabbiylar malakasini oshirish va infratuzilmani kengaytirish bo‘yicha yangi dasturlarni amalga oshirmoqda.'),
+      tr('Mashg‘ulotlarga yozilish, murabbiy tanlash va majmualarni bron qilish SportON platformasi orqali bir necha daqiqada amalga oshiriladi.'),
     ],
     quote: {
-      text: 'Sport har bir oila uchun ochiq va qulay bo‘lishi kerak. Biz shu maqsad sari ishlayapmiz.',
-      author: `${article.category} bo‘yicha mutaxassis`,
+      text: tr('Sport har bir oila uchun ochiq va qulay bo‘lishi kerak. Biz shu maqsad sari ishlayapmiz.'),
+      author: tr('{category} bo‘yicha mutaxassis', { category: tr(article.category) }),
     },
   }
 }
@@ -229,10 +229,10 @@ export function getArticleById(id) {
 
   return {
     ...article,
-    badge: article.kind === 'blog' ? 'Blog' : undefined,
+    badge: article.kind === 'blog' ? tr('Blog') : undefined,
     views: 0,
     likes: 0,
-    caption: `${article.category}: mavzuga oid lavha`,
+    caption: `${tr(article.category)}: ${tr('mavzuga oid lavha')}`,
     tags: [hashtag(article.category), article.kind === 'blog' ? '#Blog' : '#Yangilik'],
     body: buildBody(article),
     prev: siblings[index - 1] ?? null,

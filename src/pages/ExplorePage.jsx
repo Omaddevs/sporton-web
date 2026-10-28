@@ -34,7 +34,6 @@ import {
   FiMessageCircle,
   FiUsers,
 } from 'react-icons/fi'
-import { FaLinkedinIn, FaTelegram } from 'react-icons/fa6'
 import {
   blogPosts,
   competitionKinds,
@@ -109,7 +108,7 @@ function SectionList({ section }) {
         <Crumbs items={[{ label: section.title }]} />
 
         <header className="explore-hero">
-          <img className="explore-hero__bg" src={section.heroImage} alt="" />
+          <img fetchPriority="high" className="explore-hero__bg" src={section.heroImage} alt="" />
           <div className="explore-hero__content">
             <span
               className="explore-hero__icon"
@@ -160,7 +159,7 @@ function SectionList({ section }) {
                 className={`explore-chip ${t === tag ? 'is-active' : ''}`}
                 onClick={() => setTag(t)}
               >
-                {t}
+                {tr(t)}
               </button>
             ))}
           </div>
@@ -201,7 +200,7 @@ function FeaturedCard({ item }) {
   return (
     <Link to={item.href} className="explore-featured">
       <span className="explore-featured__media">
-        <img src={item.image} alt="" />
+        <img loading="lazy" decoding="async" src={item.image} alt="" />
       </span>
       <span className="explore-featured__body">
         <CardTags item={item} />
@@ -243,7 +242,7 @@ function ReelCard({ item }) {
         <Play size={18} fill="currentColor" strokeWidth={0} />
       </span>
       <span className="reel-card__info">
-        <span className="explore-tag explore-tag--light">{item.tag}</span>
+        <span className="explore-tag explore-tag--light">{tr(item.tag)}</span>
         <strong>{item.title}</strong>
         <span>{item.excerpt}</span>
       </span>
@@ -254,7 +253,7 @@ function ReelCard({ item }) {
 function CardTags({ item }) {
   return (
     <span className="explore-tags">
-      <span className="explore-tag">{item.tag}</span>
+      <span className="explore-tag">{tr(item.tag)}</span>
       {item.status && <StatusBadge status={item.status} />}
     </span>
   )
@@ -298,14 +297,14 @@ function RelatedList({ title, items, sectionId }) {
           <span className="explore-related__media">
             {item.avatar ? (
               <span className="founder-avatar founder-avatar--sm" style={{ background: item.avatar.gradient }}>
-                {item.avatar.photo ? <img src={item.avatar.photo} alt="" /> : item.avatar.initials}
+                {item.avatar.photo ? <img loading="lazy" decoding="async" src={item.avatar.photo} alt="" /> : item.avatar.initials}
               </span>
             ) : (
               <img src={item.image} alt="" loading="lazy" />
             )}
           </span>
           <span className="explore-related__text">
-            <span className="explore-tag">{item.tag}</span>
+            <span className="explore-tag">{tr(item.tag)}</span>
             <strong>{item.title}</strong>
             <span>{item.meta}</span>
           </span>
@@ -374,7 +373,7 @@ function FounderShowcase({ founder, isDetail = false, reverse = false }) {
           })}
         </div>
 
-        <ul className="fshow__stack" aria-label={`${current.label} texnologiyalari`}>
+        <ul className="fshow__stack" aria-label={`${current.label}: ${tr('texnologiyalar')}`}>
           {current.stack.map((t) => (
             <li key={t}>{t}</li>
           ))}
@@ -391,23 +390,16 @@ function FounderShowcase({ founder, isDetail = false, reverse = false }) {
           </div>
         )}
 
-        <div className="fshow__actions">
-          <a className="fshow__btn fshow__btn--primary" href={founder.socials.telegram} target="_blank" rel="noreferrer">
-            <FaTelegram /> {founder.showcase.cta}
-          </a>
-          {isDetail ? (
-            <a className="fshow__btn" href={founder.socials.linkedin} target="_blank" rel="noreferrer">
-              <FaLinkedinIn /> {tr('LinkedIn')}
-            </a>
-          ) : (
-            <Link className="fshow__btn" to={`/bolim/asoschilar/${founder.id}`}>
+        {!isDetail && (
+          <div className="fshow__actions">
+            <Link className="fshow__btn fshow__btn--primary" to={`/bolim/asoschilar/${founder.id}`}>
               {tr('Batafsil')} <ArrowUpRight size={16} />
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      <div className="fshow__stage" role="img" aria-label={`${founder.name} portreti`}>
+      <div className="fshow__stage" role="img" aria-label={`${founder.name} — ${tr('portret')}`}>
         <span className="fshow__backdrop" />
         <span className="fshow__glow" />
 
@@ -521,7 +513,7 @@ function FounderDetail({ founder }) {
           <FounderShowcase founder={founder} isDetail />
         ) : (
         <section className="founder-hero">
-          <img className="founder-hero__bg" src={founder.image} alt="" />
+          <img fetchPriority="high" className="founder-hero__bg" src={founder.image} alt="" />
           <div className="founder-hero__inner">
             <span className="founder-avatar founder-avatar--lg" style={{ background: founder.gradient }}>
               {founder.initials}
@@ -533,14 +525,6 @@ function FounderDetail({ founder }) {
                 <li><FiMapPin /> {founder.location}</li>
                 <li><FiCalendar /> {tr('SportON’da')} {founder.since}{tr('-yildan')}</li>
               </ul>
-            </div>
-            <div className="founder-hero__socials">
-              <a href={founder.socials.telegram} target="_blank" rel="noreferrer" aria-label={tr('Telegram')}>
-                <FaTelegram />
-              </a>
-              <a href={founder.socials.linkedin} target="_blank" rel="noreferrer" aria-label={tr('LinkedIn')}>
-                <FaLinkedinIn />
-              </a>
             </div>
           </div>
         </section>
@@ -627,7 +611,7 @@ function BlogDetail({ post }) {
             </header>
 
             <figure className="explore-cover">
-              <img src={post.image} alt={post.title} />
+              <img loading="lazy" decoding="async" src={post.image} alt={post.title} />
             </figure>
 
             <div className="blog-body">
@@ -665,8 +649,8 @@ function BlogBoard({ items, allItems }) {
   const byTag = (t) => allItems.filter((i) => i.tag === t).slice(0, 3)
   const groups = [
     { title: tr('Tanlangan'), items: allItems.filter((i) => i.featured).slice(0, 3) },
-    { title: tr('Qo‘llanmalar'), items: byTag('Qo‘llanma') },
-    { title: tr('Sog‘lom turmush'), items: byTag('Sog‘lom turmush') },
+    { title: tr('Qo‘llanmalar'), items: byTag(tr('Qo‘llanma')) },
+    { title: tr('Sog‘lom turmush'), items: byTag(tr('Sog‘lom turmush')) },
   ].filter((g) => g.items.length)
 
   if (!lead) return <p className="mag-empty">{tr('Hozircha bu bo‘limda maqolalar yo‘q.')}</p>
@@ -676,7 +660,7 @@ function BlogBoard({ items, allItems }) {
       <div className="mag-top">
         <Link to={lead.href} className="mag-card mag-card--lead">
           <span className="mag-card__media">
-            <img src={lead.image} alt="" />
+            <img loading="lazy" decoding="async" src={lead.image} alt="" />
             <span className="mag-card__label">{lead.tag}</span>
           </span>
           <strong className="mag-card__title">{lead.title}</strong>
@@ -842,7 +826,7 @@ function CompetitionDetail({ comp }) {
         <Crumbs items={[{ label: tr('Musobaqalar'), to: '/bolim/musobaqalar' }, { label: comp.title }]} />
 
         <section className="comp-hero">
-          <img src={comp.image} alt="" />
+          <img loading="lazy" decoding="async" src={comp.image} alt="" />
           <div className="comp-hero__shade" />
           <div className="comp-hero__content">
             <span className="explore-tags">
@@ -865,7 +849,7 @@ function CompetitionDetail({ comp }) {
             </div>
 
             <section className="explore-block">
-              <h2>{kindLabel} haqida</h2>
+              <h2>{tr('{kind} haqida', { kind: kindLabel })}</h2>
               <p>{comp.description}</p>
             </section>
 
@@ -874,7 +858,7 @@ function CompetitionDetail({ comp }) {
               <ol className="comp-timeline">
                 {comp.schedule.map((s) => (
                   <li key={s.time + s.label}>
-                    <span className="comp-timeline__time">{s.time}</span>
+                    <span className="comp-timeline__time">{tr(s.time)}</span>
                     <span className="comp-timeline__label">{s.label}</span>
                   </li>
                 ))}
@@ -901,18 +885,18 @@ function CompetitionDetail({ comp }) {
               <div className="comp-register__head">
                 <FiUsers />
                 <span>
-                  <strong>{taken.toLocaleString('ru-RU')}</strong> / {comp.slots.toLocaleString('ru-RU')} ishtirokchi
+                  <strong>{taken.toLocaleString('ru-RU')}</strong> / {comp.slots.toLocaleString('ru-RU')} {tr('ishtirokchi')}
                 </span>
               </div>
-              <div className="comp-progress" aria-label={`${fill}% to‘lgan`}>
+              <div className="comp-progress" aria-label={tr('{n}% to‘lgan', { n: fill })}>
                 <span style={{ width: `${fill}%` }} />
               </div>
               <p className="comp-register__note">
                 {canRegister
-                  ? `${(comp.slots - taken).toLocaleString('ru-RU')} ta joy qoldi`
+                  ? `${(comp.slots - taken).toLocaleString('ru-RU')} ${tr('ta joy qoldi')}`
                   : comp.status === 'soon'
                     ? tr('Ro‘yxatdan o‘tish tez orada ochiladi')
-                    : `${kindLabel} yakunlangan`}
+                    : tr('{kind} yakunlangan', { kind: kindLabel })}
               </p>
               <button
                 type="button"
@@ -925,7 +909,7 @@ function CompetitionDetail({ comp }) {
                     <FiCheck /> {tr('Ro‘yxatdan o‘tdingiz')}
                   </>
                 ) : canRegister ? (
-                  'Ro‘yxatdan o‘tish'
+                  tr('Ro‘yxatdan o‘tish')
                 ) : (
                   status.label
                 )}
@@ -976,10 +960,10 @@ function ReelDetail({ reel }) {
           </div>
 
           <div className="reel-info">
-            <span className="explore-tag">{reel.tag}</span>
+            <span className="explore-tag">{tr(reel.tag)}</span>
             <h1>{reel.title}</h1>
             <ul className="explore-meta">
-              <li><FiCalendar /> {reel.date}</li>
+              <li><FiCalendar /> {tr(reel.date)}</li>
               {reel.likes != null && <li><FiHeart /> {reel.likes}</li>}
               {reel.comments != null && <li><FiMessageCircle /> {reel.comments}</li>}
             </ul>

@@ -4,6 +4,7 @@ import { bookingModeOf, isTimedService } from '../src/utils/booking.js'
 import { formatPhone, isValidPhone, maskPhone, toLocalDigits } from '../src/utils/phone.js'
 import { tr } from '../src/i18n/index.js'
 import ru from '../src/i18n/ru.js'
+import ruContent from '../src/i18n/ru-content.js'
 
 test('bron rejimi: backend bergan qiymat ustun, bo‘lmasa narxdan taxmin', () => {
   assert.equal(bookingModeOf({ bookingMode: 'call', salary: '250 000 so‘m / soat', hours: '08:00 - 22:00' }), 'call')
@@ -33,5 +34,13 @@ test('rus lug‘ati: bo‘sh tarjima yo‘q va asosiy matnlar bor', () => {
   }
   for (const key of ['Bron qilish', 'Saqlanganlar', 'Kirish', 'Ro‘yxatdan o‘tish', 'Qo‘ng‘iroq qilish']) {
     assert.ok(ru[key], `tarjima yo‘q: ${key}`)
+  }
+})
+
+test('rus lug‘ati: kontent tarjimalari bo‘sh emas, {o‘zgaruvchilar} saqlangan', () => {
+  const placeholders = (text) => (text.match(/\{\w+\}/g) ?? []).sort().join()
+  for (const [uz, translated] of Object.entries({ ...ru, ...ruContent })) {
+    assert.ok(typeof translated === 'string' && translated.trim().length > 0, `tarjima bo‘sh: ${uz}`)
+    assert.equal(placeholders(translated), placeholders(uz), `o‘zgaruvchilar mos emas: ${uz}`)
   }
 })

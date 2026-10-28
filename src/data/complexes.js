@@ -27,7 +27,7 @@ const SPORT_IMAGES = {
 
 const GALLERY = ['g1', 'g2', 'g3', 'g4', 'g5']
 
-export const FALLBACK_IMAGE = '/images/sport/cat/boshqa.jpg'
+export const FALLBACK_IMAGE = '/images/sport/cat/boshqa.webp'
 
 export const AMENITIES = [
   { id: 'shower', label: tr('Dush va kiyinish xonasi') },
@@ -66,19 +66,20 @@ function buildComplex(company, index) {
   let images = uploaded.length ? uploaded.filter((m) => m.type === 'image').map((m) => m.url) : null
   if (!images?.length) images = company.images?.length ? company.images : null
   if (!images) {
-    const covers = sportIds.map((id) => `/images/sport/cat/${SPORT_IMAGES[id] ?? 'boshqa'}.jpg`)
+    const covers = sportIds.map((id) => `/images/sport/cat/${SPORT_IMAGES[id] ?? 'boshqa'}.webp`)
     const gallery = Array.from(
       { length: 4 },
-      (_, i) => `/images/sport/gallery/${GALLERY[(index + i) % GALLERY.length]}.jpg`,
+      (_, i) => `/images/sport/gallery/${GALLERY[(index + i) % GALLERY.length]}.webp`,
     )
     images = [...covers, ...gallery]
   }
-  images = [...new Set([...(company.bannerImage ? [company.bannerImage] : []), ...images])]
+  // Banner keng (24:5) kesiladi — yuklangan rasmlar bo‘lsa galereya va kartochkalarga qo‘shilmaydi
+  if (!uploaded.length) images = [...new Set([...(company.bannerImage ? [company.bannerImage] : []), ...images])]
 
-  // Galereya: rasm va videolar tartib bilan; muqova (banner) birinchi
+  // Galereya: rasm va videolar tartib bilan; yuklangan media bo‘lmasa muqova (banner) birinchi
   const media = uploaded.length ? uploaded : images.map((url) => ({ type: 'image', url, provider: 'link' }))
   const gallery =
-    company.bannerImage && !media.some((m) => m.url === company.bannerImage)
+    !uploaded.length && company.bannerImage && !media.some((m) => m.url === company.bannerImage)
       ? [{ type: 'image', url: company.bannerImage, provider: 'link' }, ...media]
       : media
 

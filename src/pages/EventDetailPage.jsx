@@ -1,4 +1,4 @@
-import { tr } from '../i18n/index.js'
+import { formatDayMonth, monthName, tr } from '../i18n/index.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
@@ -31,14 +31,13 @@ import { trackEventView } from '../services/catalog.js'
 import './NewsDetailPage.css'
 import './EventDetailPage.css'
 
-const MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr']
-const WEEKDAYS = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba']
+const WEEKDAYS = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'].map((d) => tr(d))
 
 // Sanalar Toshkent vaqtida ko‘rsatiladi (UTC+5)
 const tashkent = (iso) => new Date(new Date(iso).getTime() + 5 * 3600 * 1000)
 const formatDay = (iso) => {
   const d = tashkent(iso)
-  return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}`
+  return formatDayMonth(d.getUTCDate(), d.getUTCMonth())
 }
 const formatTime = (iso) => tashkent(iso).toISOString().slice(11, 16)
 const weekday = (iso) => WEEKDAYS[tashkent(iso).getUTCDay()]
@@ -175,11 +174,11 @@ function EventDetailView({ eventId }) {
 
   const facts = [
     { icon: <FiCalendar />, label: tr('Sana'), value: dateRange(event), sub: weekday(event.startsAt) },
-    { icon: <FiClock />, label: tr('Boshlanish'), value: formatTime(event.startsAt), sub: `Tugash: ${formatTime(event.endsAt)}` },
-    { icon: <FiMapPin />, label: tr('Manzil'), value: event.venue.name, sub: event.location },
+    { icon: <FiClock />, label: tr('Boshlanish'), value: formatTime(event.startsAt), sub: `${tr('Tugash')}: ${formatTime(event.endsAt)}` },
+    { icon: <FiMapPin />, label: tr('Manzil'), value: tr(event.venue.name), sub: tr(event.location) },
     { icon: <FiCreditCard />, label: tr('Ishtirok to‘lovi'), value: event.fee },
     event.prize && { icon: <FiAward />, label: tr('Sovrin jamg‘armasi'), value: event.prize },
-    { icon: <FiBarChart2 />, label: tr('Daraja'), value: event.level, sub: `Yosh: ${event.age}` },
+    { icon: <FiBarChart2 />, label: tr('Daraja'), value: tr(event.level), sub: `${tr('Yosh')}: ${tr(event.age)}` },
   ].filter(Boolean)
 
   return (
@@ -192,12 +191,12 @@ function EventDetailView({ eventId }) {
           <span>/</span>
           <Link to="/#tadbirlar">{tr('Sport tadbirlari')}</Link>
           <span>/</span>
-          <strong>{event.category}</strong>
+          <strong>{tr(event.category)}</strong>
         </nav>
 
         <header className="news-head">
           <div className="news-head__tags">
-            <span className="news-head__cat">{event.category}</span>
+            <span className="news-head__cat">{tr(event.category)}</span>
             <span className={`ev-status ev-status--${status.key}`}>
               <span className="ev-status__dot" />
               {status.label}
@@ -212,21 +211,21 @@ function EventDetailView({ eventId }) {
                 <FiUser />
               </span>
               <div>
-                <strong>{event.organizer.name}</strong>
-                <span>{event.organizer.role}</span>
+                <strong>{tr(event.organizer.name)}</strong>
+                <span>{tr(event.organizer.role)}</span>
               </div>
             </div>
             <ul className="news-head__stats">
               <li><FiCalendar /> {dateRange(event)}</li>
               <li><FiClock /> {formatTime(event.startsAt)}</li>
-              <li><FiUsers /> {taken.toLocaleString('ru-RU')} ishtirokchi</li>
+              <li><FiUsers /> {taken.toLocaleString('ru-RU')} {tr('ishtirokchi')}</li>
               <li><FiEye /> {event.views.toLocaleString('ru-RU')}</li>
             </ul>
           </div>
         </header>
 
         <figure className="news-cover ev-cover">
-          <img src={event.image} alt={event.title} />
+          <img fetchPriority="high" src={event.image} alt={event.title} />
           <div className="ev-cover__ticket" aria-hidden="true">
             <span className="ev-cover__day">{formatDay(event.startsAt)}</span>
             <span className="ev-cover__year">{tashkent(event.startsAt).getUTCFullYear()}</span>
@@ -301,7 +300,7 @@ function EventDetailView({ eventId }) {
                   <ol className="ev-timeline">
                     {event.schedule.map((s, i) => (
                       <li key={i}>
-                        <span className="ev-timeline__time">{s.time}</span>
+                        <span className="ev-timeline__time">{tr(s.time)}</span>
                         <span className="ev-timeline__body">
                           <strong>{s.label}</strong>
                           {s.note && <span>{s.note}</span>}
@@ -327,8 +326,8 @@ function EventDetailView({ eventId }) {
               <div className="ev-venue">
                 <span className="ev-venue__pin"><FiMapPin /></span>
                 <div className="ev-venue__text">
-                  <strong>{event.venue.name}</strong>
-                  <span>{event.venue.address}</span>
+                  <strong>{tr(event.venue.name)}</strong>
+                  <span>{tr(event.venue.address)}</span>
                 </div>
                 <a href={mapUrl} target="_blank" rel="noreferrer" className="ev-venue__btn">
                   <FiNavigation /> {tr('Yo‘nalish')}
@@ -366,7 +365,7 @@ function EventDetailView({ eventId }) {
                     target="_blank"
                     rel="noreferrer"
                     className="news-share__icon"
-                    aria-label={`${s.label} orqali ulashish`}
+                    aria-label={tr('{name} orqali ulashish', { name: s.label })}
                   >
                     {s.icon}
                   </a>
@@ -461,12 +460,12 @@ function EventDetailView({ eventId }) {
                   <li key={item.id}>
                     <Link to={`/tadbir/${item.id}`} className="news-side__item ev-side__item">
                       <span className="ev-side__date">
-                        <strong>{formatDay(item.startsAt).split('-')[0]}</strong>
-                        {MONTHS[tashkent(item.startsAt).getUTCMonth()].slice(0, 3)}
+                        <strong>{tashkent(item.startsAt).getUTCDate()}</strong>
+                        {monthName(tashkent(item.startsAt).getUTCMonth()).slice(0, 3)}
                       </span>
                       <div className="news-side__body">
                         <strong>{item.title}</strong>
-                        <span>{item.category} · {item.location}</span>
+                        <span>{tr(item.category)} · {tr(item.location)}</span>
                       </div>
                       <img src={item.image} alt="" loading="lazy" />
                     </Link>
@@ -491,7 +490,7 @@ function EventDetailView({ eventId }) {
               <Link key={item.id} to={`/tadbir/${item.id}`} className="news-card">
                 <div className="news-card__media">
                   <img src={item.image} alt="" loading="lazy" />
-                  <span className="news-card__cat">{item.category}</span>
+                  <span className="news-card__cat">{tr(item.category)}</span>
                 </div>
                 <div className="news-card__body">
                   <span className="news-card__date"><FiCalendar /> {dateRange(item)} · {formatTime(item.startsAt)}</span>

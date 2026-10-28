@@ -14,12 +14,11 @@ import {
   FaTelegram,
 } from 'react-icons/fa6'
 import { LANGUAGES } from '../../data/languages.js'
-import { useLocalStorageState } from '../../hooks/useLocalStorageState.js'
 import { SOCIAL_LINKS } from '../../data/social.js'
 import BrandLogo from '../Brand/BrandLogo.jsx'
 import { api } from '../../services/apiClient.js'
 import './Footer.css'
-import { tr } from '../../i18n/index.js'
+import { lang, setLang, tr } from '../../i18n/index.js'
 
 const SOCIALS = [
   { id: 'telegram', label: tr('Telegram'), Icon: FaTelegram, href: SOCIAL_LINKS.telegram.href },
@@ -65,15 +64,14 @@ export default function Footer() {
     try {
       await api('/subscribe', { method: 'POST', body: { email: email.trim() } })
       setEmail('')
-      setSubscribe({ status: 'success', message: 'Rahmat! Siz obuna bo‘ldingiz.' })
+      setSubscribe({ status: 'success', message: tr('Rahmat! Siz obuna bo‘ldingiz.') })
     } catch (err) {
       setSubscribe({ status: 'error', message: err.message })
     }
   }
-  const [langId, setLangId] = useLocalStorageState('sporton-lang', 'uz')
   const [langOpen, setLangOpen] = useState(false)
   const langRef = useRef(null)
-  const language = LANGUAGES.find((item) => item.id === langId) ?? LANGUAGES[0]
+  const language = LANGUAGES.find((item) => item.id === lang) ?? LANGUAGES[0]
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -118,7 +116,7 @@ export default function Footer() {
           <div className="footer-cta__inner">
             <div className="footer-cta__copy">
               <h3 className="footer-cta__title">
-                Chegirmalar va yangi majmualardan birinchi bo&apos;lib xabardor bo&apos;ling!
+                {tr('Chegirmalar va yangi majmualardan birinchi bo‘lib xabardor bo‘ling!')}
               </h3>
               <p className="footer-cta__subtitle">
                 {tr('Sport yangiliklari, tadbirlar va maxsus takliflar endilikda email orqali.')}
@@ -140,7 +138,7 @@ export default function Footer() {
                   aria-label={tr('Email manzilingizni kiriting')}
                 />
                 <button type="submit" className="footer-cta__submit" disabled={subscribe.status === 'loading'}>
-                  Obuna bo&apos;lish
+                  {tr('Obuna bo‘lish')}
                   <FiArrowRight aria-hidden="true" />
                 </button>
               </form>
@@ -154,7 +152,7 @@ export default function Footer() {
               )}
               <p className="footer-cta__note">
                 <ShieldCheck aria-hidden="true" strokeWidth={2.25} />
-                Biz sizning ma&apos;lumotlaringizni hech qachon uchinchi shaxslarga bermaymiz.
+                {tr('Biz sizning ma’lumotlaringizni hech qachon uchinchi shaxslarga bermaymiz.')}
               </p>
             </div>
 
@@ -166,13 +164,13 @@ export default function Footer() {
               </svg>
               <div className="footer-cta__photo footer-cta__photo--sport">
                 <span className="footer-cta__photo-frame">
-                  <img src="/images/sport/footer-cta.jpg" alt="" width={240} height={280} />
+                  <img loading="lazy" decoding="async" src="/images/sport/footer-cta.webp" alt="" width={240} height={280} />
                 </span>
                 <span className="footer-cta__photo-badge">ON</span>
               </div>
               <div className="footer-cta__scribble">
                 <p className="footer-cta__handwrite">
-                  Sog&apos;lom hayot
+                  {tr('Sog‘lom hayot')}
                   <br />
                   {tr('shu yerdan boshlanadi!')}
                 </p>
@@ -204,9 +202,7 @@ export default function Footer() {
             </Link>
             <p className="footer-brand__tagline">{tr('Sport — bir platformada')}</p>
             <p className="footer-brand__text">
-              SportON – O&apos;zbekistondagi sport majmualarini topish va bron qilish, mashg&apos;ulotlar,
-              sport yangiliklari va tadbirlarni bir joyga jamlagan zamonaviy platforma. Biz sog&apos;lom
-              va faol hayotga ishonamiz.
+              {tr('SportON – O‘zbekistondagi sport majmualarini topish va bron qilish, mashg‘ulotlar, sport yangiliklari va tadbirlarni bir joyga jamlagan zamonaviy platforma. Biz sog‘lom va faol hayotga ishonamiz.')}
             </p>
             <div className="footer-brand__socials">
               {SOCIALS.map(({ id, label, Icon, href }) => (
@@ -230,7 +226,7 @@ export default function Footer() {
 
 
           <p className="footer-main__quote" aria-hidden="true">
-            Katta g&apos;alabalar kichik qadamlardan boshlanadi
+            {tr('Katta g‘alabalar kichik qadamlardan boshlanadi')}
           </p>
         </div>
 
@@ -242,7 +238,7 @@ export default function Footer() {
 
           <p className="footer-bottom__motto">
             <FiActivity aria-hidden="true" />
-            Harakat — sog&apos;lom hayot kaliti!
+            {tr('Harakat — sog‘lom hayot kaliti!')}
           </p>
 
           <div className="footer-bottom__tools">
@@ -268,8 +264,8 @@ export default function Footer() {
                       aria-selected={item.id === language.id}
                       className={item.id === language.id ? 'is-active' : undefined}
                       onClick={() => {
-                        setLangId(item.id)
                         setLangOpen(false)
+                        setLang(item.id)
                       }}
                     >
                       {item.label}

@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react'
 import { useAuth } from '../context/auth.js'
 import * as store from '../services/notifications.js'
+import { tr } from '../i18n/index.js'
 
 /** «5 daqiqa oldin», «Kecha», «3 kun oldin» */
 export function formatAgo(date, now = Date.now()) {
   const ms = now - new Date(date).getTime()
   const minutes = Math.round(ms / 60000)
-  if (minutes < 1) return 'Hozirgina'
-  if (minutes < 60) return `${minutes} daqiqa oldin`
+  if (minutes < 1) return tr('Hozirgina')
+  if (minutes < 60) return tr('{n} daqiqa oldin', { n: minutes })
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours} soat oldin`
+  if (hours < 24) return tr('{n} soat oldin', { n: hours })
   const days = Math.round(hours / 24)
-  if (days === 1) return 'Kecha'
-  if (days < 7) return `${days} kun oldin`
+  if (days === 1) return tr('Kecha')
+  if (days < 7) return tr('{n} kun oldin', { n: days })
   return new Date(date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 

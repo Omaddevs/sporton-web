@@ -13,7 +13,7 @@ import { api } from '../services/apiClient.js'
 import MediaUploader from '../components/MediaUploader/MediaUploader.jsx'
 import { isUploading, readyMedia } from '../utils/media.js'
 import { categoryMenuItems } from '../data/categoryMenu.js'
-import { REGIONS } from '../data/regions.js'
+import { isRegionActive, REGIONS } from '../data/regions.js'
 import Select from '../components/ui/Select.jsx'
 import { formatLocal, formatPhone, isValidPhone, PHONE_PREFIX, toLocalDigits } from '../utils/phone.js'
 import './AddComplexPage.css'
@@ -22,7 +22,8 @@ import { tr } from '../i18n/index.js'
 const MAX_DESCRIPTION = 600
 
 const SPORTS = categoryMenuItems.filter((s) => s.id !== 'boshqa')
-const REGION_OPTIONS = REGIONS.filter((r) => r.id !== 'all')
+// Hozircha faqat Toshkent shahridagi majmualar qabul qilinadi
+const REGION_OPTIONS = REGIONS.filter((r) => isRegionActive(r.id))
 
 const AMENITIES = [
   'Dush va kiyinish xonasi',
@@ -325,7 +326,7 @@ export default function AddComplexPage() {
                     <span className="acf-check__box" aria-hidden="true">
                       <FiCheck />
                     </span>
-                    {item}
+                    {tr(item)}
                   </label>
                 ))}
               </div>
@@ -428,7 +429,7 @@ export default function AddComplexPage() {
                 )}
               </div>
               <p className="acf-preview__price">
-                {form.price ? `${Number(form.price).toLocaleString('ru-RU')} so‘mdan` : tr('Narx ko‘rsatilmagan')}
+                {form.price ? `${Number(form.price).toLocaleString('ru-RU')} ${tr('so‘mdan')}` : tr('Narx ko‘rsatilmagan')}
               </p>
               <p className="acf-preview__name">{form.name || tr('Majmua nomi')}</p>
               <p className="acf-preview__meta">

@@ -67,7 +67,8 @@
   --z-dropdown: 1100;
 
   /* Font */
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  /* Manrope — lotin va kirill (rus tili) bir xil ko‘rinadi; Plus Jakarta Sans’da kirill yo‘q edi */
+  --font-sans: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
   --font-display: var(--font-sans);
   --font-brand: 'Montserrat', var(--font-sans);

@@ -15,7 +15,7 @@ export class ApiError extends Error {
   }
 }
 
-const NETWORK_ERROR = 'Server bilan aloqa yo‘q. Internetni tekshirib, qayta urinib ko‘ring'
+const NETWORK_ERROR = tr('Server bilan aloqa yo‘q. Internetni tekshirib, qayta urinib ko‘ring')
 
 export async function api(path, { method = 'GET', body, form, signal, timeout = 15000 } = {}) {
   const controller = new AbortController()

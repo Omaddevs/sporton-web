@@ -37,7 +37,7 @@ function validate(form) {
   if (form.firstName.trim().length < 2) errors.firstName = tr('Ismingizni kiriting')
   if (form.lastName.trim().length < 2) errors.lastName = tr('Familiyangizni kiriting')
   if (!isValidPhone(form.phone)) errors.phone = tr('Telefon raqamni to‘liq kiriting')
-  if (form.password.length < MIN_PASSWORD) errors.password = `Parol kamida ${MIN_PASSWORD} ta belgidan iborat bo‘lsin`
+  if (form.password.length < MIN_PASSWORD) errors.password = tr('Parol kamida {n} ta belgidan iborat bo‘lsin', { n: MIN_PASSWORD })
   if (!form.consent) errors.consent = tr('Davom etish uchun rozilik bering')
   return errors
 }
@@ -154,7 +154,7 @@ function FormStep({ form, setForm, onNext, signInWith, providerLoading, provider
           placeholder={tr('Parol o‘ylab toping')}
           autoComplete="new-password"
           error={errors.password}
-          hint={`Kamida ${MIN_PASSWORD} ta belgi.`}
+          hint={tr('Kamida {n} ta belgi.', { n: MIN_PASSWORD })}
         />
 
         <div className="auth-field">
@@ -170,7 +170,7 @@ function FormStep({ form, setForm, onNext, signInWith, providerLoading, provider
               <Link to="/sahifa/maxfiylik-siyosati" target="_blank">
                 {tr('Maxfiylik siyosati')}
               </Link>{' '}
-              va{' '}
+              {tr('va')}{' '}
               <Link to="/sahifa/foydalanish-shartlari" target="_blank">
                 {tr('Foydalanish shartlari')}
               </Link>
@@ -205,7 +205,7 @@ function CodeStep({ form, onBack, onDone }) {
 
   async function verify(value) {
     if (value.length !== CODE_LENGTH) {
-      setError(`${CODE_LENGTH} xonali kodni to‘liq kiriting`)
+      setError(tr('{n} xonali kodni to‘liq kiriting', { n: CODE_LENGTH }))
       return
     }
     setError('')

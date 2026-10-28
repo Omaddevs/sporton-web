@@ -74,7 +74,7 @@ const AMENITY_ICONS = {
   ac: Snowflake,
 }
 
-const WEEKDAYS = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan']
+const WEEKDAYS = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'].map((d) => tr(d))
 const MAX_REVIEW = 1000
 
 function initials(name) {
@@ -100,7 +100,7 @@ function buildDays() {
     return {
       index: i,
       iso,
-      label: i === 0 ? 'Bugun' : i === 1 ? 'Ertaga' : WEEKDAYS[date.getDay()],
+      label: i === 0 ? tr('Bugun') : i === 1 ? tr('Ertaga') : WEEKDAYS[date.getDay()],
       day: date.getDate(),
     }
   })
@@ -272,7 +272,7 @@ function ComplexDetailView({ complexId }) {
 
         <header className="cx-head">
           <div className="cx-head__tags">
-            <span className="cx-head__cat">{complex.industry}</span>
+            <span className="cx-head__cat">{tr(complex.industry)}</span>
             {complex.verified && (
               <span className="cx-head__badge cx-head__badge--green">
                 <BadgeCheck size={13} /> {tr('Tasdiqlangan')}
@@ -285,7 +285,7 @@ function ComplexDetailView({ complexId }) {
             )}
           </div>
           <h1 className="cx-head__title">{complex.name}</h1>
-          <p className="cx-head__lead">{complex.tagline}</p>
+          <p className="cx-head__lead">{tr(complex.tagline)}</p>
 
           <div className="cx-head__meta">
             <div className="cx-head__owner">
@@ -293,8 +293,8 @@ function ComplexDetailView({ complexId }) {
                 {complex.name.charAt(0)}
               </span>
               <div>
-                <strong>{complex.location}</strong>
-                <span>{complex.sports.join(' · ')}</span>
+                <strong>{tr(complex.location)}</strong>
+                <span>{complex.sports.map((s) => tr(s)).join(' · ')}</span>
               </div>
             </div>
             <ul className="cx-head__stats">
@@ -306,7 +306,7 @@ function ComplexDetailView({ complexId }) {
                       <b>{complex.rating}</b> ({complex.reviews} {tr('sharh)')}
                     </>
                   ) : (
-                    'Hali sharh yo‘q'
+                    tr('Hali sharh yo‘q')
                   )}
                 </button>
               </li>
@@ -331,7 +331,7 @@ function ComplexDetailView({ complexId }) {
             </button>
           ))}
           <button type="button" className="cx-gallery__all" onClick={() => setLightbox(0)}>
-            <FiGrid /> {tr('Barchasi (')}{gallery.length}){videoCount > 0 && ` · ${videoCount} video`}
+            <FiGrid /> {tr('Barchasi (')}{gallery.length}){videoCount > 0 && ` · ${videoCount} ${tr('video')}`}
           </button>
         </div>
 
@@ -370,7 +370,7 @@ function ComplexDetailView({ complexId }) {
           <div className="cx-detail__main">
             <section className="cx-section">
               <h2 className="cx-section__title">{tr('Majmua haqida')}</h2>
-              <p className="cx-about">{complex.about}</p>
+              <p className="cx-about">{tr(complex.about)}</p>
 
               <ul className="cx-facts">
                 <li>
@@ -379,7 +379,7 @@ function ComplexDetailView({ complexId }) {
                 </li>
                 <li>
                   <span>{tr('Faoliyatda')}</span>
-                  <strong>{complex.years} yil</strong>
+                  <strong>{complex.years} {tr('yil')}</strong>
                 </li>
                 <li>
                   <span>{tr('Murabbiylar')}</span>
@@ -387,7 +387,7 @@ function ComplexDetailView({ complexId }) {
                 </li>
                 <li>
                   <span>{tr('Xizmatlar')}</span>
-                  <strong>{complex.services.length} ta</strong>
+                  <strong>{complex.services.length}</strong>
                 </li>
               </ul>
             </section>
@@ -431,8 +431,8 @@ function ComplexDetailView({ complexId }) {
                 )}
                 <div className="cx-location__body">
                   <ul className="cx-location__list">
-                    <li><FiMapPin /> {complex.location}</li>
-                    <li><FiClock /> {/^\d/.test(complex.hours) ? `Har kuni, ${complex.hours}` : complex.hours}</li>
+                    <li><FiMapPin /> {tr(complex.location)}</li>
+                    <li><FiClock /> {/^\d/.test(complex.hours) ? `${tr('Har kuni')}, ${tr(complex.hours)}` : tr(complex.hours)}</li>
                     {complex.hasPhone && (
                       <li><FiPhone /> <PhoneReveal complexId={complex.id} icon={false} className="cx-phone-link" /></li>
                     )}
@@ -492,7 +492,7 @@ function ComplexDetailView({ complexId }) {
                               <Star size={11} /> {item.rating} ·{' '}
                             </>
                           ) : null}
-                          {item.sports.slice(0, 2).join(', ')}
+                          {item.sports.slice(0, 2).map((s) => tr(s)).join(', ')}
                         </span>
                         {item.minPrice && <em>{formatPrice(item.minPrice)} {tr('so‘mdan')}</em>}
                       </div>
@@ -546,7 +546,7 @@ function Services({ complex, selectedId, onChoose }) {
                 aria-selected={sport === item}
                 onClick={() => setSport(item)}
               >
-                {item === 'all' ? tr('Barchasi') : item}
+                {item === 'all' ? tr('Barchasi') : tr(item)}
               </button>
             ))}
           </div>
@@ -564,17 +564,17 @@ function Services({ complex, selectedId, onChoose }) {
                   {service.title}
                 </Link>
                 <p className="cx-service__meta">
-                  <span>{service.category}</span>
-                  <span>{service.typeLabel}</span>
-                  <span>{service.hours}</span>
+                  <span>{tr(service.category)}</span>
+                  <span>{tr(service.typeLabel)}</span>
+                  <span>{tr(service.hours)}</span>
                   <span className={`cx-service__mode cx-service__mode--${bookingModeOf(service)}`}>
                     {BOOKING_MODES[bookingModeOf(service)].label}
                   </span>
                 </p>
               </div>
               <div className="cx-service__price">
-                <strong>{amount}</strong>
-                {unit && <span>/ {unit}</span>}
+                <strong>{tr(amount)}</strong>
+                {unit && <span>/ {tr(unit)}</span>}
               </div>
               <button
                 type="button"
@@ -753,10 +753,10 @@ function Booking({ ref, complex, serviceId, onServiceChange }) {
         <p className="cx-book__price">
           {complex.minPrice ? (
             <>
-              {formatPrice(complex.minPrice)} {tr('so‘m')}<span>dan</span>
+              {formatPrice(complex.minPrice)} {tr('so‘m')}<span>{tr('dan')}</span>
             </>
           ) : (
-            (complex.priceNote ?? tr('Narxi kelishiladi'))
+            tr(complex.priceNote ?? 'Narxi kelishiladi')
           )}
         </p>
         {!online && (
@@ -834,18 +834,18 @@ function Booking({ ref, complex, serviceId, onServiceChange }) {
           <dl className="cx-book__summary">
             <div>
               <dt>{service.title}</dt>
-              <dd>{price ? `${formatPrice(price)} so‘m` : service.salary}</dd>
+              <dd>{price ? `${formatPrice(price)} ${tr('so‘m')}` : tr(service.salary)}</dd>
             </div>
             {mode === 'slot' && unit && (
               <div>
                 <dt>{tr('Davomiyligi')}</dt>
-                <dd>1 {unit}</dd>
+                <dd>1 {tr(unit)}</dd>
               </div>
             )}
             {mode === 'slot' && (
               <div className="cx-book__total">
                 <dt>{tr('Jami')}</dt>
-                <dd>{price ? `${formatPrice(price)} so‘m` : service.salary}</dd>
+                <dd>{price ? `${formatPrice(price)} ${tr('so‘m')}` : tr(service.salary)}</dd>
               </div>
             )}
           </dl>
@@ -859,7 +859,7 @@ function Booking({ ref, complex, serviceId, onServiceChange }) {
             <div className="cx-book__info">
               <p>
                 {tr('Bu xizmatni onlayn band qilib bo‘lmaydi')}
-                {unit === 'oy' ? tr(' (oylik abonement)') : ''}. Shartlar va bo‘sh joylarni majmuadan so‘rang.
+                {unit === 'oy' ? tr(' (oylik abonement)') : ''}. {tr('Shartlar va bo‘sh joylarni majmuadan so‘rang.')}
               </p>
               {complex.hasPhone ? (
                 <PhoneReveal complexId={complex.id} className="cx-book__cta" />
@@ -885,7 +885,7 @@ function Booking({ ref, complex, serviceId, onServiceChange }) {
                 {!canContinue
                   ? tr('Vaqtni tanlang')
                   : !user
-                    ? `${BOOKING_MODES[mode].cta} uchun kiring`
+                    ? tr('{action} uchun kiring', { action: BOOKING_MODES[mode].cta })
                     : isRequest
                       ? BOOKING_MODES[mode].cta
                       : tr('Davom etish')}
@@ -1054,7 +1054,7 @@ function Reviews({ ref, complex }) {
               <button
                 key={n}
                 type="button"
-                aria-label={`${n} yulduz`}
+                aria-label={tr('{n} yulduz', { n })}
                 aria-pressed={rating === n}
                 onMouseEnter={() => setHover(n)}
                 onClick={() => setRating(n)}
@@ -1216,7 +1216,7 @@ function Lightbox({ items, index, onChange, onClose }) {
             type="button"
             className={i === index ? 'is-active' : ''}
             onClick={() => onChange(i)}
-            aria-label={`${i + 1}-${item.type === 'video' ? 'video' : 'rasm'}`}
+            aria-label={`${i + 1}-${item.type === 'video' ? tr('video') : tr('rasm')}`}
           >
             <MediaThumb item={item} />
           </button>

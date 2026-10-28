@@ -187,7 +187,7 @@ function CompanyCard({ company }) {
           style={company.logo ? undefined : { background: company.color, color: '#fff' }}
         >
           {company.logo ? (
-            <img src={`${company.logo}?v=2`} alt="" width={44} height={44} />
+            <img loading="lazy" decoding="async" src={`${company.logo}?v=2`} alt="" width={44} height={44} />
           ) : (
             company.name.charAt(0)
           )}
