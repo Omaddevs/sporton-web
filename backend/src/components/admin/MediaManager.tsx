@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, Crop, ImagePlus, Link2, Play, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Crop, ImagePlus, Link2, Play, Trash2, X } from 'lucide-react'
 import { MediaError, parseMediaLink, type MediaItem } from '@/lib/media'
 import ImageCropper from './ImageCropper'
 import { uploadBlob } from './upload'
@@ -93,6 +93,12 @@ export default function MediaManager({
       return next
     })
 
+  const remove = (key: string) => setTiles((list) => list.filter((x) => x.key !== key))
+
+  function removeAll() {
+    if (window.confirm(`Barcha ${tiles.length} ta rasm/videoni o‘chirasizmi? Saqlash tugmasini bosgandan keyin kuchga kiradi.`)) setTiles([])
+  }
+
   const ready = tiles.filter((t) => t.progress == null && !t.error).map(({ type, url, provider }) => ({ type, url, provider }))
   const firstImage = tiles.find((t) => t.type === 'image' && t.progress == null && !t.error)?.key
 
@@ -154,6 +160,15 @@ export default function MediaManager({
       </div>
       {linkError && <p className="media-error">{linkError}</p>}
 
+      {tiles.length > 1 && (
+        <div className="media-toolbar">
+          <span className="muted">{tiles.length} ta fayl</span>
+          <button type="button" className="btn btn--sm btn--danger" onClick={removeAll}>
+            <Trash2 size={14} /> Hammasini o‘chirish
+          </button>
+        </div>
+      )}
+
       {tiles.length > 0 ? (
         <ul className="media-grid">
           {tiles.map((t, i) => {
@@ -181,6 +196,9 @@ export default function MediaManager({
                     </span>
                   )}
                   {t.error && <span className="media-tile__err">{t.error}</span>}
+                  <button type="button" className="media-tile__remove" onClick={() => remove(t.key)} aria-label="O‘chirish" title="O‘chirish">
+                    <X size={15} strokeWidth={2.6} />
+                  </button>
                 </div>
                 <div className="media-tile__bar">
                   <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Chapga">
@@ -195,7 +213,7 @@ export default function MediaManager({
                       <Crop size={14} />
                     </button>
                   )}
-                  <button type="button" onClick={() => setTiles((list) => list.filter((x) => x.key !== t.key))} aria-label="O‘chirish" className="is-danger">
+                  <button type="button" onClick={() => remove(t.key)} aria-label="O‘chirish" className="is-danger">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -207,7 +225,8 @@ export default function MediaManager({
         <p className="muted" style={{ margin: 0 }}>{emptyText}</p>
       )}
       <small className="muted">
-        Birinchi rasm — muqova (kartochkalarda ko‘rinadi). Tartibni strelkalar bilan o‘zgartiring.
+        Birinchi rasm — muqova (kartochkalarda ko‘rinadi). Tartibni strelkalar bilan o‘zgartiring. O‘chirish — rasm
+        burchagidagi ✕; o‘zgarishlar saqlash tugmasidan keyin kuchga kiradi.
         {uploading && ' · Yuklanmoqda…'}
       </small>
 
