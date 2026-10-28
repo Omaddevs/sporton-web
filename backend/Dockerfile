@@ -23,6 +23,7 @@ COPY --from=build --chown=app:app /app/drizzle ./drizzle
 COPY --from=build --chown=app:app /app/scripts ./scripts
 COPY --from=build --chown=app:app /app/src/db ./src/db
 COPY --from=build --chown=app:app /app/src/lib/phone.ts ./src/lib/phone.ts
+COPY --from=build --chown=app:app /app/src/lib/booking-mode.ts ./src/lib/booking-mode.ts
 COPY --from=deps --chown=app:app /app/node_modules ./node_modules
 COPY --chown=app:app package.json ./
 USER app
