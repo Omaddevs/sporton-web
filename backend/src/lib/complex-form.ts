@@ -68,6 +68,12 @@ export function readComplex(form: FormData) {
 }
 
 
+/** Galereyani darhol saqlash (✕ bosilganda): faqat media va undan olingan images */
+export function readMediaPatch(rawMedia: unknown) {
+  const media = normalizeMedia(rawMedia)
+  return { media, images: imagesOf(media) }
+}
+
 /** Majmua egasi o‘zgartira oladigan maydonlar: holat, tasdiq belgisi, tartib — faqat admin */
 export function readOwnerComplex(form: FormData) {
   const { status: _status, verified: _verified, listed: _listed, isDemo: _isDemo, similarIds: _similar, ...rest } = readComplex(form)

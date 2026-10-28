@@ -11,6 +11,10 @@ type Tile = MediaItem & { key: string; progress?: number; error?: string }
 let seq = 0
 const keyOf = () => `m${Date.now()}${seq++}`
 
+/** Yuklanib bo‘lgan, xatosiz elementlar — saqlanadigan ro‘yxat */
+const readyOf = (list: Tile[]): MediaItem[] =>
+  list.filter((t) => t.progress == null && !t.error).map(({ type, url, provider }) => ({ type, url, provider }))
+
 export function thumbOf(item: MediaItem) {
   if (item.provider === 'youtube') return `https://img.youtube.com/vi/${item.url.split('/embed/')[1]}/hqdefault.jpg`
   return item.type === 'image' ? item.url : null
@@ -21,11 +25,15 @@ export default function MediaManager({
   initial,
   name = 'media',
   emptyText = 'Hali rasm yoki video yo‘q.',
+  onRemove,
 }: {
   initial: MediaItem[]
   name?: string
   emptyText?: string
+  /** Berilsa — o‘chirilgan zahoti qolgan ro‘yxat serverga saqlanadi */
+  onRemove?: (media: MediaItem[]) => Promise<{ error?: string }>
 }) {
+  const [removeStatus, setRemoveStatus] = useState<{ kind: 'ok' | 'error' | 'busy'; text: string } | null>(null)
   const [tiles, setTiles] = useState<Tile[]>(() => initial.map((m) => ({ ...m, key: keyOf() })))
   const [link, setLink] = useState('')
   const [linkError, setLinkError] = useState('')
@@ -93,13 +101,28 @@ export default function MediaManager({
       return next
     })
 
-  const remove = (key: string) => setTiles((list) => list.filter((x) => x.key !== key))
-
-  function removeAll() {
-    if (window.confirm(`Barcha ${tiles.length} ta rasm/videoni o‘chirasizmi? Saqlash tugmasini bosgandan keyin kuchga kiradi.`)) setTiles([])
+  async function commit(next: Tile[]) {
+    const before = tiles
+    setTiles(next)
+    if (!onRemove) return
+    setRemoveStatus({ kind: 'busy', text: 'O‘chirilmoqda…' })
+    try {
+      const res = await onRemove(readyOf(next))
+      if (res?.error) throw new Error(res.error)
+      setRemoveStatus({ kind: 'ok', text: 'O‘chirildi va saqlandi' })
+    } catch (error) {
+      setTiles(before)
+      setRemoveStatus({ kind: 'error', text: error instanceof Error ? error.message : 'O‘chirib bo‘lmadi' })
+    }
   }
 
-  const ready = tiles.filter((t) => t.progress == null && !t.error).map(({ type, url, provider }) => ({ type, url, provider }))
+  const remove = (key: string) => commit(tiles.filter((x) => x.key !== key))
+
+  function removeAll() {
+    if (window.confirm(`Barcha ${tiles.length} ta rasm/videoni o‘chirasizmi?`)) commit([])
+  }
+
+  const ready = readyOf(tiles)
   const firstImage = tiles.find((t) => t.type === 'image' && t.progress == null && !t.error)?.key
 
   return (
@@ -226,9 +249,14 @@ export default function MediaManager({
       )}
       <small className="muted">
         Birinchi rasm — muqova (kartochkalarda ko‘rinadi). Tartibni strelkalar bilan o‘zgartiring. O‘chirish — rasm
-        burchagidagi ✕; o‘zgarishlar saqlash tugmasidan keyin kuchga kiradi.
+        burchagidagi ✕{onRemove ? ' (darhol saqlanadi)' : ''}.
         {uploading && ' · Yuklanmoqda…'}
       </small>
+      {removeStatus && (
+        <p className={removeStatus.kind === 'error' ? 'media-error' : 'muted'} style={{ margin: 0 }} role="status">
+          {removeStatus.text}
+        </p>
+      )}
 
       {cropTile && (
         <ImageCropper

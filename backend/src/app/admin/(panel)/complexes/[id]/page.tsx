@@ -11,7 +11,7 @@ import { requireStaff } from '@/lib/admin'
 import { BOOKING_MODE_SHORT, SERVICE_TYPE_LABELS } from '@/lib/constants'
 import { formatPhone } from '@/lib/phone'
 import { previewToken } from '@/lib/preview'
-import { deleteComplex, setComplexOwner, setComplexStatus, updateComplex } from '../actions'
+import { deleteComplex, saveComplexMedia, setComplexOwner, setComplexStatus, updateComplex } from '../actions'
 
 export default async function EditComplexPage({
   params,
@@ -76,7 +76,7 @@ export default async function EditComplexPage({
       )}
 
       <div className="grid-main">
-        <ComplexForm complex={complex} action={updateComplex} submitLabel="Saqlash" />
+        <ComplexForm complex={complex} action={updateComplex} saveMedia={saveComplexMedia.bind(null, complex.id)} submitLabel="Saqlash" />
 
         <div className="stack">
           <section className="card">

@@ -8,7 +8,7 @@ import { Badge, Empty, Flash, PageHeader, StatusBadge } from '@/components/admin
 import { BOOKING_MODE_SHORT } from '@/lib/constants'
 import { requireOwnedComplex } from '@/lib/owner'
 import { previewToken } from '@/lib/preview'
-import { ownerUpdateComplex } from '../../actions'
+import { ownerSaveComplexMedia, ownerUpdateComplex } from '../../actions'
 
 export default async function OwnerComplexPage({
   params,
@@ -53,7 +53,13 @@ export default async function OwnerComplexPage({
       )}
 
       <div className="grid-main">
-        <ComplexForm complex={complex} action={ownerUpdateComplex} submitLabel="Saqlash" variant="owner" />
+        <ComplexForm
+          complex={complex}
+          action={ownerUpdateComplex}
+          saveMedia={ownerSaveComplexMedia.bind(null, complex.id)}
+          submitLabel="Saqlash"
+          variant="owner"
+        />
 
         <section className="card">
           <div className="card-head">

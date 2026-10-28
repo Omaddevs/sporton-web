@@ -9,7 +9,7 @@ import { slugify } from '@/lib/admin'
 import { audit } from '@/lib/audit'
 import { isUniqueViolation } from '@/lib/booking'
 import { invalidateCatalog } from '@/lib/catalog'
-import { readOwnerComplex } from '@/lib/complex-form'
+import { readMediaPatch, readOwnerComplex } from '@/lib/complex-form'
 import { requireOwnedComplex, requireOwner } from '@/lib/owner'
 import { readService } from '@/lib/service-form'
 import { notifyAdmins } from '@/lib/telegram'
@@ -41,6 +41,23 @@ export async function ownerCreateComplex(form: FormData) {
   invalidateCatalog()
   revalidatePath('/kabinet', 'layout')
   go(`/kabinet/majmua/${encodeURIComponent(id)}`, 'ok', 'Majmua qo‘shildi. Endi sport turlari (xizmatlar) qo‘shing — admin tekshirib e’lon qiladi.')
+}
+
+/** Galereyadan rasm o‘chirilganda darhol saqlanadi — formani yuborish shart emas */
+export async function ownerSaveComplexMedia(id: string, rawMedia: unknown): Promise<{ error?: string }> {
+  const { user } = await requireOwnedComplex(id)
+  try {
+    const db = await getDb()
+    await db
+      .update(complexes)
+      .set(readMediaPatch(rawMedia))
+      .where(and(eq(complexes.id, id), eq(complexes.ownerId, user.id)))
+  } catch (error) {
+    return { error: messageOf(error) }
+  }
+  await audit(user.id, 'complex.media', 'complex', id, { by: 'owner' })
+  invalidateCatalog()
+  return {}
 }
 
 /** Egasi majmua ma’lumotlarini tahrirlaydi (holat va tasdiq belgilari — faqat admin) */

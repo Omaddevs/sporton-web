@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
 import { complexes, LISTING_STATUSES, users, type ListingStatus } from '@/db/schema'
-import { readComplex } from '@/lib/complex-form'
+import { readComplex, readMediaPatch } from '@/lib/complex-form'
 import { field, requireStaff, slugify } from '@/lib/admin'
 import { audit } from '@/lib/audit'
 import { invalidateCatalog } from '@/lib/catalog'
@@ -50,6 +50,20 @@ export async function updateComplex(form: FormData) {
   invalidateCatalog()
   revalidatePath('/admin/complexes')
   redirect(`/admin/complexes/${id}?ok=${encodeURIComponent('O‘zgarishlar saqlandi')}`)
+}
+
+/** Galereyadan rasm o‘chirilganda darhol saqlanadi — formani yuborish shart emas */
+export async function saveComplexMedia(id: string, rawMedia: unknown): Promise<{ error?: string }> {
+  const actor = await requireStaff()
+  try {
+    const db = await getDb()
+    await db.update(complexes).set(readMediaPatch(rawMedia)).where(eq(complexes.id, id))
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Saqlashda xatolik' }
+  }
+  await audit(actor.id, 'complex.media', 'complex', id)
+  invalidateCatalog()
+  return {}
 }
 
 export async function setComplexStatus(form: FormData) {

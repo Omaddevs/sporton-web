@@ -1,4 +1,5 @@
 import type { Complex } from '@/db/schema'
+import type { MediaItem } from '@/lib/media'
 import { AMENITIES, LISTING_STATUS_LABELS, REGIONS } from '@/lib/constants'
 import ConfirmButton from './ConfirmButton'
 import CoverImageField from './CoverImageField'
@@ -7,11 +8,14 @@ import MediaManager from './MediaManager'
 export default function ComplexForm({
   complex,
   action,
+  saveMedia,
   submitLabel,
   variant = 'admin',
 }: {
   complex?: Complex
   action: (form: FormData) => Promise<void>
+  /** Mavjud majmuada: galereyadan o‘chirish darhol saqlanadi */
+  saveMedia?: (media: MediaItem[]) => Promise<{ error?: string }>
   submitLabel: string
   /** owner — majmua egasi kabineti: holat, tasdiq belgilari va tartib maydonlari ko‘rinmaydi */
   variant?: 'admin' | 'owner'
@@ -148,6 +152,7 @@ export default function ComplexForm({
           <div className="fld span-2">
             <span>Rasm va videolar</span>
             <MediaManager
+              onRemove={saveMedia}
               initial={
                 c?.media?.length
                   ? c.media
