@@ -1,9 +1,10 @@
 node_modules
-.next
-out
+/.next
+/out
 *.tsbuildinfo
 next-env.d.ts
 .env
 .env.local
-.data
-uploads
+# Faqat ildizdagi papkalar: «uploads» yolg‘iz yozilsa src/app/api/v1/uploads route’i ham chiqib ketadi
+/.data
+/uploads
